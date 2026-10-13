@@ -1,4 +1,4 @@
-$Macro OUTBINNAME "mod_hl2sp"
+$Macro OUTBINNAME "hl2"
 
 $Conditional "MOD_LAUNCHER" "1"
 

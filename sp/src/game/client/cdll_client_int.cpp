@@ -358,21 +358,25 @@ class IClientPurchaseInterfaceV2 *g_pClientPurchaseInterface = (class IClientPur
 
 static ConVar *g_pcv_ThreadMode = NULL;
 
-// GAMEPADUI TODO - put this somewhere better. (Madi)
 #if defined( GAMEPADUI )
-const bool IsSteamDeck()
+static bool InitializeGamepadUIStartupMode()
 {
-	if ( CommandLine()->FindParm( "-gamepadui" ) )
-		return true;
-
 	if ( CommandLine()->FindParm( "-nogamepadui" ) )
 		return false;
 
-	const char *pszSteamDeckEnv = getenv( "SteamDeck" );
-	if ( pszSteamDeckEnv && *pszSteamDeckEnv )
-		return atoi( pszSteamDeckEnv ) != 0;
+	// GameUI also chooses its loading dialog and background using this flag,
+	// and caches the result. Set it as soon as the client module is loaded,
+	// before PostInit creates the custom menu or a loading dialog is opened.
+	if ( !CommandLine()->FindParm( "-gamepadui" ) )
+		CommandLine()->AppendParm( "-gamepadui", nullptr );
+	return true;
+}
 
-	return false;
+static const bool s_bGamepadUIStartupMode = InitializeGamepadUIStartupMode();
+
+static bool ShouldUseGamepadUI()
+{
+	return s_bGamepadUIStartupMode;
 }
 #endif
 
@@ -1220,7 +1224,7 @@ void CHLClient::PostInit()
 #endif
 
 #if defined(GAMEPADUI)
-	if ( IsSteamDeck() )
+	if ( ShouldUseGamepadUI() )
 	{
 		CSysModule* pGamepadUIModule = g_pFullFileSystem->LoadModule( "gamepadui", "GAMEBIN", false );
 		if ( pGamepadUIModule != nullptr )

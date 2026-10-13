@@ -9,7 +9,6 @@ $MacroRequired "PLATSUBDIR"
 $Macro SRCDIR		".."
 $Macro OUTBINDIR	"$SRCDIR\..\game"
 
-$Macro OUTBINNAME		"$OUTBINNAME_win32"		[$WIN32]
 $Macro OUTBINNAME       "$OUTBINNAME_osx"		[$OSXALL]
 $Macro OUTBINNAME       "$OUTBINNAME_linux"		[$LINUX32]
 
@@ -41,7 +40,13 @@ $Configuration
 	$Compiler
 	{
 		$PreprocessorDefinitions	"$BASE;MOD_LAUNCHER" [$MOD_LAUNCHER]
+		$EnableC++Exceptions		"Yes (/EHsc)" [$WINDOWS]
 		$ForceIncludes				" "
+	}
+
+	$General [$WINDOWS]
+	{
+		$CharacterSet "Use Unicode Character Set"
 	}
 
 	$Linker

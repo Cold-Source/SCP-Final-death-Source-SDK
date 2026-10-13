@@ -54,3 +54,19 @@ config.cfg
 
 # shader files
 *.tmp
+
+# Generated SDK projects and build outputs
+*.vcxproj.filters
+*.vcxproj.vpc_crc
+*.vpc.sentinel
+*.pdb
+Debug*/
+Release*/
+_vpc_/
+gamepadui.dll
+gamepadui.lib
+/sp/src/lib/public/mathlib.lib
+/sp/src/lib/public/tier1.lib
+/sp/src/lib/public/vgui_controls.lib
+/sp/game/*.exe
+/mp/game/*.exe

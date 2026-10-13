@@ -186,6 +186,7 @@ protected:
 public:
 
     int m_nPriority = 0;
+    bool m_bMainMenuAlignRight = false;
 
     GAMEPADUI_BUTTON_ANIMATED_PROPERTY( float, m_flWidth,                "Button.Width",               "392",             SchemeValueTypes::ProportionalFloat );
     GAMEPADUI_BUTTON_ANIMATED_PROPERTY( float, m_flHeight,               "Button.Height",              "40",              SchemeValueTypes::ProportionalFloat );

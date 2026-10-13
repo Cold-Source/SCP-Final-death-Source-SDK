@@ -31,6 +31,20 @@ using namespace vgui;
 
 static CUtlSymbolTable g_ScriptSymbols(0, 128, true);
 
+static bool IsAnimationConditional( const char *token )
+{
+	return token[0] == '[' && ( token[1] == '$' || ( token[1] == '!' && token[2] == '$' ) );
+}
+
+static bool EvaluateAnimationConditional( const char *token )
+{
+	const char *condition = token[0] == '[' ? token + 1 : token;
+	// Unknown platform flags (e.g. DECK on this SDK) are false, and their negation is true.
+	if ( condition[0] == '!' )
+		return !EvaluateConditional( condition + 1 );
+	return EvaluateConditional( condition );
+}
+
 // singleton accessor for animation controller for use by the vgui controls
 namespace vgui
 {
@@ -328,9 +342,9 @@ bool AnimationController::ParseScriptFile(char *pMem, int length)
 
 		// get the open brace or a conditional
 		pMem = ParseFile(pMem, token, NULL);
-		if ( Q_stristr( token, "[$" ) )
+		if ( IsAnimationConditional( token ) )
 		{
-			bAccepted = EvaluateConditional( token );
+			bAccepted = EvaluateAnimationConditional( token );
 
 			// now get the open brace
 			pMem = ParseFile(pMem, token, NULL);
@@ -593,9 +607,9 @@ bool AnimationController::ParseScriptFile(char *pMem, int length)
 			
 			// Look ahead one token for a conditional
 			char *peek = ParseFile(pMem, token, NULL);
-			if ( Q_stristr( token, "[$" ) )
+			if ( IsAnimationConditional( token ) )
 			{
-				if ( !EvaluateConditional( token ) )
+				if ( !EvaluateAnimationConditional( token ) )
 				{
 					seq.cmdList.Remove( cmdIndex );
 				}

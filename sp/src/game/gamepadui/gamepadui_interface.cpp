@@ -1,6 +1,8 @@
 #include "gamepadui_interface.h"
 #include "gamepadui_basepanel.h"
 #include "gamepadui_mainmenu.h"
+#include "gamepadui_language.h"
+#include "gamepadui_loading.h"
 
 #include "vgui/ILocalize.h"
 
@@ -61,6 +63,7 @@ void GamepadUI::Initialize( CreateInterfaceFn factory )
 
     g_pVGuiLocalize->AddFile( "resource/gameui_%language%.txt", "GAME", true );
     g_pVGuiLocalize->AddFile( "resource/deck_%language%.txt", "GAME", true );
+    GamepadUILoadSavedLanguage();
 
 #ifdef HL2_RETAIL // not necessary on SDK2013 (Madi)
     SteamAPI_InitSafe();
@@ -78,6 +81,7 @@ void GamepadUI::Initialize( CreateInterfaceFn factory )
     GamepadUI_Log( "Overriding menu.\n" );
 
     m_pGameUI->SetMainMenuOverride( GetBaseVPanel() );
+    GamepadUILoadingInitialize();
 
     m_pAnimationController = new vgui::AnimationController( m_pBasePanel );
     m_pAnimationController->SetProportional( false );
@@ -87,6 +91,7 @@ void GamepadUI::Initialize( CreateInterfaceFn factory )
 
 void GamepadUI::Shutdown()
 {
+    GamepadUILoadingShutdown();
     if ( m_pGameUI )
         m_pGameUI->SetMainMenuOverride( NULL );
 

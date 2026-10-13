@@ -13,6 +13,7 @@ $Group "gamedlls"
 	"client"
 	"server"
 	"gamepadui"
+	"launcher"
 }
 
 $Group "game"
