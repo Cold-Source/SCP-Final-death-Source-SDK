@@ -1,9 +1,8 @@
-# Cold Source SDK
-### This branch of Cold Source has Lua and GamePadUI✅
-### [Files Lua](https://github.com/Cold-Source/Cold-Source-Game)
-### [Files GamepadUI](https://github.com/Cold-Source/Cold-Source-Game/tree/gamepadui)
-## Currently, the multiplayer version does not support Lua, including gamepadui, but we will try to implement Lua and gamepadui in the multiplayer version as soon as possible.
-The foundational source code for the **Cold Source** development environment. This SDK is a modernized branch of the Source Engine, providing the framework for advanced community projects.
+# SCP:FD Source SDK Based on Cold Source SDK
+### game downloads
+### coming soon...
+// ### [de](https://github.com/Cold-Source/Cold-Source-Game/tree/gamepadui)
+The foundational source code for the **SCP: Final death** development environment. This SDK is a modernized branch of the Source Engine, providing the framework for advanced community projects.
 
 Currently contains updated game code for:
 *   **Source SP**
@@ -16,7 +15,6 @@ Currently contains updated game code for:
 ### Windows
 **Requirements:**
 *   **Source Multiplayer Game** or **Source SDK 2013 Multiplayer**
-*   **Source Singlplayer Game** or **Source SDK 2013 Singlplayer**
 *   **Visual Studio 2022 or Visual Studio 2026** with "Desktop development with C++"
 *   **Python 3.13** or later
 
