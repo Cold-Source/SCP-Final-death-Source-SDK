@@ -1,7 +1,7 @@
 # SCP:FD Source SDK Based on Cold Source SDK
 ### game downloads
 ### coming soon...
-// ### [de](https://github.com/Cold-Source/Cold-Source-Game/tree/gamepadui)
+<!-- ### [de](https://github.com/Cold-Source/Cold-Source-Game/tree/gamepadui) -->
 The foundational source code for the **SCP: Final death** development environment. This SDK is a modernized branch of the Source Engine, providing the framework for advanced community projects.
 
 Currently contains updated game code for:
