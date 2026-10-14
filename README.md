@@ -33,8 +33,7 @@ Currently contains updated game code for:
 We are actively working on modernizing the engine core. Our current development focus includes:
 
 ### 🟢 Core Architecture
-- [ ] **x64 Architecture:** — `IN PROGRESS (50%)`
-  > Full migration to 64-bit for improved memory addressing and performance.
+- [x] **x64 Architecture:** — Full migration to 64-bit for improved memory addressing and performance.
 - [ ] **Jolt Physics Integration:** Replacing the legacy Havok physics engine with **Jolt Physics** for better multithreading and stability.
 
 ### 🟡 Graphics & UI
