@@ -1,0 +1,52 @@
+$Macro SRCDIR ".."
+$Include "$SRCDIR\vpc_scripts\platform_dirs.vpc"
+$Macro LIBPUBLIC "$SRCDIR\lib\public$PLATSUBDIR"
+$Include "$SRCDIR\vpc_scripts\source_win32_base.vpc"
+$Configuration
+{
+    $General
+    {
+        $ConfigurationType "Dynamic Library (.dll)"
+        $TargetName "bit"
+        $TargetExtension ".dll"
+        $OutputDirectory "$SRCDIR\..\game\mod_hl2\lua\includes\modules"
+    }
+    $Compiler
+    {
+        $AdditionalIncludeDirectories "$SRCDIR\lua-5.1.5\src"
+        $WarningLevel "Level 3 (/W3)"
+        $TreatWarningsAsErrors "No"
+    }
+    $Linker
+    {
+        $OutputFile "$SRCDIR\..\game\mod_hl2\lua\includes\modules\bit.dll"
+        $ImportLibrary "$SRCDIR\lib\public$PLATSUBDIR\lua_bit.lib"
+        $AdditionalOptions "$BASE /EXPORT:luaopen_bit"
+    }
+}
+$Configuration "Debug"
+{
+    $Compiler
+    {
+        $RuntimeLibrary "Multi-threaded Debug DLL (/MDd)"
+    }
+}
+$Configuration "Release"
+{
+    $Compiler
+    {
+        $RuntimeLibrary "Multi-threaded DLL (/MD)"
+    }
+}
+$Project "Lua BitOp"
+{
+    $Folder "Source Files"
+    {
+        $File "src\LuaBitOp-1.0.2\bit.c"
+        $File "src\LuaBitOp-1.0.2\bittest.lua"
+    }
+    $Folder "Link Libraries"
+    {
+        $ImpLib lua51
+    }
+}

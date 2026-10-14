@@ -1,0 +1,8 @@
+$Macro SRCDIR "..\.."
+$Macro OUTBINNAME "game_shader_generic_example"
+$Macro GAMENAME "mod_hl2"
+$Include "$SRCDIR\materialsystem\stdshaders\game_shader_generic_example_base.vpc"
+
+$Project "Game Shaders (HL2)"
+{
+}

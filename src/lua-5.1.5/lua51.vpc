@@ -1,0 +1,80 @@
+$Macro SRCDIR ".."
+$Include "$SRCDIR\vpc_scripts\platform_dirs.vpc"
+$Configuration "Debug"
+{
+    $Compiler
+    {
+        $Optimization "Disabled (/Od)"
+        $RuntimeLibrary "Multi-threaded Debug DLL (/MDd)"
+    }
+    $Linker
+    {
+        $GenerateDebugInfo "Generate Debug Information optimized for sharing and publishing (/DEBUG:FULL)"
+    }
+}
+$Configuration "Release"
+{
+    $Compiler
+    {
+        $Optimization "Maximize Speed (/O2)"
+        $RuntimeLibrary "Multi-threaded DLL (/MD)"
+    }
+}
+$Include "$SRCDIR\vpc_scripts\source_win32_base.vpc"
+$Configuration
+{
+    $General
+    {
+        $ConfigurationType "Dynamic Library (.dll)"
+        $TargetName "lua51"
+        $TargetExtension ".dll"
+        $OutputDirectory "$SRCDIR\..\game\mod_hl2\bin$PLATSUBDIR"
+    }
+    $Compiler
+    {
+        $AdditionalIncludeDirectories "$SRCDIR\lua-5.1.5\src"
+        $PreprocessorDefinitions "LUA_BUILD_AS_DLL;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS"
+        $WarningLevel "Level 3 (/W3)"
+        $TreatWarningsAsErrors "No"
+    }
+    $Linker
+    {
+        $ImportLibrary "$SRCDIR\lib\public$PLATSUBDIR\lua51.lib"
+        $OutputFile "$SRCDIR\..\game\mod_hl2\bin$PLATSUBDIR\lua51.dll"
+    }
+}
+$Project "Lua 5.1"
+{
+    $Folder "Source Files"
+    {
+        $File "src\lapi.c"
+        $File "src\lauxlib.c"
+        $File "src\lbaselib.c"
+        $File "src\lcode.c"
+        $File "src\ldblib.c"
+        $File "src\ldebug.c"
+        $File "src\ldo.c"
+        $File "src\ldump.c"
+        $File "src\lfunc.c"
+        $File "src\lgc.c"
+        $File "src\linit.c"
+        $File "src\liolib.c"
+        $File "src\llex.c"
+        $File "src\lmathlib.c"
+        $File "src\lmem.c"
+        $File "src\loadlib.c"
+        $File "src\lobject.c"
+        $File "src\lopcodes.c"
+        $File "src\loslib.c"
+        $File "src\lparser.c"
+        $File "src\lstate.c"
+        $File "src\lstring.c"
+        $File "src\lstrlib.c"
+        $File "src\ltable.c"
+        $File "src\ltablib.c"
+        $File "src\ltm.c"
+        $File "src\lundump.c"
+        $File "src\lvm.c"
+        $File "src\lzio.c"
+    }
+}
