@@ -79,6 +79,50 @@
 	
 	"Fonts"
 	{
+        "News.Body.Font"
+        {
+            "settings"
+            {
+                "name" "Noto Sans"
+                "tall" "12"
+                "weight" "500"
+                "antialias" "1"
+                "range" "0x0000 0xFFFF"
+            }
+        }
+        "News.Entry.Font"
+        {
+            "settings"
+            {
+                "name" "Noto Sans"
+                "tall" "14"
+                "weight" "700"
+                "antialias" "1"
+                "range" "0x0000 0xFFFF"
+            }
+        }
+        "News.Heading.Font"
+        {
+            "settings"
+            {
+                "name" "Noto Sans"
+                "tall" "16"
+                "weight" "700"
+                "antialias" "1"
+                "range" "0x0000 0xFFFF"
+            }
+        }
+        "News.Date.Font"
+        {
+            "settings"
+            {
+                "name" "Noto Sans"
+                "tall" "10"
+                "weight" "400"
+                "antialias" "1"
+                "range" "0x0000 0xFFFF"
+            }
+        }
 		"Logo.Font"
 		{
 			"settings"

@@ -59,6 +59,7 @@ private:
     GamepadUIButton* m_pQuitButton = nullptr;
     GamepadUIButton* m_pModeButton = nullptr;
     GamepadUIButton* m_pLanguageButton = nullptr;
+    vgui::Panel* m_pNewsPanel = nullptr;
 
     GAMEPADUI_PANEL_PROPERTY( float, m_flNewsWidth, "News.Width", "240", SchemeValueTypes::Float );
     GAMEPADUI_PANEL_PROPERTY( Color, m_colNewsBackground, "News.Background", "16 16 16 230", SchemeValueTypes::Color );

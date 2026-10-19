@@ -1,0 +1,16 @@
+"SCPFDNews"
+{
+    "version" "1"
+    "entries"
+    {
+        "2026-10-19-welcome"
+        {
+            "date" "19.10.2026"
+            "image" "images/scp-foundation.jpg"
+            "title_russian" "Новости в главном меню"
+            "body_russian" "Добро пожаловать в SCP: Final Death!\n\nЭто пример новости из нашего репозитория GitHub. Здесь будут появляться сообщения команды, новости разработки и информация об обновлениях.\n\nЛента обновляется автоматически. Последние загруженные новости доступны и без интернета."
+            "title_english" "News in the main menu"
+            "body_english" "Welcome to SCP: Final Death!\n\nThis is a sample news post from our GitHub repository. This feed will feature team announcements, development news and update information.\n\nNews refreshes automatically. Previously downloaded posts remain available offline."
+        }
+    }
+}

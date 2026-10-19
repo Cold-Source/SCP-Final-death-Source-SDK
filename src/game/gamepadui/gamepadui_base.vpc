@@ -46,6 +46,7 @@ $Configuration
         $SystemLibraries "rt" [$LINUXALL]
         $IgnoreImportLibrary "TRUE"
         $AdditionalDependencies "$BASE winmm.lib" [$WINDOWS]
+        $AdditionalDependencies "$BASE winhttp.lib windowscodecs.lib ole32.lib" [$WINDOWS]
         $AdditionalDependencies "$BASE wsock32.lib Ws2_32.lib" [$BUILD_REPLAY]
     }
 }
@@ -67,6 +68,9 @@ $Project
         $File "gamepadui_image.h"
         $File "gamepadui_interface.h"
         $File "gamepadui_mainmenu.h"
+        $File "gamepadui_news.h"
+        $File "gamepadui_news_http.h"
+        $File "gamepadui_news_format.h"
         $File "gamepadui_loading.h"
         $File "gamepadui_mode.h"
         $File "gamepadui_language.h"
@@ -94,6 +98,8 @@ $Project
         $File "gamepadui_genericconfirmation.cpp"
         $File "gamepadui_interface.cpp"
         $File "gamepadui_mainmenu.cpp"
+        $File "gamepadui_news.cpp"
+        $File "gamepadui_news_http.cpp"
         $File "gamepadui_loading.cpp"
         $File "gamepadui_mode.cpp"
         $File "gamepadui_language.cpp"

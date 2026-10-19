@@ -3,10 +3,13 @@ setlocal
 
 set BUILD_SHADER=call buildshaders.bat
 
-set SOURCE_DIR="..\..\"
+:: ПРАВИЛЬНЫЙ ПУТЬ к корневой папке исходников (где лежит src)
+set SOURCEDIR="C:\Users\REKISX\Desktop\scpfd\SCP-Final-death-Source-SDK\src"
 
-rem Change me to your mod's name!
-set GAME_DIR="..\..\..\game\mod_tf"
+:: Путь к папке вашей игры/мода
+set GAMEDIR="C:\Users\REKISX\Desktop\scpfd\scpfd\scpfd\hl2"
 
-%BUILD_SHADER% sdkshaders_dx9_20b -game %GAME_DIR% -source %SOURCE_DIR%
-%BUILD_SHADER% sdkshaders_dx9_30  -game %GAME_DIR% -source %SOURCE_DIR% -force30
+%BUILD_SHADER% mymod_dx9_20b			-game %GAMEDIR% -source %SOURCEDIR%
+%BUILD_SHADER% mymod_dx9_30				-game %GAMEDIR% -source %SOURCEDIR% -dx9_30	-force30
+
+pause

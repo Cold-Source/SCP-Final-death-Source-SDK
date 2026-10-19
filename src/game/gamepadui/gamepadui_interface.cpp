@@ -3,6 +3,7 @@
 #include "gamepadui_mainmenu.h"
 #include "gamepadui_language.h"
 #include "gamepadui_loading.h"
+#include "gamepadui_news.h"
 
 #include "vgui/ILocalize.h"
 
@@ -91,6 +92,7 @@ void GamepadUI::Initialize( CreateInterfaceFn factory )
 
 void GamepadUI::Shutdown()
 {
+    GamepadUINewsShutdown();
     GamepadUILoadingShutdown();
     if ( m_pGameUI )
         m_pGameUI->SetMainMenuOverride( NULL );
@@ -111,6 +113,7 @@ void GamepadUI::Shutdown()
 
 void GamepadUI::OnUpdate( float flFrametime )
 {
+    GamepadUINewsUpdate();
     if ( m_pAnimationController )
         m_pAnimationController->UpdateAnimations( GetTime() );
 }

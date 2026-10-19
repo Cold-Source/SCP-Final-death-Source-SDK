@@ -2,6 +2,7 @@
 #include "gamepadui_basepanel.h"
 #include "gamepadui_mainmenu.h"
 #include "gamepadui_language.h"
+#include "gamepadui_news.h"
 
 #include "vgui/ISurface.h"
 #include "vgui/ILocalize.h"
@@ -257,6 +258,8 @@ GamepadUIMainMenu::GamepadUIMainMenu( vgui::Panel* pParent )
 
     RefreshMenuLanguage();
 
+    m_pNewsPanel = GamepadUICreateNewsPanel( this );
+
     SetFooterButtons( FooterButtons::Select, FooterButtons::Select );
 }
 
@@ -402,6 +405,11 @@ void GamepadUIMainMenu::LayoutMainMenu()
 
     const bool bMainMenu = GetCurrentMenuState() == GamepadUIMenuStates::MainMenu;
     const int nNewsLeft = bMainMenu ? GetNewsLeft() : GetWide();
+    if ( m_pNewsPanel )
+    {
+        m_pNewsPanel->SetVisible( bMainMenu );
+        m_pNewsPanel->SetBounds( nNewsLeft + 1, 0, Max( 0, GetWide() - nNewsLeft - 1 ), GetTall() );
+    }
     if ( m_pModeButton )
         m_pModeButton->SetPos( Max( 0, nNewsLeft - m_pModeButton->GetWide() ),
                               Max( 0, GetTall() - m_pModeButton->GetTall() ) );
