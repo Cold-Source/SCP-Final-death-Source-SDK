@@ -1111,6 +1111,95 @@ bool CHL2_Player::HandleInteraction(int interactionType, void *data, CBaseCombat
 }
 
 
+// NPC character models use activities rather than the legacy ref_aim_*
+// player sequences. Resolve the weapon's activity first, then an unarmed
+// fallback, instead of displaying sequence zero when a sequence is absent.
+static int SelectHL2CharacterSequence( CHL2_Player *pPlayer, Activity preferred,
+	Activity fallback, Activity &selectedActivity )
+{
+	const Activity candidates[] =
+	{
+		pPlayer->Weapon_TranslateActivity( preferred ), preferred,
+		pPlayer->Weapon_TranslateActivity( fallback ), fallback,
+		pPlayer->Weapon_TranslateActivity( ACT_IDLE ), ACT_IDLE
+	};
+	for ( int i = 0; i < ARRAYSIZE( candidates ); ++i )
+	{
+		int sequence = pPlayer->SelectWeightedSequence( candidates[i] );
+		if ( sequence >= 0 )
+		{
+			selectedActivity = candidates[i];
+			return sequence;
+		}
+	}
+	return -1;
+}
+
+void CHL2_Player::SetAnimation( PLAYER_ANIM playerAnim )
+{
+	if ( !IsAlive() || !GetModelPtr() || playerAnim == PLAYER_DIE || playerAnim == PLAYER_IN_VEHICLE )
+	{
+		BaseClass::SetAnimation( playerAnim );
+		return;
+	}
+
+	char legacySequence[64];
+	Q_snprintf( legacySequence, sizeof( legacySequence ), "ref_aim_%s", m_szAnimExtension );
+	if ( LookupSequence( legacySequence ) >= 0 )
+	{
+		BaseClass::SetAnimation( playerAnim );
+		return;
+	}
+
+	if ( playerAnim == PLAYER_ATTACK1 || playerAnim == PLAYER_RELOAD )
+	{
+		Activity gesture = Weapon_TranslateActivity( playerAnim == PLAYER_ATTACK1
+			? ACT_GESTURE_RANGE_ATTACK1 : ACT_GESTURE_RELOAD );
+		if ( SelectWeightedSequence( gesture ) >= 0 )
+			RestartGesture( gesture );
+		return;
+	}
+
+	float speed = GetAbsVelocity().Length2D();
+	Activity preferred = ACT_IDLE_ANGRY;
+	Activity fallback = ACT_IDLE;
+	if ( GetFlags() & ( FL_FROZEN | FL_ATCONTROLS ) )
+		speed = 0.0f;
+	if ( GetWaterLevel() > 1 )
+	{
+		preferred = ACT_SWIM;
+	}
+	else if ( playerAnim == PLAYER_JUMP || playerAnim == PLAYER_SUPERJUMP || !( GetFlags() & FL_ONGROUND ) )
+	{
+		preferred = ACT_JUMP;
+	}
+	else if ( GetFlags() & FL_DUCKING )
+	{
+		preferred = speed > 1.0f ? ACT_WALK_CROUCH_AIM : ACT_RANGE_AIM_LOW;
+		fallback = speed > 1.0f ? ACT_WALK_CROUCH : ACT_COVER_LOW;
+	}
+	else if ( speed > 1.0f )
+	{
+		preferred = speed > 150.0f ? ACT_RUN_AIM : ACT_WALK_AIM;
+		fallback = speed > 150.0f ? ACT_RUN : ACT_WALK;
+	}
+
+	Activity selectedActivity = ACT_IDLE;
+	int sequence = SelectHL2CharacterSequence( this, preferred, fallback, selectedActivity );
+	if ( sequence < 0 )
+	{
+		BaseClass::SetAnimation( playerAnim );
+		return;
+	}
+	SetActivity( selectedActivity );
+	if ( GetSequence() != sequence || ( !SequenceLoops() && IsSequenceFinished() ) )
+	{
+		ResetSequence( sequence );
+		SetCycle( 0.0f );
+	}
+	SetPlaybackRate( 1.0f );
+}
+
 void CHL2_Player::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 {
 	// Handle FL_FROZEN.

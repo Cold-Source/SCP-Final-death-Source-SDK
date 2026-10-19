@@ -100,6 +100,7 @@ public:
 	virtual void		Activate( void );
 	virtual void		CheatImpulseCommands( int iImpulse );
 	virtual void		PlayerRunCommand( CUserCmd *ucmd, IMoveHelper *moveHelper);
+	virtual void		SetAnimation( PLAYER_ANIM playerAnim ) OVERRIDE;
 	virtual void		PlayerUse ( void );
 	virtual void		SuspendUse( float flDuration ) { m_flTimeUseSuspended = gpGlobals->curtime + flDuration; }
 	virtual void		UpdateClientData( void );
