@@ -19,19 +19,19 @@ Scheme
 		"White"				"255 255 255 255"
 		"OffWhite"			"216 216 216 255"
 		"DullWhite"			"142 142 142 255"
-		
+
 		"TransparentBlack"	"0 0 0 128"
 		"Black"				"0 0 0 255"
 
 		"Blank"				"0 0 0 0"
 
 		"Red"               "255 128 128 255"
-		"Green"             "128 255 128 255"
+		"Green"             "245 245 245 255"
 		"Blue"              "128 128 255 255"
 
-		"OrangeV"           "255 155 0 255"
-		"OrangeZ"           "255 153 35 255"
-		"OrangeZDim"        "255 153 35 196"
+		"OrangeV"           "245 245 245 255"
+		"OrangeZ"           "245 245 245 255"
+		"OrangeZDim"        "245 245 245 196"
 
 		"IfmMenuDark"       "66 66 66 255"
 		// "IfmMenuDarkDim"    "66 66 66 196"
@@ -61,7 +61,7 @@ Scheme
 		Button.DepressedTextColor		"OrangeZDim"
 		Button.DepressedBgColor			"Blank"
 		Button.FocusBorderColor			"Black"
-		
+
 		CheckButton.TextColor			"OffWhite"
 		CheckButton.SelectedTextColor	"White"
 		CheckButton.BgColor				"TransparentBlack"
@@ -116,13 +116,13 @@ Scheme
 		ListPanel.TextBgColor				"Blank"
 		ListPanel.BgColor					"TransparentBlack"
 		ListPanel.SelectedTextColor			"Black"
-		ListPanel.SelectedBgColor			"255 155 0 255"
-		ListPanel.SelectedOutOfFocusBgColor	"255 155 0 128"
+		ListPanel.SelectedBgColor			"28 28 28 255"
+		ListPanel.SelectedOutOfFocusBgColor	"28 28 28 128"
 		ListPanel.EmptyListInfoTextColor	"OffWhite"
 		ListPanel.DisabledTextColor			"Label.DisabledFgColor1"
 		ListPanel.DisabledSelectedTextColor			"OffWhite"
 
-		IfmWorkspace.BgColor            "50 70 50 90"
+		IfmWorkspace.BgColor            "28 28 28 90"
 
 		MenuBar.BgColor					"IfmMenuDarkDim"
 
@@ -150,7 +150,7 @@ Scheme
 		RichText.TextColor				"OffWhite"
 		RichText.BgColor				"TransparentBlack"
 		RichText.SelectedTextColor		"Black"
-		RichText.SelectedBgColor		"255 155 0 255"
+		RichText.SelectedBgColor		"28 28 28 255"
 
 		ScrollBar.Wide					17
 
@@ -171,9 +171,9 @@ Scheme
 		SectionedListPanel.BrightTextColor	"White"
 		SectionedListPanel.BgColor			"TransparentBlack"
 		SectionedListPanel.SelectedTextColor			"Black"
-		SectionedListPanel.SelectedBgColor				"255 155 0 255"
+		SectionedListPanel.SelectedBgColor				"28 28 28 255"
 		SectionedListPanel.OutOfFocusSelectedTextColor	"Black"
-		SectionedListPanel.OutOfFocusSelectedBgColor	"255 155 0 128"
+		SectionedListPanel.OutOfFocusSelectedBgColor	"28 28 28 128"
 
 		Slider.NobColor				"108 108 108 255"
 		Slider.TextColor			"180 180 180 255"
@@ -187,14 +187,14 @@ Scheme
 		TextEntry.DisabledTextColor	"DullWhite"
 		TextEntry.DisabledBgColor	"Blank"
 		TextEntry.SelectedTextColor	"Black"
-		TextEntry.SelectedBgColor	"255 155 0 255"
-		TextEntry.OutOfFocusSelectedBgColor	"255 155 0 128"
+		TextEntry.SelectedBgColor	"28 28 28 255"
+		TextEntry.OutOfFocusSelectedBgColor	"28 28 28 128"
 		TextEntry.FocusEdgeColor	"0 0 0 196"
 
 		ToggleButton.SelectedTextColor	"White"
 
 		Tooltip.TextColor			"0 0 0 196"
-		Tooltip.BgColor				"255 155 0 255"
+		Tooltip.BgColor				"28 28 28 255"
 
 		TreeView.BgColor			"TransparentBlack"
 
@@ -203,7 +203,7 @@ Scheme
 		// scheme-specific colors
 		MainMenu.TextColor			"White"
 		MainMenu.ArmedTextColor		"200 200 200 255"
-		MainMenu.DepressedTextColor	"192 186 80 255"
+		MainMenu.DepressedTextColor	"245 245 245 255"
 		MainMenu.MenuItemHeight		"30"
 		MainMenu.Inset				"32"
 		MainMenu.Backdrop			"255 0 0 156"
@@ -213,67 +213,67 @@ Scheme
 
 		NewGame.TextColor			"White"
 		NewGame.FillColor			"0 0 0 255"
-		NewGame.SelectionColor		"255 155 0 255"
+		NewGame.SelectionColor		"245 245 245 255"
 		NewGame.DisabledColor		"128 128 128 196"
 
 		DragDrop.DragFrame			"255 255 255 192"
 		DragDrop.DropFrame			"150 255 150 255"
-		
-		AttributeWidget.DirtyBgColor "100 100 200 63"
-		
+
+		AttributeWidget.DirtyBgColor "28 28 28 63"
+
 		Clip.Selected				"255 155 0 255"
 		Clip.Unselected				"150 150 150 255"
-		
+
 		Clip.BgColor				"Blank"
 		Clip.ActiveBgColor			"255 255 255 50"
-		
+
 		Clip.TrackBorder			"0 0 0 255"
-		
+
 		// Color at insert cursor when dropping tracks onto a timeline view
 		Clip.DropTimeColor			"255 255 255 255"
 		Clip.DropTimeColorBg		"0 0 0 192"
 		Clip.DropTimeColorBorder	"255 255 255 192"
-		
-		Clip.StartDragColor			"0 255 255 128"
-		
+
+		Clip.StartDragColor			"245 245 245 128"
+
 		KeyBoardEditor.AlteredBinding		"100 255 100 255"
 		StatusBar.BgColor 			"IfmMenuDarkDim"
-		
-		FilmStrip.FilmBgColor		"75 75 220 128"
-		FilmStrip.AudioBgColor		"75 220 75 128"
-		FilmStrip.FXBgColor			"220 75 75 128"
-		FilmStrip.ChannelsBgColor	"220 200 75 128"
+
+		FilmStrip.FilmBgColor		"28 28 28 128"
+		FilmStrip.AudioBgColor		"28 28 28 128"
+		FilmStrip.FXBgColor			"28 28 28 128"
+		FilmStrip.ChannelsBgColor	"28 28 28 128"
 		FilmStrip.FgColor			"31 31 31 128"
 
 		TimeCode.BorderColor		"0 0 0 255"
-		
-		TimeCode.SubClipFgColor		"255 0 100 255"
+
+		TimeCode.SubClipFgColor		"245 245 245 255"
 		TimeCode.SubClipBgColor		"255 255 255 63"
 
-		TimeCode.ClipFgColor		"100 100 255 255"
+		TimeCode.ClipFgColor		"245 245 245 255"
 		TimeCode.ClipBgColor		"255 255 255 63"
-		
+
 		IFM.CurrentTimeScrubber		"100 150 255 192"  // In the timeline views, the grabbable scrubber color
 		IFM.CurrentTimeScrubberOutline	"0 0 0 0"  // In the timeline views, the outline around the bar and scrubber
-		IFM.CurrentTimeBarColor		"100 150 255 192" 
-		
-		IFM.ClipTransitionBgColor	"180 180 255 192"
-		
+		IFM.CurrentTimeBarColor		"245 245 245 192"
+
+		IFM.ClipTransitionBgColor	"28 28 28 192"
+
 		IFM.TimeLineBgColor			"0 0 0 128"
-			
+
 		IFM.TimeLineTickMajor		"255 255 63 192"
 		IFM.TimeLineTickMinor		"255 255 63 127"
 		IFM.TimeLineTickLabelColor	"255 255 255 127"
-		
-		IFMConsole.TextColor		"216 222 211 255"
-		IFMConsole.DevTextColor		"196 181 80 255"
-		
+
+		IFMConsole.TextColor		"245 245 245 255"
+		IFMConsole.DevTextColor		"245 245 245 255"
+
 		// It just oscillates between these two
 		IFMDrop.BlinkCursor1		"255 255 0 255"
 		IFMDrop.BlinkCursor2		"100 100 100 255"
-		
+
 		IFM.CurveOtherLayer			"150 150 150 255"
-		IFM.CurveBaseLayer			"0 255 255 255"
+		IFM.CurveBaseLayer			"245 245 245 255"
 		IFM.CurveWriteLayer			"220 200 50 255"
 	}
 
@@ -291,210 +291,217 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"500"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		// fonts are used in order that they are listed
 		"DebugFixedSmall"
 		{
 			"1"
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"7"
-				"weight"	"500"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultFixedOutline"
 		{
 			"1"
 			{
-				"name"		"Lucida Console"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"0"
+				"weight"	"700"
 				"outline"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"Default"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"800"
-				"antialias" "1"
+				"weight"	"700"
 				// "dropshadow" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultBold"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"1000"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultUnderline"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
+				"weight"	"700"
 				"underline" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultSmall"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"0"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultSmallDropShadow"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"13"
-				"weight"	"0"
+				"weight"	"700"
 				"dropshadow" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultVerySmall"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
-				//"name"		"Verdana"
+				"name"		"Trebuchet MS"
+				//"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"0"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		"DefaultLarge"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"0"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultLargeOutline"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"32"
-				"weight"	"1000"
+				"weight"	"700"
 				"outline"	"1"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
-		
+
 		"UiBold"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"1000"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"UiBoldSmall"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"1000"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		"DmePropertyVerySmall"
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"0"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		"DmePropertySmall"
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"13"
-				"weight"	"0"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		"DmeProperty"
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"0"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		"DmePropertyLarge"
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"0"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		"DmePropertyVeryLarge"
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"22"
-				"weight"	"0"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		"MenuLarge"
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"600"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		"ConsoleText"
 		{
 			"1"
 			{
-				"name"		"Lucida Console"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"500"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		// this is the symbol font
@@ -524,8 +531,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 
@@ -535,8 +543,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"Trebuchet18"
@@ -545,8 +554,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		// HUD numbers
@@ -557,8 +567,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"40"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber1"
 		{
@@ -566,8 +577,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"41"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber2"
 		{
@@ -575,8 +587,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"42"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber3"
 		{
@@ -584,8 +597,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"43"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber4"
 		{
@@ -593,8 +607,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"44"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber5"
 		{
@@ -602,79 +617,86 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"45"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultFixed"
 		{
 			"1"
 			{
-				"name"		"Lucida Console"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"0"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 //			"1"
 //			{
-//				"name"		"FixedSys"
+//				"name"		"Trebuchet MS"
 //				"tall"		"20"
-//				"weight"	"0"
-//			}
+//				"weight"	"700"
+//			"range" "0x0020 0x04FF" }
 		}
 
 		"DefaultFixedDropShadow"
 		{
 			"1"
 			{
-				"name"		"Lucida Console"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"0"
+				"weight"	"700"
 				"dropshadow" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 //			"1"
 //			{
-//				"name"		"FixedSys"
+//				"name"		"Trebuchet MS"
 //				"tall"		"20"
-//				"weight"	"0"
-//			}
+//				"weight"	"700"
+//			"range" "0x0020 0x04FF" }
 		}
 
 		"CloseCaption_Normal"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Italic"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
+				"weight"	"700"
 				"italic"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Bold"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_BoldItalic"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"900"
+				"weight"	"700"
 				"italic"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		TitleFont
@@ -814,7 +836,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		TitleButtonBorder
 		{
 			"backgroundtype" "0"
@@ -869,7 +891,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		ScrollBarButtonDepressedBorder
 		{
 			"inset" "2 2 0 0"

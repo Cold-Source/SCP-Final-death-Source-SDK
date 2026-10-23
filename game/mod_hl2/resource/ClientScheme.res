@@ -18,39 +18,39 @@ Scheme
 		"SteamDeckLoadingBar" "0 0 0 255"
 		"SteamDeckSpinner" "0 0 0 255"
 	}
-	
+
 	///////////////////// BASE SETTINGS ////////////////////////
 	//
 	// default settings for all panels
 	// controls use these to determine their settings
 	BaseSettings
 	{
-		"FgColor"			"50 134 218 100"
+		"FgColor"			"245 245 245 100"
 		"BgColor"			"0 0 0 76"
 
-		"Panel.FgColor"			"50 134 218 100"
+		"Panel.FgColor"			"245 245 245 100"
 		"Panel.BgColor"			"0 0 0 76"
-		
-		//Highlighted, fade from green into blue
-		"BrightFg"		"0 194 74 255"
 
-		"DamagedBg"			"180 0 0 200"
-		"DamagedFg"			"180 0 0 230"
-		"BrightDamagedFg"		"255 0 0 255"
+		//Highlighted, fade from green into blue
+		"BrightFg"		"245 245 245 255"
+
+		"DamagedBg"			"28 28 28 200"
+		"DamagedFg"			"245 245 245 230"
+		"BrightDamagedFg"		"245 245 245 255"
 
 		// weapon selection colors
-		"SelectionNumberFg"		"50 134 218 255"
-		"SelectionTextFg"		"50 134 218 255"
+		"SelectionNumberFg"		"245 245 245 255"
+		"SelectionTextFg"		"245 245 245 255"
 		"SelectionEmptyBoxBg" 	"0 0 0 80"
 		"SelectionBoxBg" 		"0 0 0 80"
 		"SelectionSelectedBoxBg" "0 0 0 80"
-		
-		"ZoomReticleColor"	"50 134 218 255"
+
+		"ZoomReticleColor"	"245 245 245 255"
 
 		// HL1-style HUD colors
-		"Yellowish"			"0 194 74 255"
-		"Normal"			"50 134 218 255"
-		"Caution"			"255 48 0 255"
+		"Yellowish"			"245 245 245 255"
+		"Normal"			"245 245 245 255"
+		"Caution"			"245 245 245 255"
 
 		// Top-left corner of the "Half-Life 2" on the main screen
 		"Main.Title1.X"				"50" // 76
@@ -82,34 +82,59 @@ Scheme
 		"Buttons"		"materials/vgui/fonts/buttons_32.vbf"
 	}
 
-	
+
 	//////////////////////// FONTS /////////////////////////////
 	//
 	// describes all the fonts
 	Fonts
 	{
+		"SCPHUDLabel"
+        {
+            "1"
+            {
+                "name" "Trebuchet MS"
+                "tall" "8"
+                "weight" "700"
+                "dropshadow" "1"
+                "antialias" "1"
+                "range" "0x0020 0x04FF"
+            }
+        }
+
+		SCPHUDValue
+		{
+			"1"
+			{
+				"name" "Trebuchet MS"
+				"tall" "16"
+				"weight" "700"
+				"dropshadow" "1"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
+		}
+
 		// fonts are used in order that they are listed
 		// fonts are used in order that they are listed
 		"DebugFixed"
 		{
 			"1"
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"400"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		// fonts are used in order that they are listed
 		"DebugFixedSmall"
 		{
 			"1"
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"400"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		// fonts listed later in the order will only be used if they fulfill a range not already filled
 		// if a font fails to load then the subsequent fonts will replace
@@ -117,172 +142,159 @@ Scheme
 		{
 			"1"	[$X360]
 			{
-				"name"		"Capture_it"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
 				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 			"1"	[$WIN32]
 			{
-				"name"		"Capture_it"
+				"name"		"Trebuchet MS"
 				"tall"		"9"
 				"weight"	"700"
-				"antialias" "1"
 				"yres"	"1 599"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"2"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
 				"weight"	"700"
-				"antialias" "1"
 				"yres"	"600 767"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"3"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"900"
-				"antialias" "1"
+				"weight"	"700"
 				"yres"	"768 1023"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"4"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"900"
-				"antialias" "1"
+				"weight"	"700"
 				"yres"	"1024 1199"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"5"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"900"
-				"antialias" "1"
+				"weight"	"700"
 				"yres"	"1200 10000"
 				"additive"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultSmall"
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"0"
-				"range"		"0x0000 0x017F"
+				"weight"	"700"
 				"yres"	"480 599"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"2"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"13"
-				"weight"	"0"
-				"range"		"0x0000 0x017F"
+				"weight"	"700"
 				"yres"	"600 767"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"3"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"0"
-				"range"		"0x0000 0x017F"
+				"weight"	"700"
 				"yres"	"768 1023"
-				"antialias"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"4"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"0"
-				"range"		"0x0000 0x017F"
+				"weight"	"700"
 				"yres"	"1024 1199"
-				"antialias"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"5"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"0"
-				"range"		"0x0000 0x017F"
+				"weight"	"700"
 				"yres"	"1200 6000"
-				"antialias"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"6"
 			{
-				"name"		"Arial"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"range" 		"0x0000 0x00FF"
-				"weight"		"0"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultVerySmall"
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"0"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"yres"	"480 599"
-				"scanlines" "2"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"2"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"13"
-				"weight"	"0"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"yres"	"600 767"
-				"scanlines" "2"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"3"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"0"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"yres"	"768 1023"
-				"antialias"	"1"
-				"scanlines" "2"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"4"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"0"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"yres"	"1024 1199"
-				"antialias"	"1"
-				"scanlines" "2"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"5"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"0"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"yres"	"1200 6000"
-				"antialias"	"1"
-				"scanlines" "2"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"6"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"range" 		"0x0000 0x00FF"
-				"weight"		"0"
-				"scanlines" "2"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"7"
 			{
-				"name"		"Arial"
+				"name"		"Trebuchet MS"
 				"tall"		"11"
-				"range" 		"0x0000 0x00FF"
-				"weight"		"0"
-				"scanlines" "2"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		WeaponIcons
 		{
@@ -368,15 +380,13 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Capture_it"
+				"name"		"Trebuchet MS"
 				"tall"		"32"	[$WIN32]
 				"tall"		"38"	[$X360]
-				"weight"	"0"
-				"antialias" "1"
+				"weight"	"700"
 				"additive"	"1"
-				"custom"	"1"
-				"scanlines" "2"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		SquadIcon	[$X360]
 		{
@@ -394,41 +404,38 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Capture_it"
+				"name"		"Trebuchet MS"
 				"tall"		"32"	[$WIN32]
 				"tall"		"38"	[$X360]
-				"weight"	"0"
+				"weight"	"700"
 				"blur"		"4"
-				"scanlines" "2"
-				"antialias" "1"
 				"additive"	"1"
-				"custom"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		HudNumbersSmall
 		{
 			"1"
 			{
-				"name"		"Capture_it" [!$OSX]
-				"name"		"Capture_it" [$OSX]
+				"name"		"Trebuchet MS" [!$OSX]
+				"name"		"Trebuchet MS" [$OSX]
 				"tall"		"16"	[$WIN32]
 				"tall"		"22"	[$X360]
-				"weight"	"1000"
+				"weight"	"700"
 				"additive"	"1"
 				"antialias" "1"
-				"custom"	"1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		HudSelectionNumbers
 		{
 			"1"
 			{
-				"name"		"Capture_it"
+				"name"		"Trebuchet MS"
 				"tall"		"11"
 				"weight"	"700"
-				"antialias" "1"
 				"additive"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		HudHintTextLarge
 		{
@@ -441,76 +448,76 @@ Scheme
 			}
 			"1"	[$WIN32]
 			{
-				"name"		"Verdana" [!$OSX]
-				"name"		"Helvetica Bold" [$OSX]
+				"name"		"Trebuchet MS" [!$OSX]
+				"name"		"Trebuchet MS" [$OSX]
 				"tall"		"14"
-				"weight"	"1000"
-				"antialias" "1"
+				"weight"	"700"
 				"additive"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		HudHintTextSmall
 		{
 			"1"	[$WIN32]
 			{
-				"name"		"Capture_it" [!$OSX]
-				"name"		"Capture_it" [$OSX]
+				"name"		"Trebuchet MS" [!$OSX]
+				"name"		"Trebuchet MS" [$OSX]
 				"tall"		"11"
-				"weight"	"0"
-				"antialias" "1"
+				"weight"	"700"
 				"additive"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"1"	[$X360]
 			{
-				"name"		"Capture_it"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
 				"weight"	"700"
-				"antialias" "1"
 				"additive"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		HudSelectionText
 		{
 			"1"
 			{
-				"name"		"Capture_it"
+				"name"		"Trebuchet MS"
 				"tall"		"8"
 				"weight"	"700"
-				"antialias" "1"
 				"yres"	"1 599"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"2"
 			{
-				"name"		"Capture_it"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
 				"weight"	"700"
-				"antialias" "1"
 				"yres"	"600 767"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"3"
 			{
-				"name"		"Capture_it"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"900"
-				"antialias" "1"
+				"weight"	"700"
 				"yres"	"768 1023"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"4"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"900"
-				"antialias" "1"
+				"weight"	"700"
 				"yres"	"1024 1199"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"5"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"17"
-				"weight"	"1000"
-				"antialias" "1"
+				"weight"	"700"
 				"yres"	"1200 10000"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		GameUIButtons
 		{
@@ -528,87 +535,94 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"400"
+				"weight"	"700"
 				"outline"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		DebugOverlay
 		{
 			"1"	[$WIN32]
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"400"
+				"weight"	"700"
 				"outline"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"1"	[$X360]
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"200"
+				"weight"	"700"
 				"outline"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Normal"
 		{
 			"1"
 			{
-				"name"		"Tahoma" [!$OSX]
-				"name"		"Verdana" [$OSX]
+				"name"		"Trebuchet MS" [!$OSX]
+				"name"		"Trebuchet MS" [$OSX]
 				"tall"		"26" [!$OSX]
 				"tall"		"24" [$OSX]
-				"weight"	"500"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Italic"
 		{
 			"1"
 			{
-				"name"		"Tahoma" [!$OSX]
-				"name"		"Verdana Italic" [$OSX]
+				"name"		"Trebuchet MS" [!$OSX]
+				"name"		"Trebuchet MS" [$OSX]
 				"tall"		"26" [!$OSX]
 				"tall"		"24" [$OSX]
-				"weight"	"500"
+				"weight"	"700"
 				"italic"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Bold"
 		{
 			"1"
 			{
-				"name"		"Tahoma" [!$OSX]
-				"name"		"Verdana Bold" [$OSX]
+				"name"		"Trebuchet MS" [!$OSX]
+				"name"		"Trebuchet MS" [$OSX]
 				"tall"		"26" [!$OSX]
 				"tall"		"24" [$OSX]
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_BoldItalic"
 		{
 			"1"
 			{
-				"name"		"Tahoma" [!$OSX]
-				"name"		"Verdana Bold Italic" [$OSX]
+				"name"		"Trebuchet MS" [!$OSX]
+				"name"		"Trebuchet MS" [$OSX]
 				"tall"		"26" [!$OSX]
 				"tall"		"24" [$OSX]
-				"weight"	"900"
+				"weight"	"700"
 				"italic"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Small"
 		{
 			"1"
 			{
-				"name"		"Tahoma" [!$OSX]
-				"name"		"Verdana" [$OSX]
+				"name"		"Trebuchet MS" [!$OSX]
+				"name"		"Trebuchet MS" [$OSX]
 				"tall"		"16" [!$OSX]
 				"tall"		"14" [$OSX]
 				"tall_hidef"	"24"
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		// this is the symbol font
 		"Marlett"
@@ -627,11 +641,10 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"900"
-				"range"		"0x0000 0x007F"	//	Basic Latin
-				"antialias" "1"
+				"weight"	"700"
 				"additive"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"Trebuchet18"
 		{
@@ -639,8 +652,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		ClientTitleFont
 		{
@@ -649,11 +663,10 @@ Scheme
 				"name"  "Trebuchet MS"
 				"tall"			"34"
 				"tall_hidef"	"48"
-				"weight" "0"
+				"weight" "700"
 				"additive" "0"
 				"antialias" "1"
-				"custom"	"1" [$OSX]
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		CreditsLogo
 		{
@@ -673,10 +686,10 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"900"
-				"antialias" "1"
+				"weight"	"700"
 				"additive"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		CreditsOutroLogos
 		{
@@ -694,12 +707,12 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Verdana" [!$OSX]
-				"name"		"Courier Bold" [$OSX]
+				"name"		"Trebuchet MS" [!$OSX]
+				"name"		"Trebuchet MS" [$OSX]
 				"tall"		"9"
-				"weight"	"900"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		CenterPrintText
 		{
@@ -707,12 +720,12 @@ Scheme
 			"1"
 			{
 				"name"		"Trebuchet MS" [!$OSX]
-				"name"		"Helvetica" [$OSX]
+				"name"		"Trebuchet MS" [$OSX]
 				"tall"		"18"
-				"weight"	"900"
-				"antialias" "1"
+				"weight"	"700"
 				"additive"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		HDRDemoText
 		{
@@ -721,10 +734,10 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"900"
-				"antialias" "1"
+				"weight"	"700"
 				"additive"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"AchievementNotification"
 		{
@@ -732,75 +745,72 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"900"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		"CommentaryDefault"
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"yres"	"480 599"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"2"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"13"	[$WIN32]
 				"tall"		"20"	[$X360]
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"yres"	"600 767"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"3"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"yres"	"768 1023"
-				"antialias"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"4"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"yres"	"1024 1199"
-				"antialias"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"5"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"yres"	"1200 6000"
-				"antialias"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"6"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"range" 		"0x0000 0x00FF"
-				"weight"		"900"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"7"
 			{
-				"name"		"Arial"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"range" 		"0x0000 0x00FF"
-				"weight"		"800"
-			}
-			
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
+
 		}
 	}
 
-	
+
 	//////////////////////// CUSTOM FONT FILES /////////////////////////////
 	//
 	// specifies all the custom (non-system) font files that need to be loaded to service the above described fonts
@@ -808,7 +818,7 @@ Scheme
 	{
 		"1"		"resource/HALFLIFE2.ttf"
 		"2"		"resource/HL2crosshairs.ttf"
-		"3"		"resource/HL2EP2.ttf"		
+		"3"		"resource/HL2EP2.ttf"
 		"4" 	"resource/Capture_it.ttf"
 		"5" 	"resource/Capture_it_2.ttf"
 	}

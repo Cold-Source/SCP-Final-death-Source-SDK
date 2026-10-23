@@ -14,7 +14,7 @@
 		"tabPosition"	"10"
 		"bgcolor_override"	"0 0 0 50"
 	}
-	
+
 	"Dlg"
 	{
 		"ControlName"	"EditablePanel"
@@ -34,8 +34,8 @@
 		"border"			"EconItemBorder"
 		"paintborder"		"1"
 		"paintbackground"	"1"
-		
-	
+
+
 		"NameYourTakeLabel"
 		{
 			"ControlName"	"CExLabel"
@@ -54,7 +54,7 @@
 			"enabled"		"1"
 			"tabPosition"	"10"
 		}
-		
+
 		"FinePrintLabel"
 		{
 			"ControlName"	"CExLabel"
@@ -73,7 +73,7 @@
 			"enabled"		"1"
 			"tabPosition"	"10"
 		}
-		
+
 		"TitleInput"
 		{
 			"ControlName"	"TextEntry"
@@ -92,12 +92,12 @@
 			"pinCorner"		"0"
 			"visible"		"1"
 			"enabled"		"1"
-			"bgcolor_override"		"117 107 95 255"
-			"fgcolor_override"		"202 190 164 255"
+			"bgcolor_override"		"28 28 28 255"
+			"fgcolor_override"		"245 245 245 255"
 			"tabPosition"	"10"
 			"maxchars"		"255"
 		}
-		
+
 		"DiscardButton"
 		{
 			"ControlName"	"CExButton"
@@ -121,7 +121,7 @@
 			"Command"		"discard"
 			"sound_depressed"	"UI/buttonclick.wav"
 			"sound_released"	"UI/buttonclickrelease.wav"
-		}		
+		}
 
 		"CancelButton"
 		{
@@ -146,8 +146,8 @@
 			"Command"		"cancel"
 			"sound_depressed"	"UI/buttonclick.wav"
 			"sound_released"	"UI/buttonclickrelease.wav"
-		}	
-		
+		}
+
 		"SaveButton"
 		{
 			"ControlName"	"CExButton"
@@ -171,6 +171,6 @@
 			"Command"		"save"
 			"sound_depressed"	"UI/buttonclick.wav"
 			"sound_released"	"UI/buttonclickrelease.wav"
-		}			
+		}
 	}
 }

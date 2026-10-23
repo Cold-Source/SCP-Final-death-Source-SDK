@@ -19,7 +19,7 @@ Scheme
 		"White"				"255 255 255 255"
 		"OffWhite"			"216 216 216 255"
 		"DullWhite"			"142 142 142 255"
-		"Orange"			"255 155 0 255"
+		"Orange"			"245 245 245 255"
 		"TransparentBlack"		"0 0 0 128"
 		"Black"				"0 0 0 255"
 
@@ -41,11 +41,11 @@ Scheme
 		Button.BgColor					"Blank"
 		Button.ArmedTextColor			"White"
 		Button.ArmedBgColor				"Blank"				[$WIN32]
-		Button.ArmedBgColor				"190 115 0 255"		[$X360]
+		Button.ArmedBgColor				"28 28 28 255"		[$X360]
 		Button.DepressedTextColor		"White"
 		Button.DepressedBgColor			"Blank"
 		Button.FocusBorderColor			"Black"
-		
+
 		CheckButton.TextColor			"OffWhite"
 		CheckButton.SelectedTextColor	"White"
 		CheckButton.BgColor				"TransparentBlack"
@@ -102,7 +102,7 @@ Scheme
 		ListPanel.BgColor					"TransparentBlack"
 		ListPanel.SelectedTextColor			"Black"
 		ListPanel.SelectedBgColor			"Orange"
-		ListPanel.SelectedOutOfFocusBgColor	"255 155 0 128"
+		ListPanel.SelectedOutOfFocusBgColor	"28 28 28 128"
 		ListPanel.EmptyListInfoTextColor	"OffWhite"
 
 		Menu.TextColor					"White"
@@ -150,7 +150,7 @@ Scheme
 		SectionedListPanel.SelectedTextColor			"Black"
 		SectionedListPanel.SelectedBgColor				"Orange"
 		SectionedListPanel.OutOfFocusSelectedTextColor	"Black"
-		SectionedListPanel.OutOfFocusSelectedBgColor	"255 155 0 128"
+		SectionedListPanel.OutOfFocusSelectedBgColor	"28 28 28 128"
 
 		Slider.NobColor				"108 108 108 255"
 		Slider.TextColor			"180 180 180 255"
@@ -165,7 +165,7 @@ Scheme
 		TextEntry.DisabledBgColor	"Blank"
 		TextEntry.SelectedTextColor	"Black"
 		TextEntry.SelectedBgColor	"Orange"
-		TextEntry.OutOfFocusSelectedBgColor	"255 155 0 128"
+		TextEntry.OutOfFocusSelectedBgColor	"28 28 28 128"
 		TextEntry.FocusEdgeColor	"0 0 0 196"
 
 		ToggleButton.SelectedTextColor	"White"
@@ -182,7 +182,7 @@ Scheme
 		MainMenu.TextColor			"200 200 200 255"	[$X360]
 		MainMenu.ArmedTextColor		"200 200 200 255"	[$WIN32]
 		MainMenu.ArmedTextColor		"White"				[$X360]
-		MainMenu.DepressedTextColor	"192 186 80 255"
+		MainMenu.DepressedTextColor	"245 245 245 255"
 		MainMenu.MenuItemHeight		"30"				[$WIN32]
 		MainMenu.MenuItemHeight		"32"				[$X360]
 		MainMenu.Inset				"32"
@@ -220,157 +220,169 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"500"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		// fonts are used in order that they are listed
 		"DebugFixedSmall"
 		{
 			"1"
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"7"
-				"weight"	"500"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultFixedOutline"
 		{
 			"1"
 			{
-				"name"		 "Lucida Console" [$WINDOWS]
-				"name"		 "Lucida Console" [$X360]
-				"name"		 "Monaco" [$POSIX]
+				"name"		 "Trebuchet MS" [$WINDOWS]
+				"name"		 "Trebuchet MS" [$X360]
+				"name"		 "Trebuchet MS" [$POSIX]
 				"tall"		"10"
-				"weight"	"0"
+				"weight"	"700"
 				"outline"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"Default"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultBold"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"1000"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultUnderline"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
+				"weight"	"700"
 				"underline" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultSmall"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"0"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultSmallDropShadow"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"13"
-				"weight"	"0"
+				"weight"	"700"
 				"dropshadow" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultVerySmall"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"0"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"DefaultLarge"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"0"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"UiBold"
 		{
 			"1"	[$WIN32]
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"1000"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"1"	[$X360]
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"2000"
+				"weight"	"700"
 				"outline" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"ChapterTitle"	[$X360]
 		{
 			"1"
 			{
-				"name"			"Tahoma"
+				"name"			"Trebuchet MS"
 				"tall"			"20"
 				"tall_hidef"	"28"
-				"weight"		"2000"
+				"weight"		"700"
 				"outline"		"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"ChapterTitleBlur"	[$X360]
 		{
 			"1"
 			{
-				"name"			"Tahoma"
+				"name"			"Trebuchet MS"
 				"tall"			"20"
 				"tall_hidef"	"28"
-				"weight"		"2000"
+				"weight"		"700"
 				"blur"			"3"
 				"blur_hidef"	"5"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"MenuLarge"
 		{
 			"1"	[$WIN32]
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"600"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 			"1"	[$X360]
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"1200"
-				"antialias" "1"
+				"weight"	"700"
 				"outline" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		GameUIButtons
 		{
@@ -388,12 +400,13 @@ Scheme
 		{
 			"1"
 			{
-				"name"		 "Lucida Console" [$WINDOWS]
-				"name"		 "Lucida Console" [$X360]
-				"name"		 "Monaco" [$POSIX]
+				"name"		 "Trebuchet MS" [$WINDOWS]
+				"name"		 "Trebuchet MS" [$X360]
+				"name"		 "Trebuchet MS" [$POSIX]
 				"tall"		"10"
-				"weight"	"500"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		// this is the symbol font
@@ -414,8 +427,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"Trebuchet20"
@@ -424,8 +438,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"Trebuchet18"
@@ -434,8 +449,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		// HUD numbers
@@ -446,8 +462,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"40"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber1"
 		{
@@ -455,8 +472,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"41"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber2"
 		{
@@ -464,8 +482,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"42"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber3"
 		{
@@ -473,8 +492,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"43"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber4"
 		{
@@ -482,8 +502,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"44"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber5"
 		{
@@ -491,83 +512,90 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"45"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultFixed"
 		{
 			"1"
 			{
-				"name"		 "Lucida Console" [$WINDOWS]
-				"name"		 "Lucida Console" [$X360]
-				"name"		 "Monaco" [$POSIX]
+				"name"		 "Trebuchet MS" [$WINDOWS]
+				"name"		 "Trebuchet MS" [$X360]
+				"name"		 "Trebuchet MS" [$POSIX]
 				"tall"		"10"
-				"weight"	"0"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 //			"1"
 //			{
-//				"name"		"FixedSys"
+//				"name"		"Trebuchet MS"
 //				"tall"		"20"
-//				"weight"	"0"
-//			}
+//				"weight"	"700"
+//			"range" "0x0020 0x04FF" }
 		}
 
 		"DefaultFixedDropShadow"
 		{
 			"1"
 			{
-				"name"		 "Lucida Console" [$WINDOWS]
-				"name"		 "Lucida Console" [$X360]
-				"name"		 "Monaco" [$POSIX]
+				"name"		 "Trebuchet MS" [$WINDOWS]
+				"name"		 "Trebuchet MS" [$X360]
+				"name"		 "Trebuchet MS" [$POSIX]
 				"tall"		"10"
-				"weight"	"0"
+				"weight"	"700"
 				"dropshadow" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 //			"1"
 //			{
-//				"name"		"FixedSys"
+//				"name"		"Trebuchet MS"
 //				"tall"		"20"
-//				"weight"	"0"
-//			}
+//				"weight"	"700"
+//			"range" "0x0020 0x04FF" }
 		}
 
 		"CloseCaption_Normal"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Italic"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
+				"weight"	"700"
 				"italic"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Bold"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_BoldItalic"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"900"
+				"weight"	"700"
 				"italic"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		TitleFont
@@ -601,9 +629,9 @@ Scheme
 				"name"			"Trebuchet MS"
 				"tall"			"16"
 				"tall_hidef"	"24"
-				"weight"		"900"
-				"antialias"		"1"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		AppchooserGameTitleFontBlur	[$X360]
@@ -613,11 +641,11 @@ Scheme
 				"name"			"Trebuchet MS"
 				"tall"			"16"
 				"tall_hidef"	"24"
-				"weight"		"900"
+				"weight"		"700"
 				"blur"			"3"
 				"blur_hidef"	"5"
-				"antialias"		"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 	}
 
@@ -718,7 +746,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		TitleButtonBorder
 		{
 			"backgroundtype" "0"
@@ -773,7 +801,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		ScrollBarButtonDepressedBorder
 		{
 			"inset" "2 2 0 0"
@@ -1024,6 +1052,6 @@ Scheme
 	CustomFontFiles
 	{
 		"1"		"resource/HALFLIFE2.ttf"
-		"2"		"resource/HL2EP2.ttf"		
+		"2"		"resource/HL2EP2.ttf"
 	}
 }

@@ -1,0 +1,24 @@
+"SCPSessionMaps"
+{
+    // A chapter is an installed starting map with a positive "chapter" number.
+    // Optional "chapter_title" and "chapter_title_ru" supply its display name.
+    // Unmarked maps remain available in the Maps tab.
+    "scp_site19_a1"
+    {
+        "title" "#SCPSession_Site19"
+        "title_ru" "#SCPSession_Site19"
+        "image" "vgui/maps/scp_site19_a1"
+    }
+    "hgg"
+    {
+        "title" "#SCPSession_Hgg"
+        "title_ru" "#SCPSession_Hgg"
+        "image" "vgui/maps/hgg"
+    }
+    "dm_lockdown"
+    {
+        "title" "#SCPSession_Lockdown"
+        "title_ru" "#SCPSession_Lockdown"
+        "image" "vgui/maps/dm_lockdown"
+    }
+}

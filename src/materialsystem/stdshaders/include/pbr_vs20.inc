@@ -5,18 +5,36 @@
 #include "shaderlib/cshader.h"
 class pbr_vs20_Static_Index
 {
+	unsigned int m_nLIGHTMAPPED : 2;
+#ifdef _DEBUG
+	bool m_bLIGHTMAPPED : 1;
+#endif	// _DEBUG
 public:
+	void SetLIGHTMAPPED( int i )
+	{
+		Assert( i >= 0 && i <= 1 );
+		m_nLIGHTMAPPED = i;
+#ifdef _DEBUG
+		m_bLIGHTMAPPED = true;
+#endif	// _DEBUG
+	}
+
 	pbr_vs20_Static_Index(  )
 	{
+		m_nLIGHTMAPPED = 0;
+#ifdef _DEBUG
+		m_bLIGHTMAPPED = false;
+#endif	// _DEBUG
 	}
 
 	int GetIndex() const
 	{
-		return 0;
+		Assert( m_bLIGHTMAPPED );
+		return ( 80 * m_nLIGHTMAPPED ) + 0;
 	}
 };
 
-#define shaderStaticTest_pbr_vs20 1
+#define shaderStaticTest_pbr_vs20 vsh_forgot_to_set_static_LIGHTMAPPED
 
 
 class pbr_vs20_Dynamic_Index

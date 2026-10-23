@@ -18,41 +18,41 @@ Scheme
 	Colors
 	{
 		// base colors
-		"BaseText"		"216 222 211 255"		// used in text windows, lists
+		"BaseText"		"245 245 245 255"		// used in text windows, lists
 		"BrightBaseText" "255 255 255 255"	// brightest text
-		"DimBaseText"	"150 159 142 255"		// dim base text
+		"DimBaseText"	"245 245 245 255"		// dim base text
 		"SelectedText"		"255 255 255 255"	// selected text
 
-		"LabelDimText"	"160 170 149 255"		// slight modification on above, used for info text
+		"LabelDimText"	"245 245 245 255"		// slight modification on above, used for info text
 												// could be just removed and use DimBaseText?
-		
-		"ControlText"	"216 222 211 255"		// used in all text controls
-		"BrightControlText"	"196 181 80 255"	// use for selected controls
+
+		"ControlText"	"245 245 245 255"		// used in all text controls
+		"BrightControlText"	"245 245 245 255"	// use for selected controls
 		"DisabledText1"	"117 128 111 255"		// disabled text
 		"DisabledText2"	"30 30 30 255"		// overlay color for disabled text (to give that inset look)
-		"DimListText"		"117 134 102 255"	// offline friends, unsubscribed games, etc.
+		"DimListText"		"180 180 180 255"	// offline friends, unsubscribed games, etc.
 
 		// background colors
-		"ControlBG"		"76 88 68 255"		// background color of controls
-		"ControlDarkBG" "90 106 80 255"		// darker background color; used for background of scrollbars
-		"WindowBG"		"62 70 55 255"		// background color of text edit panes (chat, text entries, etc.)
-		"SelectionBG"	"149 136 49 255"		// background color of any selected text or menu item
-		"SelectionBG2"		"40 46 34 255"		// selection background in window w/o focus
-		"ListBG"			"62 70 55 255"		// background of server browser, buddy list, etc.
+		"ControlBG"		"28 28 28 255"		// background color of controls
+		"ControlDarkBG" "28 28 28 255"		// darker background color; used for background of scrollbars
+		"WindowBG"		"28 28 28 255"		// background color of text edit panes (chat, text entries, etc.)
+		"SelectionBG"	"28 28 28 255"		// background color of any selected text or menu item
+		"SelectionBG2"		"28 28 28 255"		// selection background in window w/o focus
+		"ListBG"			"28 28 28 255"		// background of server browser, buddy list, etc.
 
 		// title colors
 		"TitleText"		"255 255 255 255"
-		"TitleDimText"	"120 132 114 255"
-		"TitleBG"		"76 88 68 0"
-		"TitleDimBG"	"76 88 68 0"
+		"TitleDimText"	"180 180 180 255"
+		"TitleBG"		"28 28 28 0"
+		"TitleDimBG"	"28 28 28 0"
 
 		// slider tick colors
-		"SliderTickColor"	"127 140 127 255"
+		"SliderTickColor"	"180 180 180 255"
 		"SliderTrackColor"	"31 31 31 255"
 
 		// border colors
-		"BorderBright"	"136 145 128 255"		// the lit side of a control
-		"BorderDark"	"45 49 40 255"		// the dark/unlit side of a control
+		"BorderBright"	"180 180 180 255"		// the lit side of a control
+		"BorderDark"	"180 180 180 255"		// the dark/unlit side of a control
 		"BorderSelection"	"0 0 0 255"		// the additional border color for displaying the default/selected button
 	}
 
@@ -67,7 +67,7 @@ Scheme
 		"LabelBgColor"		"ControlBG"
 		"SubPanelBgColor"	"ControlBG"
 
-		"DisabledFgColor1"		"DisabledText1" 
+		"DisabledFgColor1"		"DisabledText1"
 		"DisabledFgColor2"		"DisabledText2"		// set this to the BgColor if you don't want it to draw
 
 		"TitleBarFgColor"			"TitleText"
@@ -102,8 +102,8 @@ Scheme
 		MenuButton	  // the little arrow on the side of boxes that triggers drop down menus
 		{
 			"ButtonArrowColor"	"DimBaseText"	// color of arrows
-		   	"ButtonBgColor"		"WindowBG"	// bg color of button. same as background color of text edit panes 
-			
+			"ButtonBgColor"		"WindowBG"	// bg color of button. same as background color of text edit panes
+
 			"ArmedArrowColor"		"BrightBaseText" // color of arrow when mouse is over button
 			"ArmedBgColor"		"DimBaseText"  // bg color of button when mouse is over button
 		}
@@ -112,8 +112,8 @@ Scheme
 		{
 			"SliderFgColor"			"ControlBG"		// handle with which the slider is grabbed
 			"SliderBgColor"			"ControlDarkBG"		// area behind handle
-			"SliderTickColor"		"127 140 127 255"	// slider tick's color
-			"SliderTickLabelColor"	"127 140 127 255"	// color of labels at the ends of the slider tick
+			"SliderTickColor"		"180 180 180 255"	// slider tick's color
+			"SliderTickLabelColor"	"180 180 180 255"	// color of labels at the ends of the slider tick
 		}
 
 		ScrollBarSlider
@@ -131,15 +131,15 @@ Scheme
 		"WindowFgColor"				"BaseText"		// off-white
 		"WindowBgColor"				"WindowBG"
 		"WindowDisabledFgColor"		"DimBaseText"
-		"WindowDisabledBgColor"		"66 80 60 255"		// background of chat conversation
+		"WindowDisabledBgColor"		"28 28 28 255"		// background of chat conversation
 
 		"SelectionFgColor"			"255 255 255 255"		// fg color of selected text
 		"SelectionBgColor"			"SelectionBG"
-		"ListSelectionFgColor"		"255 255 255 255"			// 
+		"ListSelectionFgColor"		"255 255 255 255"			//
 
-		"ListBgColor"				"62 70 55 255"	// background of server browser control, etc
-		"BuddyListBgColor"			"62 70 55 255"	// background of buddy list pane
-		
+		"ListBgColor"				"28 28 28 255"	// background of server browser control, etc
+		"BuddyListBgColor"			"28 28 28 255"	// background of buddy list pane
+
 		// App-specific stuff
 		"ChatBgColor"				"WindowBgColor"
 
@@ -151,7 +151,7 @@ Scheme
 		"CheckButtonBorder1"   		"BorderDark" 		// the left checkbutton border
 		"CheckButtonBorder2"   		"BorderBright"		// the right checkbutton border
 		"CheckButtonCheck"			"0 0 0 255"				// color of the check itself
-		"CheckBgColor"				"158 168 150 255"
+		"CheckBgColor"				"28 28 28 255"
 
 		// buttons (default fg/bg colors are used if these are not set)
 //		"ButtonArmedFgColor"
@@ -163,7 +163,7 @@ Scheme
 		BuddyButton
 		{
 			"FgColor1"		"ControlText"
-			"FgColor2"		"117 134 102 255"
+			"FgColor2"		"180 180 180 255"
 
 			"ArmedFgColor1"	"BrightBaseText"
 			"ArmedFgColor2"	"BrightBaseText"
@@ -176,12 +176,12 @@ Scheme
 			"SelfTextColor"			"BaseText"
 			"SeperatorTextColor"	"DimBaseText"
 		}
-		
+
 		InGameDesktop
 		{
 			"MenuColor"			"200 200 200 255"
 			"ArmedMenuColor"	"255 255 255 255"
-			"DepressedMenuColor" "192 186 80 255"
+			"DepressedMenuColor" "245 245 245 255"
 			"WidescreenBarColor" "0 0 0 0"
 			"MenuItemVisibilityRate" "0.03"  // time it takes for one menu item to appear
 			"MenuItemHeight"	"28"
@@ -210,109 +210,107 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"500"
+				"weight"	"700"
 				"antialias" "1"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		// fonts are used in order that they are listed
 		"DebugFixedSmall"
 		{
 			"1"
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"7"
-				"weight"	"500"
+				"weight"	"700"
 				"antialias" "1"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		"Default"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultUnderline"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
+				"weight"	"700"
 				"underline" "1"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultSmall"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"13"
-				"weight"	"0"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultSmallDropShadow"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"13"
-				"weight"	"0"
+				"weight"	"700"
 				"dropshadow" "1"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultVerySmall"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"0"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"DefaultLarge"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"0"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"MenuLarge"
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"1000"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		"ConsoleText"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"13"
-				"weight"	"500"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		// this is the symbol font
@@ -334,9 +332,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"900"
-				"range"		"0x0000 0x007F"	//	Basic Latin
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 
@@ -346,9 +344,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"900"
-				"range"		"0x0000 0x007F"	//	Basic Latin
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"Trebuchet18"
@@ -357,9 +355,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"900"
-				"range"		"0x0000 0x007F"	//	Basic Latin
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		// HUD numbers
@@ -370,9 +368,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"40"
-				"weight"	"900"
-				"range"		"0x0000 0x007F"	//	Basic Latin
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber1"
 		{
@@ -380,9 +378,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"41"
-				"weight"	"900"
-				"range"		"0x0000 0x007F"	//	Basic Latin
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber2"
 		{
@@ -390,9 +388,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"42"
-				"weight"	"900"
-				"range"		"0x0000 0x007F"	//	Basic Latin
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber3"
 		{
@@ -400,9 +398,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"43"
-				"weight"	"900"
-				"range"		"0x0000 0x007F"	//	Basic Latin
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber4"
 		{
@@ -410,9 +408,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"44"
-				"weight"	"900"
-				"range"		"0x0000 0x007F"	//	Basic Latin
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber5"
 		{
@@ -420,25 +418,25 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"45"
-				"weight"	"900"
-				"range"		"0x0000 0x007F"	//	Basic Latin
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultFixed"
 		{
 			"1"
 			{
-				"name"		"Lucida Console"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"0"
-				"range"		"0x0000 0x007F" //	Basic Latin
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 //			"1"
 //			{
-//				"name"		"FixedSys"
+//				"name"		"Trebuchet MS"
 //				"tall"		"20"
-//				"weight"	"0"
-//				"range"		"0x0000 0x007F" //	Basic Latin
+//				"weight"	"700"
+//				"range"		"0x0020 0x04FF" //	Basic Latin
 //			}
 		}
 
@@ -446,18 +444,18 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Lucida Console"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"0"
+				"weight"	"700"
 				"dropshadow" "1"
-				"range"		"0x0000 0x007F" //	Basic Latin
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 //			"1"
 //			{
-//				"name"		"FixedSys"
+//				"name"		"Trebuchet MS"
 //				"tall"		"20"
-//				"weight"	"0"
-//				"range"		"0x0000 0x007F" //	Basic Latin
+//				"weight"	"700"
+//				"range"		"0x0020 0x04FF" //	Basic Latin
 //			}
 		}
 
@@ -465,18 +463,18 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Lucida Console"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"0"
+				"weight"	"700"
 				"outline" "1"
-				"range"		"0x0000 0x007F" //	Basic Latin
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 //			"1"
 //			{
-//				"name"		"FixedSys"
+//				"name"		"Trebuchet MS"
 //				"tall"		"20"
-//				"weight"	"0"
-//				"range"		"0x0000 0x007F" //	Basic Latin
+//				"weight"	"700"
+//				"range"		"0x0020 0x04FF" //	Basic Latin
 //			}
 		}
 
@@ -484,43 +482,43 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Italic"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
+				"weight"	"700"
 				"italic"	"1"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Bold"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_BoldItalic"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"900"
+				"weight"	"700"
 				"italic"	"1"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		TitleFont
@@ -580,7 +578,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		TitleButtonBorder
 		{
 			"inset" "0 0 1 1"
@@ -739,7 +737,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		ScrollBarButtonDepressedBorder
 		{
 			"inset" "2 2 0 0"
@@ -819,7 +817,7 @@ Scheme
 				}
 			}
 		}
-	
+
 		FrameBorder
 		{
 			"inset" "0 0 1 1"
@@ -1158,7 +1156,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		BrowserBorder
 		{
 			"inset" "0 0 0 1"

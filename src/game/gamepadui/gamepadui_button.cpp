@@ -11,6 +11,78 @@
 #define DEFAULT_BTN_ARMED_SOUND "ui/buttonrollover.wav"
 #define DEFAULT_BTN_RELEASED_SOUND "ui/buttonclickrelease.wav"
 
+GamepadUIActionButton::GamepadUIActionButton( vgui::Panel *parent, const char *name, const char *text, const char *command )
+    : BaseClass( parent, parent, GAMEPADUI_RESOURCE_FOLDER "schemeactionbutton.res", command, text, "" )
+{
+    SetName( name );
+}
+
+GamepadUIActionButton::GamepadUIActionButton( vgui::Panel *parent, const char *name, const wchar_t *text, const char *command )
+    : BaseClass( parent, parent, GAMEPADUI_RESOURCE_FOLDER "schemeactionbutton.res", command, text, L"" )
+{
+    SetName( name );
+}
+
+void GamepadUIActionButton::KeepLayoutSize()
+{
+    m_flWidth = GetWide();
+    m_flHeight = GetTall();
+    for ( int i = 0; i < ButtonStates::Count; ++i )
+    {
+        m_flWidthAnimationValue[i] = m_flWidth;
+        m_flHeightAnimationValue[i] = m_flHeight;
+    }
+}
+
+void GamepadUIActionButton::ApplySchemeSettings( vgui::IScheme *scheme )
+{
+    const int width = GetWide(), height = GetTall();
+    BaseClass::ApplySchemeSettings( scheme );
+    SetSize( width, height );
+    KeepLayoutSize();
+    DoAnimations( true );
+}
+
+void GamepadUIActionButton::OnThink()
+{
+    KeepLayoutSize();
+    BaseClass::OnThink();
+}
+
+void GamepadUIActionButton::RunAnimations( ButtonState state )
+{
+    KeepLayoutSize();
+    RunStyleAnimations( state );
+}
+
+ButtonState GamepadUIActionButton::GetCurrentButtonState()
+{
+    if ( !IsEnabled() ) return ButtonStates::Out;
+    return m_Highlighted ? ButtonStates::Pressed : BaseClass::GetCurrentButtonState();
+}
+
+void GamepadUIActionButton::Paint()
+{
+    vgui::surface()->DrawSetTexture( -1 );
+    PaintButton();
+    const vgui::HFont font = GetCurrentButtonState() == ButtonStates::Out ? m_hTextFont : m_hTextFontOver;
+    wchar_t text[1024];
+    V_wcsncpy( text, GetButtonText().String(), sizeof( text ) );
+    const int x = Max( 4, int( m_flTextOffsetX ) );
+    int width, height, length = V_wcslen( text );
+    vgui::surface()->GetTextSize( font, text, width, height );
+    while ( length > 1 && width > GetWide() - x - 4 )
+    {
+        --length; text[length - 1] = 0x2026; text[length] = 0;
+        vgui::surface()->GetTextSize( font, text, width, height );
+    }
+    vgui::surface()->DrawSetTextFont( font );
+    vgui::surface()->DrawSetTextColor( IsEnabled() ? m_colTextColor : Color( 130, 130, 130, 190 ) );
+    vgui::surface()->DrawSetTextPos( x, ( GetTall() - height ) / 2 );
+    vgui::surface()->DrawPrintText( text, length );
+    m_bNavigateTo = false;
+}
+
 
 GamepadUIButton::GamepadUIButton( vgui::Panel *pParent, vgui::Panel* pActionSignalTarget, const char *pSchemeFile, const char *pCommand, const char *pText, const char *pDescription )
     : BaseClass( pParent, "", "", pActionSignalTarget, pCommand )
@@ -54,11 +126,11 @@ void GamepadUIButton::ApplySchemeSettings(vgui::IScheme* pScheme)
 
     UpdateSchemeProperties( this, pScheme );
 
-    m_hTextFont        = pScheme->GetFont( "Button.Text.Font", true );
-    m_hTextFontOver    = pScheme->GetFont( "Button.Text.Font.Over", true );
+    m_hTextFont        = SCPUIGetTextFont( vgui::surface(), pScheme, "Button.Text.Font", true );
+    m_hTextFontOver    = SCPUIGetTextFont( vgui::surface(), pScheme, "Button.Text.Font.Over", true );
     if (m_hTextFontOver == vgui::INVALID_FONT )
         m_hTextFontOver = m_hTextFont;
-    m_hDescriptionFont = pScheme->GetFont( "Button.Description.Font", true );
+    m_hDescriptionFont = SCPUIGetTextFont( vgui::surface(), pScheme, "Button.Description.Font", true );
 
     m_ePreviousState = ButtonStates::Out;
 
@@ -88,6 +160,11 @@ void GamepadUIButton::RunAnimations( ButtonState state )
 {
     GAMEPADUI_RUN_ANIMATION_COMMAND( m_flWidth, vgui::AnimationController::INTERPOLATOR_LINEAR );
     GAMEPADUI_RUN_ANIMATION_COMMAND( m_flHeight, vgui::AnimationController::INTERPOLATOR_LINEAR );
+    RunStyleAnimations( state );
+}
+
+void GamepadUIButton::RunStyleAnimations( ButtonState state )
+{
     GAMEPADUI_RUN_ANIMATION_COMMAND( m_flTextOffsetX, vgui::AnimationController::INTERPOLATOR_LINEAR );
     GAMEPADUI_RUN_ANIMATION_COMMAND( m_flTextOffsetY, vgui::AnimationController::INTERPOLATOR_LINEAR );
     GAMEPADUI_RUN_ANIMATION_COMMAND( m_flDescriptionOffsetX, vgui::AnimationController::INTERPOLATOR_LINEAR );

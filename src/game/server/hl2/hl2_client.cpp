@@ -15,6 +15,8 @@
 
 #include "cbase.h"
 #include "hl2_player.h"
+#include "scp_playermodels.h"
+#include "scp_gamemode.h"
 #include "hl2_gamerules.h"
 #include "gamerules.h"
 #include "teamplay_gamerules.h"
@@ -105,6 +107,7 @@ CBaseEntity* FindEntity( edict_t *pEdict, char *classname)
 //-----------------------------------------------------------------------------
 void ClientGamePrecache( void )
 {
+	SCPPrecachePlayerModels();
 	CBaseEntity::PrecacheModel("models/player.mdl");
 	CBaseEntity::PrecacheModel( "models/gibs/agibs.mdl" );
 	CBaseEntity::PrecacheModel ("models/weapons/v_hands.mdl");
@@ -146,10 +149,10 @@ void respawn( CBaseEntity *pEdict, bool fCopyCorpse )
 void GameStartFrame( void )
 {
 	VPROF("GameStartFrame()");
-	if ( g_pGameRules && g_pGameRules->IsCoOp() )
+	if ( g_pGameRules )
 	{
-		gpGlobals->coop = true;
-		gpGlobals->deathmatch = false;
+		gpGlobals->coop = g_pGameRules->IsCoOp();
+		gpGlobals->deathmatch = g_pGameRules->IsDeathmatch();
 	}
 	if ( g_fGameOver )
 		return;
@@ -166,6 +169,7 @@ extern ConVar gamerules_survival;
 //=========================================================
 void InstallGameRules()
 {
+    SCPGamemodeConfigureServer();
 #ifdef HL2_EPISODIC
 	if ( gamerules_survival.GetBool() )
 	{

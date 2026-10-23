@@ -26,6 +26,9 @@
 #include <vgui_controls/AnimationController.h>
 #include <vgui/ISurface.h>
 #include "hud_lcd.h"
+#ifdef HL2_CLIENT_DLL
+#include "hl2/hud_scp_status.h"
+#endif
 #ifdef LUA_SDK
 #include "luamanager.h"
 #endif
@@ -290,6 +293,10 @@ void CHudElement::SetHiddenBits( int iBits )
 //-----------------------------------------------------------------------------
 bool CHudElement::ShouldDraw( void )
 {
+#ifdef HL2_CLIENT_DLL
+	if ( SCPStatusHudReplacesElement( GetName() ) )
+		return false;
+#endif
 #if defined ( LUA_SDK )
 	C_BasePlayer* pPlayer = C_BasePlayer::GetLocalPlayer();
 	if (pPlayer)
@@ -988,9 +995,13 @@ bool CHud::IsHidden( int iHudFlags )
 	if ( ( iHudFlags & HIDEHUD_PLAYERDEAD ) && ( pPlayer->GetHealth() <= 0 && !pPlayer->IsAlive() ) )
 		return true;
 
-	// Need the HEV suit ( HL2 )
+	// SCP's HUD and weapon selection are available without an HEV suit.
+#if defined( HL2_CLIENT_DLL )
+	iHudFlags &= ~HIDEHUD_NEEDSUIT;
+#else
 	if ( ( iHudFlags & HIDEHUD_NEEDSUIT ) && ( !pPlayer->IsSuitEquipped() ) )
 		return true;
+#endif
 
 	// Hide all HUD elements during screenshot if the user's set hud_freezecamhide ( TF2 )
 #if defined( TF_CLIENT_DLL )

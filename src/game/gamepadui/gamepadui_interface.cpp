@@ -1,4 +1,6 @@
 #include "gamepadui_interface.h"
+#include "gamepadui_savegame.h"
+#include "gamepadui_mode.h"
 #include "gamepadui_basepanel.h"
 #include "gamepadui_mainmenu.h"
 #include "gamepadui_language.h"
@@ -6,6 +8,7 @@
 #include "gamepadui_news.h"
 
 #include "vgui/ILocalize.h"
+#include "matsys_controls/matsyscontrols.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -30,6 +33,8 @@ void GamepadUI::Initialize( CreateInterfaceFn factory )
     ConnectTier2Libraries( &factory, 1 );
     ConVar_Register( FCVAR_CLIENTDLL );
     ConnectTier3Libraries( &factory, 1 );
+    // Model browser previews use the separate matsys_controls interface table.
+    vgui::VGui_InitMatSysInterfacesList( "GamepadUI", &factory, 1 );
 
     m_pEngineClient           = (IVEngineClient*)         factory( VENGINE_CLIENT_INTERFACE_VERSION, NULL );
     m_pEngineSound            = (IEngineSound*)           factory( IENGINESOUND_CLIENT_INTERFACE_VERSION, NULL );
@@ -93,6 +98,7 @@ void GamepadUI::Initialize( CreateInterfaceFn factory )
 void GamepadUI::Shutdown()
 {
     GamepadUINewsShutdown();
+    GamepadUIModesShutdown();
     GamepadUILoadingShutdown();
     if ( m_pGameUI )
         m_pGameUI->SetMainMenuOverride( NULL );
@@ -113,6 +119,8 @@ void GamepadUI::Shutdown()
 
 void GamepadUI::OnUpdate( float flFrametime )
 {
+    GamepadUISessionUpdate();
+    GamepadUISaveGameUpdate();
     GamepadUINewsUpdate();
     if ( m_pAnimationController )
         m_pAnimationController->UpdateAnimations( GetTime() );
@@ -142,6 +150,7 @@ void GamepadUI::OnLevelShutdown()
 
 void GamepadUI::VidInit()
 {
+    SCPUIClearTextFonts();
     int w, h;
     vgui::surface()->GetScreenSize( w, h );
 

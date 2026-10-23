@@ -2,12 +2,12 @@
 // Stat Item
 //------------------------------------
 "StatItem.res"
-{	
+{
 	"StatDialogItemPanel"
 	{
 		"ControlName"	"CStatDialogItemPanel"
 		"fieldName"		"StatDialogItemPanel"
-		"xpos"						"0"	
+		"xpos"						"0"
 		"ypos"						"0"
 		"wide"						"500"
 		"tall"						"40"
@@ -17,10 +17,10 @@
 		"tabPosition"				"0"
 		"settitlebarvisible"		"0"
 		"pinCorner"					"0"
-		"ProgressBarColor" 	"200 184 148 255" [$WIN32]
+		"ProgressBarColor" 	"245 245 245 255" [$WIN32]
 		"PaintBackgroundType"	"2"
 	}
-			
+
 	"StatName"
 	{
 		"ControlName"	"label"
@@ -33,7 +33,7 @@
 		"font"			"AchievementItemTitle"
 		"textAlignment"		"west"
 	}
-			
+
 	"StatValue"
 	{
 		"ControlName"	"label"

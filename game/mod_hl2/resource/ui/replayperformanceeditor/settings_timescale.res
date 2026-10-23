@@ -13,9 +13,9 @@
 		"enabled"		"1"
 		"tabPosition"	"0"
 		"proportional"	"0"
-		"bgcolor_override"	"57 51 42 255"
+		"bgcolor_override"	"28 28 28 255"
 	}
-	
+
 	"TimeScaleSlider"
 	{
 		"ControlName"	"Slider"

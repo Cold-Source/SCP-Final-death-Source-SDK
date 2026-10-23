@@ -52,6 +52,9 @@ void LoadMaterialSystemInterface( CreateInterfaceFn fileSystemFactory )
 	{
 		Error( "Could not start the empty shader (shaderapiempty.dll)!" );
 	}
+
+	// Load the mod's shader libraries before querying material lighting properties.
+	g_pMaterialSystem->ModInit();
 }
 
 void InitMaterialSystem( const char *materialBaseDirPath, CreateInterfaceFn fileSystemFactory )
@@ -65,6 +68,7 @@ void ShutdownMaterialSystem( )
 {
 	if ( g_pMaterialSystem )
 	{
+		g_pMaterialSystem->ModShutdown();
 		g_pMaterialSystem->Shutdown();
 		g_pMaterialSystem = NULL;
 	}

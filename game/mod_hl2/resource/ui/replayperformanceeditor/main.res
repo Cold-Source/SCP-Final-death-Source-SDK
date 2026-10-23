@@ -14,18 +14,18 @@
 		"tabPosition"	"0"
 		"proportional"	"1"
 		"bgcolor_override"	"0 0 0 0"
-		
+
 		"right_margin_width"	"20"
-		
+
 		"PlayerCell"
 		{
 			"zpos"			"3"
-			"bgcolor_override"	"255 107 95 255"
+			"bgcolor_override"	"28 28 28 255"
 			"wide"			"10"
 			"tall"			"10"
 			"sound_depressed"	"UI/buttonclick.wav"
 			"sound_released"	"UI/buttonclickrelease.wav"
-			
+
 			"SubImage"
 			{
 				"ControlName"	"ImagePanel"
@@ -36,10 +36,10 @@
 				"scaleImage"	"1"
 				"wide"			"10"
 				"tall"			"10"
-			}				
+			}
 		}
 	}
-	
+
 	"BottomPanel"
 	{
 		"ControlName"	"EditablePanel"
@@ -47,7 +47,7 @@
 		"tall"			"40"
 		"visible"		"1"
 		"bgcolor_override"	"0 0 0 255"
-		
+
 		"LeftLine"
 		{
 			"ControlName"	"EditablePanel"
@@ -59,10 +59,10 @@
 			"visible"		"1"
 			"enabled"		"1"
 			"pinCorner"		"0"
-			"bgcolor_override" "122 111 98 255"
+			"bgcolor_override" "28 28 28 255"
 			"paintbackground"	"1"
 		}
-		
+
 		"RightLine"
 		{
 			"ControlName"	"EditablePanel"
@@ -74,19 +74,19 @@
 			"visible"		"1"
 			"enabled"		"1"
 			"pinCorner"		"0"
-			"bgcolor_override" "122 111 98 255"
+			"bgcolor_override" "28 28 28 255"
 			"paintbackground"	"1"
 		}
-	
+
 		"PlayerCellsPanel"
 		{
 			"ControlName"	"EditablePanel"
 			"fieldName"		"PlayerCellsPanel"
 			"visible"		"1"
 			"tall"			"40"
-			"bgcolor_override"	"255 0 0 255"
+			"bgcolor_override"	"28 28 28 255"
 			"paintbackground"	"0"
-			
+
 			"RedLabel"
 			{
 				"ControlName"	"CExLabel"
@@ -96,10 +96,10 @@
 				"enabled"		"1"
 				"font"			"PerformanceModeSmall"
 				"LabelText"		"#Replay_Team0"
-				"fgcolor_override" "251 246 220 255"
+				"fgcolor_override" "245 245 245 255"
 				"pinCorner"		"0"
 			}
-			
+
 			"BlueLabel"
 			{
 				"ControlName"	"CExLabel"
@@ -109,12 +109,12 @@
 				"enabled"		"1"
 				"font"			"PerformanceModeSmall"
 				"LabelText"		"#Replay_Team1"
-				"fgcolor_override" "251 246 220 255"
+				"fgcolor_override" "245 245 245 255"
 				"pinCorner"		"0"
 			}
 		}
 	}
-	
+
 	"TimeScaleButton"
 	{
 		"ControlName"	"CReplayButton"
@@ -132,13 +132,13 @@
 		"Command"		"timescale_showpanel"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		
+
 		"tipname"			"#Replay_EditorButtonTip_TimeScaleButton"
-		
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -150,9 +150,9 @@
 			"image"			"replay/replay_timescale"
 			"wide"			"40"
 			"tall"			"40"
-		}				
+		}
 	}
-	
+
 	"CameraFirst"
 	{
 		"ControlName"	"CReplayButton"
@@ -170,13 +170,13 @@
 		"Command"		"setcamera_first"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		
+
 		"tipname"			"#Replay_EditorButtonTip_FirstPersonButton"
-		
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -188,9 +188,9 @@
 			"image"			"replay/replay_camera_first"
 			"wide"			"40"
 			"tall"			"40"
-		}				
+		}
 	}
-	
+
 	"CameraThird"
 	{
 		"ControlName"	"CReplayButton"
@@ -208,13 +208,13 @@
 		"Command"		"setcamera_third"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		
+
 		"tipname"			"#Replay_EditorButtonTip_ThirdPersonButton"
-		
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -227,8 +227,8 @@
 			"wide"			"40"
 			"tall"			"40"
 		}
-	}	
-	
+	}
+
 	"CameraFree"
 	{
 		"ControlName"	"CReplayButton"
@@ -247,13 +247,13 @@
 		"Command"		"setcamera_free"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		
+
 		"tipname"			"#Replay_EditorButtonTip_FreeCamButton"
-		
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -265,9 +265,9 @@
 			"image"			"replay/replay_camera_free"
 			"wide"			"40"
 			"tall"			"40"
-		}				
-	}	
-	
+		}
+	}
+
 	"CurTimeLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -278,10 +278,10 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"font"			"ReplayMediumBig"
-		"fgcolor_override" "122 111 98 255"
+		"fgcolor_override" "180 180 180 255"
 		"LabelText"		"00:00"
 	}
-	
+
 	"TotalTimeLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -292,10 +292,10 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"font"			"ReplayMediumBig"
-		"fgcolor_override" "122 111 98 255"
+		"fgcolor_override" "180 180 180 255"
 		"LabelText"		"00:00"
 	}
-	
+
 	"PlayerNameLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -305,18 +305,18 @@
 		"enabled"		"1"
 		"font"			"PerformanceModeSmall"
 		"LabelText"		""
-		"fgcolor_override" "251 246 220 255"
+		"fgcolor_override" "245 245 245 255"
 	}
-	
+
 	"MouseHighlightPanel"
 	{
 		"ControlName"	"EditablePanel"
 		"fieldName"		"MouseHighlightPanel"
 		"visible"		"0"
 		"zpos"			"1"
-		"bgcolor_override" "218 209 187 255"
+		"bgcolor_override" "28 28 28 255"
 	}
-	
+
 	"MouseTargetPanel"
 	{
 		"ControlName"	"EditablePanel"
@@ -325,7 +325,7 @@
 		"zpos"			"2"
 		"bgcolor_override" "255 255 255 255"
 	}
-	
+
 	"InButton"
 	{
 		"ControlName"	"CReplayButton"
@@ -344,14 +344,14 @@
 		"Command"		"settick_in"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		"image_selectedcolor"	"230 128 128 255"
-		
+		"image_selectedcolor"	"245 245 245 255"
+
 		"tipname"			"#Replay_EditorButtonTip_InButton"
-		
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -363,9 +363,9 @@
 			"image"			"replay/replay_icon_in"
 			"wide"			"22"
 			"tall"			"22"
-		}				
+		}
 	}
-	
+
 	"GotoBeginningButton"
 	{
 		"ControlName"	"CReplayButton"
@@ -384,13 +384,13 @@
 		"Command"		"goto_start"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		
+
 		"tipname"			"#Replay_EditorButtonTip_RwHardButton"
-		
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -402,9 +402,9 @@
 			"image"			"replay/replay_icon_begin"
 			"wide"			"22"
 			"tall"			"22"
-		}				
+		}
 	}
-	
+
 	"RewindButton"
 	{
 		"ControlName"	"CReplayButton"
@@ -423,13 +423,13 @@
 		"Command"		"goto_back"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		
+
 		"tipname"			"#Replay_EditorButtonTip_RwButton"
-		
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -441,9 +441,9 @@
 			"image"			"replay/replay_icon_rewind"
 			"wide"			"22"
 			"tall"			"22"
-		}				
+		}
 	}
-	
+
 	"PlayButton"
 	{
 		"ControlName"	"CReplayButton"
@@ -462,13 +462,13 @@
 		"Command"		"play"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		
+
 		"tipname"			"#Replay_EditorButtonTip_PlayButton"
-		
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -480,9 +480,9 @@
 			"image"			"replay/replay_control_play"
 			"wide"			"48"
 			"tall"			"48"
-		}				
-	}	
-	
+		}
+	}
+
 	"FastForwardButton"
 	{
 		"ControlName"	"CReplayEditorFastForwardButton"
@@ -500,13 +500,13 @@
 		"labelText"		""
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		
+
 		"tipname"			"#Replay_EditorButtonTip_FfButton"
-		
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -518,9 +518,9 @@
 			"image"			"replay/replay_icon_forward"
 			"wide"			"22"
 			"tall"			"22"
-		}				
+		}
 	}
-	
+
 	"GotoEndButton"
 	{
 		"ControlName"	"CReplayButton"
@@ -539,13 +539,13 @@
 		"Command"		"goto_end"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		
+
 		"tipname"			"#Replay_EditorButtonTip_FfHardButton"
-		
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -557,9 +557,9 @@
 			"image"			"replay/replay_icon_end"
 			"wide"			"22"
 			"tall"			"22"
-		}				
+		}
 	}
-	
+
 	"OutButton"
 	{
 		"ControlName"	"CReplayButton"
@@ -578,14 +578,14 @@
 		"Command"		"settick_out"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		"image_selectedcolor"	"230 128 128 255"
-		
+		"image_selectedcolor"	"245 245 245 255"
+
 		"tipname"		"#Replay_EditorButtonTip_OutButton"
-		
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -597,9 +597,9 @@
 			"image"			"replay/replay_icon_out"
 			"wide"			"22"
 			"tall"			"22"
-		}				
+		}
 	}
-	
+
 	"MenuButton"
 	{
 		"ControlName"	"CReplayButton"
@@ -623,12 +623,12 @@
 		"Command"		"toggle_menu"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-		
+
 		"paintbackground"	"0"
 		"image_drawcolor"	"255 255 255 191"
 		"image_armedcolor"	"255 255 255 255"
-		"image_selectedcolor"	"230 128 128 255"
-		
+		"image_selectedcolor"	"245 245 245 255"
+
 		"SubImage"
 		{
 			"ControlName"	"ImagePanel"
@@ -640,9 +640,9 @@
 			"image"			"replay/replay_icon_menu"
 			"wide"			"22"
 			"tall"			"22"
-		}	
-	}	
-	
+		}
+	}
+
 	"ButtonTip"
 	{
 		"ControlName"	"CReplayTipLabel"
@@ -656,7 +656,7 @@
 		"font"			"ReplayMediumSmall"
 		"centerwrap"	"1"
 		"paintbackground"	"1"
-		"bgcolor_override"	"60 53 45 255"
+		"bgcolor_override"	"28 28 28 255"
 		"border"		"ButtonBorder"
 	}
 }

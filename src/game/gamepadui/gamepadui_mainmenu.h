@@ -26,6 +26,7 @@ class GamepadUIMainMenu : public GamepadUIFrame
 
 public:
     GamepadUIMainMenu( vgui::Panel* pParent );
+    ~GamepadUIMainMenu();
 
     void ApplySchemeSettings( vgui::IScheme* pScheme ) OVERRIDE;
     void OnCommand( char const* pCommand ) OVERRIDE;
@@ -39,6 +40,9 @@ public:
     void RefreshMenuLanguage();
     void LayoutMainMenu();
     void PaintLogo();
+    void PaintCoopBadge( int x, int y, int maxWidth );
+    void PaintCoopBackground();
+    void RefreshModePresentation();
     void OnMenuStateChanged();
 
     void OnKeyCodeReleased( vgui::KeyCode code );
@@ -56,10 +60,16 @@ private:
 
     GamepadUIString m_LogoText[ 2 ];
     GamepadUIImage  m_LogoImage;
+    GamepadUIImage  m_CoopBackground;
+    int m_ModePresentationRevision = -1;
+    char m_PresentationMode[64] = "";
+    char m_ModeContentPath[MAX_PATH] = "";
     GamepadUIButton* m_pQuitButton = nullptr;
     GamepadUIButton* m_pModeButton = nullptr;
     GamepadUIButton* m_pLanguageButton = nullptr;
     vgui::Panel* m_pNewsPanel = nullptr;
+    GamepadUIButton* m_pAdminButton = nullptr;
+    bool m_bAdminAllowed = false;
 
     GAMEPADUI_PANEL_PROPERTY( float, m_flNewsWidth, "News.Width", "240", SchemeValueTypes::Float );
     GAMEPADUI_PANEL_PROPERTY( Color, m_colNewsBackground, "News.Background", "16 16 16 230", SchemeValueTypes::Color );
@@ -84,6 +94,7 @@ private:
     GAMEPADUI_PANEL_PROPERTY( Color, m_colLogoColor, "Logo", "255 255 255 255", SchemeValueTypes::Color );
 
     vgui::HFont m_hLogoFont;
+    vgui::HFont m_hModeBadgeFont = vgui::INVALID_FONT;
 };
 
 #endif

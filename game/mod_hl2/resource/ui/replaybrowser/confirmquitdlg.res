@@ -27,9 +27,9 @@
 		"tall"			"190"
 		"visible"		"1"
 		"PaintBackgroundType"	"2"
-		"bgcolor_override"	"59 54 48 255"
+		"bgcolor_override"	"28 28 28 255"
 	}
-	
+
 	"TitleLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -46,9 +46,9 @@
 		"pinCorner"		"0"
 		"visible"		"1"
 		"enabled"		"1"
-		"fgcolor_override" "200 80 60 255"
+		"fgcolor_override" "245 245 245 255"
 	}
-	
+
 	"ExplanationLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -91,8 +91,8 @@
 		"Command"		"rendernow"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-	}			
-	
+	}
+
 	"ReplaysButton"
 	{
 		"ControlName"	"CExButton"
@@ -116,8 +116,8 @@
 		"Command"		"gotoreplays"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-	}			
-	
+	}
+
 	"QuitButton"
 	{
 		"ControlName"	"CExButton"
@@ -141,7 +141,7 @@
 		"Command"		"quit"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-	}		
+	}
 
 	"DontShowThisAgainCheckbox"
 	{

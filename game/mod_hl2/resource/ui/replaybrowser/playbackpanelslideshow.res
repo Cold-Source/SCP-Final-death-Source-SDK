@@ -10,7 +10,7 @@
 		"enabled"		"1"
 		"scaleImage"	"1"
 	}
-	
+
 	"NoScreenshotLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -23,6 +23,6 @@
 		"pinCorner"		"0"
 		"visible"		"0"
 		"enabled"		"1"
-		"fgcolor_override"		"202 190 164 255"
+		"fgcolor_override"		"245 245 245 255"
 	}
 }

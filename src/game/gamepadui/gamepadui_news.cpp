@@ -1,4 +1,5 @@
 #include "gamepadui_news.h"
+#include "gamepadui_mode.h"
 #include "gamepadui_news_http.h"
 #include "gamepadui_news_format.h"
 #include "gamepadui_interface.h"
@@ -75,15 +76,22 @@ public:
     ~NewsService() { Shutdown(); }
     void Initialize()
     {
-        if ( m_Initialized ) return;
+        if ( m_Initialized || !ConfigureMode() ) return;
         m_Initialized = true;
-        if ( !LoadFile( NEWS_CACHE, "MOD" ) ) LoadFile( NEWS_LOCAL, "GAME" );
+        KeyValues *entries=GamepadUIGetModeConfig()->FindKey("news/entries");
+        if(entries) {
+            KeyValues *feed=new KeyValues("SCPFDNews"); feed->UsesEscapeSequences(true); feed->SetInt("version",1);
+            KeyValues *items=entries->MakeCopy(); items->SetName("entries"); feed->AddSubKey(items);
+            CUtlBuffer text(0,0,CUtlBuffer::TEXT_BUFFER); feed->RecursiveSaveToFile(text,0,false,true);
+            m_HasFeed=ParseFeed(std::string((const char*)text.Base(),text.TellPut()),m_Entries); feed->deleteThis();
+        } else if ( m_Repository.empty() || !LoadFile( m_CacheFile.c_str(), "MOD" ) ) LoadFile( m_LocalFile.c_str(), "GAME" );
         RefreshImages();
     }
     void Update()
     {
+        if ( m_Shutdown || !ConfigureMode() ) return;
         Initialize();
-        if ( m_Shutdown ) return;
+        if ( !GamepadUIGetModeConfig()->GetBool("news/enabled",true) ) return;
         if ( m_Worker.joinable() && m_Done.load() )
         {
             m_Worker.join();
@@ -107,9 +115,9 @@ public:
             {
                 m_HasFeed = true; m_Offline = false; ++m_Revision;
                 RefreshImages();
-                g_pFullFileSystem->CreateDirHierarchy( "cfg", "DEFAULT_WRITE_PATH" );
+                g_pFullFileSystem->CreateDirHierarchy( "cfg/scp_news", "DEFAULT_WRITE_PATH" );
                 CUtlBuffer buffer( 0, 0 ); buffer.Put( m_Response.data(), (int)m_Response.size() );
-                g_pFullFileSystem->WriteFile( NEWS_CACHE, "DEFAULT_WRITE_PATH", buffer );
+                g_pFullFileSystem->WriteFile( m_CacheFile.c_str(), "DEFAULT_WRITE_PATH", buffer );
                 Msg( "SCP news: loaded %d entries from GitHub.\n", m_Entries.Count() );
                 m_NextRequest = Plat_FloatTime() + 300.0;
             }
@@ -121,13 +129,13 @@ public:
             }
             m_Response.clear();
         }
-        if ( !m_Worker.joinable() && Plat_FloatTime() >= m_NextRequest )
+        if ( !m_Repository.empty() && !m_Worker.joinable() && Plat_FloatTime() >= m_NextRequest )
         {
             m_Done.store( false ); m_Cancel.store( false ); m_Response.clear();
             try
             {
                 m_Worker = std::thread( [this]() {
-                    try { m_Success = GamepadUINewsHTTP::Download( m_Response, m_Status, m_Cancel ); }
+                    try { m_Success = GamepadUINewsHTTP::Download( m_Response, m_Status, m_Cancel, m_Repository, m_Branch, m_FeedFile ); }
                     catch ( ... ) { m_Success = false; }
                     m_Done.store( true );
                 } );
@@ -154,10 +162,10 @@ public:
         return nullptr;
     }
 private:
-    static std::string ImageCachePath( const std::string& path )
+    std::string ImageCachePath( const std::string& path ) const
     {
         unsigned hash = 2166136261u;
-        for ( unsigned char c : path ) hash = ( hash ^ c ) * 16777619u;
+        for ( unsigned char c : m_ModeId + m_Repository + m_Branch + path ) hash = ( hash ^ c ) * 16777619u;
         char name[80]; V_snprintf( name, sizeof( name ), "cfg/scp_news_images/%08x.dat", hash ); return name;
     }
     void RefreshImages()
@@ -194,16 +202,24 @@ private:
                 }
                 g_pFullFileSystem->Close( file );
             }
+            if(m_Response.empty()) {
+                FileHandle_t local=g_pFullFileSystem->Open(m_Images[i].path.c_str(),"rb","GAME");
+                if(local!=FILESYSTEM_INVALID_HANDLE) {
+                    unsigned size=g_pFullFileSystem->Size(local);
+                    if(size && size<=2*1024*1024) { m_Response.resize(size); if(g_pFullFileSystem->Read(&m_Response[0],size,local)!=(int)size) m_Response.clear(); }
+                    g_pFullFileSystem->Close(local);
+                }
+            }
             try
             {
-                const bool refreshOnline = !m_Offline;
+                const bool refreshOnline = !m_Offline && !m_Repository.empty();
                 m_Worker = std::thread( [this,i,refreshOnline]() {
                     try
                     {
                         std::string cached; cached.swap( m_Response );
                         m_Success = false;
                         if ( refreshOnline && !m_Cancel.load() )
-                            m_Success = GamepadUINewsHTTP::DownloadImage( m_Images[i].path, m_Response, m_Status, m_Cancel ) && GamepadUINewsHTTP::DecodeImage( m_Response, m_DecodedImage );
+                            m_Success = GamepadUINewsHTTP::DownloadImage( m_Images[i].path, m_Response, m_Status, m_Cancel, m_Repository, m_Branch ) && GamepadUINewsHTTP::DecodeImage( m_Response, m_DecodedImage );
                         if ( !m_Success && !cached.empty() )
                         {
                             m_Response.swap( cached );
@@ -217,6 +233,25 @@ private:
             catch ( ... ) { m_Images[i].attempted = true; m_ImageJob = -1; }
             break;
         }
+    }
+    bool ConfigureMode()
+    {
+        const int revision=GamepadUIModeRevision();
+        const std::string id=GamepadUIGetModeId();
+        if(m_ModeRevision==revision && m_ModeId==id) return true;
+        // Cancel an old source without blocking the menu while WinHTTP is waiting.
+        if(m_Worker.joinable()) { m_Cancel.store(true); if(!m_Done.load()) return false; m_Worker.join(); }
+        for(const ImageAsset& asset:m_Images) if(asset.texture>0) vgui::surface()->DestroyTextureID(asset.texture);
+        m_Images.clear(); m_Entries.RemoveAll(); m_Response.clear(); m_DecodedImage.rgba.clear(); m_ImageJob=-1;
+        m_ModeRevision=revision; m_ModeId=id;
+        KeyValues *mode=GamepadUIGetModeConfig();
+        m_Repository=mode->GetString("news/repository"); m_Branch=mode->GetString("news/branch","main");
+        m_FeedFile=mode->GetString("news/file","news.vdf"); m_LocalFile=mode->GetString("news/local_file",NEWS_LOCAL);
+        unsigned hash=2166136261u; for(unsigned char c:m_Repository+m_Branch+m_FeedFile) hash=(hash^c)*16777619u;
+        char cache[160]; V_snprintf(cache,sizeof(cache),"cfg/scp_news/%s_%08x.vdf",m_ModeId.c_str(),hash); m_CacheFile=cache;
+        m_Initialized=false; m_HasFeed=false; m_Offline=m_Repository.empty(); m_Success=false; m_NextRequest=0;
+        m_Cancel.store(false); m_Done.store(false); ++m_Revision;
+        return true;
     }
     bool LoadFile( const char* path, const char* pathId )
     {
@@ -233,6 +268,8 @@ private:
     CUtlVector<NewsEntry> m_Entries;
     std::thread m_Worker;
     std::atomic<bool> m_Cancel{ false }, m_Done{ false };
+    std::string m_ModeId, m_Repository, m_Branch, m_FeedFile, m_LocalFile, m_CacheFile;
+    int m_ModeRevision=-1;
     std::string m_Response;
     std::vector<ImageAsset> m_Images;
     GamepadUINewsHTTP::Image m_DecodedImage;
@@ -331,8 +368,8 @@ private:
         for ( int i = 0; i < 4; ++i )
         {
             // Use the same scheme font loader as the working main-menu buttons.
-            m_Fonts[i] = scheme->GetFont( names[i], true );
-            if ( !m_Fonts[i] ) m_Fonts[i] = scheme->GetFont( "Button.Text.Font", true );
+            m_Fonts[i] = SCPUIGetTextFont( vgui::surface(), scheme, names[i], true );
+            if ( !m_Fonts[i] ) m_Fonts[i] = SCPUIGetTextFont( vgui::surface(), scheme, "Button.Text.Font", true );
         }
         m_Padding = Max( 14, int( GetTall() * 0.022f ) );
     }

@@ -17,6 +17,12 @@
 #include "basescripted.h"
 #include "hl2mp/weapon_hl2mpbase_scriptedweapon.h"
 #include "luamanager.h"
+#include "scp_gamemode_content.h"
+#include "tier1/utlstring.h"
+#ifdef CLIENT_DLL
+#include "vgui_int.h"
+#include "vgui_controls/Panel.h"
+#endif
 #include "luasrclib.h"
 #include "luacachefile.h"
 #include "lconvar.h"
@@ -27,6 +33,7 @@
 
 ConVar gamemode( "gamemode", "campaign", FCVAR_ARCHIVE | FCVAR_REPLICATED );
 static char contentSearchPath[MAX_PATH];
+static char contentRelativePath[MAX_PATH];
 
 static void tag_error (lua_State *L, int narg, int tag) {
   luaL_typerror(L, narg, lua_typename(L, tag));
@@ -236,9 +243,15 @@ void luasrc_shutdown (void) {
   if (!g_bLuaInitialized)
 	  return;
 
+#ifdef CLIENT_DLL
+  vgui::Panel *roots[]={VGui_GetClientLuaRootPanel(),VGui_GetINGamePanel()};
+  for(int i=0;i<2;++i) if(roots[i])
+      while(roots[i]->GetChildCount()) roots[i]->GetChild(0)->DeletePanel();
+#endif
   g_bLuaInitialized = false;
 
-  filesystem->RemoveSearchPath( contentSearchPath, "MOD" );
+  SCPUnmountGamemodeContent(filesystem,contentSearchPath);
+  contentRelativePath[0]=0;
 
   ResetConCommandDatabase();
 
@@ -253,6 +266,7 @@ void luasrc_shutdown (void) {
 
   lcf_close(L);
   lua_close(L);
+  L=nullptr;
 }
 
 LUA_API int luasrc_dostring (lua_State *L, const char *string) {
@@ -273,34 +287,69 @@ LUA_API int luasrc_dofile (lua_State *L, const char *filename) {
   return iError;
 }
 
-LUA_API void luasrc_dofolder (lua_State *L, const char *path)
+LUA_API void luasrc_dofolder(lua_State *state,const char *path)
 {
-	FileFindHandle_t fh;
+    CUtlVector<CUtlString> files;
+    char pattern[MAX_PATH]; V_snprintf(pattern,sizeof(pattern),"%s/*.lua",path);
+    FileFindHandle_t find;
+    for(const char *name=filesystem->FindFirstEx(pattern,"MOD",&find);name;name=filesystem->FindNext(find)) {
+        if(name[0]=='.' || filesystem->FindIsDirectory(find)) continue;
+        char relative[MAX_PATH],full[MAX_PATH];
+        if(V_snprintf(relative,sizeof(relative),"%s/%s",path,name)>=sizeof(relative)) continue;
+        if(!filesystem->RelativePathToFullPath(relative,"MOD",full,sizeof(full))) continue;
+        bool duplicate=false;
+        FOR_EACH_VEC(files,i) if(!V_stricmp(files[i].Get(),full)) duplicate=true;
+        if(!duplicate) files.AddToTail(CUtlString(full));
+    }
+    filesystem->FindClose(find);
+    files.Sort([](const CUtlString *a,const CUtlString *b){return V_stricmp(a->Get(),b->Get());});
+    FOR_EACH_VEC(files,i) { const int top=lua_gettop(state); luasrc_dofile(state,files[i].Get()); lua_settop(state,top); }
+}
 
-	char searchPath[ 512 ];
-	Q_snprintf( searchPath, sizeof( searchPath ), "%s\\*.lua", path );
-
-	char const *fn = g_pFullFileSystem->FindFirstEx( searchPath, "MOD", &fh );
-	while ( fn )
-	{
-		if ( fn[0] != '.' )
-		{
-			char ext[ 10 ];
-			Q_ExtractFileExtension( fn, ext, sizeof( ext ) );
-
-			if ( !Q_stricmp( ext, "lua" ) )
-			{
-				char relative[ 512 ];
-				char loadname[ 512 ];
-				Q_snprintf( relative, sizeof( relative ), "%s\\%s", path, fn );
-				filesystem->RelativePathToFullPath( relative, "MOD", loadname, sizeof( loadname ) );
-				luasrc_dofile( L, loadname );
-			}
-		}
-
-		fn = g_pFullFileSystem->FindNext( fh );
-	}
-	g_pFullFileSystem->FindClose( fh );
+void luasrc_MountGamemodeContent(const char *id)
+{
+    contentRelativePath[0]=0;
+#ifdef CLIENT_DLL
+    const char *directory=engine->GetGameDirectory();
+#else
+    char directory[MAX_PATH]; engine->GetGameDir(directory,sizeof(directory));
+#endif
+    if(!SCPMountGamemodeContent(filesystem,directory,id,contentSearchPath,sizeof(contentSearchPath))) return;
+    V_snprintf(contentRelativePath,sizeof(contentRelativePath),"gamemodes/%s/content/",id);
+    lua_getglobal(L,"package");
+    if(lua_istable(L,-1)) {
+        lua_getfield(L,-1,"path");
+        char paths[4096];
+        V_snprintf(paths,sizeof(paths),"%s/lua/includes/modules/?.lua;%s/lua/?.lua;%s",contentSearchPath,contentSearchPath,lua_tostring(L,-1));
+        V_FixSlashes(paths); lua_pop(L,1); lua_pushstring(L,paths); lua_setfield(L,-2,"path");
+    }
+    lua_pop(L,1);
+}
+static void LoadModeFolder(const char *folder)
+{
+    if(!contentRelativePath[0]) return;
+    char path[MAX_PATH]; V_snprintf(path,sizeof(path),"%slua/%s",contentRelativePath,folder);
+    luasrc_dofolder(L,path);
+}
+static void LoadModeContent()
+{
+    if(!contentRelativePath[0]) return;
+    LoadModeFolder("includes/extensions");
+    LoadModeFolder("includes/modules");
+#ifdef CLIENT_DLL
+    LoadModeFolder("vgui");
+#endif
+    luasrc_LoadWeapons(contentRelativePath);
+    luasrc_LoadEntities(contentRelativePath);
+    LoadModeFolder("game/shared");
+    LoadModeFolder("autorun");
+#ifdef CLIENT_DLL
+    LoadModeFolder("game/client");
+    LoadModeFolder("autorun/client");
+#else
+    LoadModeFolder("game/server");
+    LoadModeFolder("autorun/server");
+#endif
 }
 
 LUA_API int luasrc_pcall (lua_State *L, int nargs, int nresults, int errfunc) {
@@ -360,7 +409,8 @@ void luasrc_LoadEntities (const char *path)
 	char const *fn = g_pFullFileSystem->FindFirstEx( root, "MOD", &fh );
 	while ( fn )
 	{
-		Q_strcpy( className, fn );
+		if ( V_strlen(fn) >= sizeof(className) ) { fn=filesystem->FindNext(fh); continue; }
+        Q_strncpy( className, fn, sizeof(className) );
 		Q_strlower( className );
 		if ( fn[0] != '.' )
 		{
@@ -458,7 +508,8 @@ void luasrc_LoadWeapons (const char *path)
 	char const *fn = g_pFullFileSystem->FindFirstEx( root, "MOD", &fh );
 	while ( fn )
 	{
-		Q_strcpy( className, fn );
+		if ( V_strlen(fn) >= sizeof(className) ) { fn=filesystem->FindNext(fh); continue; }
+        Q_strncpy( className, fn, sizeof(className) );
 		Q_strlower( className );
 		if ( fn[0] != '.' )
 		{
@@ -516,6 +567,7 @@ void luasrc_LoadWeapons (const char *path)
 }
 
 bool luasrc_LoadGamemode (const char *gamemode) {
+  if(!SCPGamemodeIdentifier(gamemode)) return false;
   lua_newtable(L);
   lua_pushstring(L, "__folder");
   char gamemodepath[MAX_PATH];
@@ -567,6 +619,7 @@ bool luasrc_LoadGamemode (const char *gamemode) {
 }
 
 bool luasrc_SetGamemode (const char *gamemode) {
+  if(!SCPGamemodeIdentifier(gamemode)) return false;
   lua_getglobal(L, "gamemode");
   if (lua_istable(L, -1)) {
     lua_getfield(L, -1, "get");
@@ -575,13 +628,7 @@ bool luasrc_SetGamemode (const char *gamemode) {
 	  lua_pushstring(L, gamemode);
 	  luasrc_pcall(L, 1, 1, 0);
 	  lua_setglobal(L, "_GAMEMODE");
-	  Q_snprintf( contentSearchPath, sizeof( contentSearchPath ), "gamemodes\\%s\\content", gamemode );
-	  filesystem->AddSearchPath( contentSearchPath, "MOD" );
-	  char loadPath[MAX_PATH];
-	  Q_snprintf( loadPath, sizeof( loadPath ), "%s\\", contentSearchPath );
-	  luasrc_LoadWeapons( loadPath );
-	  luasrc_LoadEntities( loadPath );
-	  // luasrc_LoadEffects( loadPath );
+      LoadModeContent();
 	  BEGIN_LUA_CALL_HOOK("Initialize");
 	  END_LUA_CALL_HOOK(0,0);
 	  return true;

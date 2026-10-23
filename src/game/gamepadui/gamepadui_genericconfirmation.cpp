@@ -53,7 +53,7 @@ void GamepadUIGenericConfirmationPanel::ApplySchemeSettings( vgui::IScheme* pSch
 {
     BaseClass::ApplySchemeSettings( pScheme );
 
-    m_hGenericConfirmationFont = pScheme->GetFont( m_pszGenericConfirmationFontName, true );
+    m_hGenericConfirmationFont = SCPUIGetTextFont( vgui::surface(), pScheme, m_pszGenericConfirmationFontName, true );
 }
 
 void GamepadUIGenericConfirmationPanel::PaintText()

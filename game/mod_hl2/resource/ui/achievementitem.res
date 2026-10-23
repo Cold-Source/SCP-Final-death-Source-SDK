@@ -2,12 +2,12 @@
 // Achievement Item
 //------------------------------------
 "AchievementItem.res"
-{	
+{
 	"AchievementDialogItemPanel"
 	{
 		"ControlName"	"CAchievementDialogItemPanel"
 		"fieldName"		"AchievementDialogItemPanel"
-		"xpos"						"0"	
+		"xpos"						"0"
 		"ypos"						"0"
 		"wide"						"594"
 		"tall"						"64"
@@ -17,10 +17,10 @@
 		"tabPosition"				"0"
 		"settitlebarvisible"		"0"
 		"pinCorner"					"0"
-		"ProgressBarColor" 	"200 184 148 255" [$WIN32]
+		"ProgressBarColor" 	"245 245 245 255" [$WIN32]
 		"PaintBackgroundType"	"2"
 	}
-			
+
 	"AchievementIcon"
 	{
 		"ControlName"	"ImagePanel"
@@ -32,7 +32,7 @@
 		"visible"		"1"
 		"scaleImage"		"1"
 	}
-			
+
 	"AchievementName"
 	{
 		"ControlName"	"label"
@@ -45,7 +45,7 @@
 		"font"			"AchievementItemTitle"
 		"textAlignment"		"west"
 	}
-	
+
 	"AchievementDesc"
 	{
 		"ControlName"	"label"
@@ -59,7 +59,7 @@
 		"wrap"			"1"
 		"textAlignment"		"north-west"
 	}
-	
+
 	"PercentageBarBackground"
 	{
 		"ControlName"		"ImagePanel"
@@ -73,7 +73,7 @@
 		"visible"		"0"
 		"enabled"		"1"
 	}
-	
+
 	"PercentageBar" // current completed
 	{
 		"ControlName"	"ImagePanel"
@@ -87,7 +87,7 @@
 		"visible"		"0"
 		"enabled"		"1"
 	}
-	
+
 	"PercentageText" //Percent Text inside the percentage field
 	{
 		"ControlName"		"Label"

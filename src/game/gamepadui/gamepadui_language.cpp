@@ -51,7 +51,7 @@ bool IsSupportedLanguage( const char* name )
 
 void LoadLanguageStrings( const char* name )
 {
-    const char* const groups[] = { "valve", "gameui", "hl2", "deck", "cold_ui" };
+    const char* const groups[] = { "valve", "gameui", "hl2", "deck", "cold_ui", "scp_models", "scp_hud", "scp_game", "scp_session" };
     // Reset each group to English before overlaying the chosen translation, so
     // missing tokens never retain text from the previous language.
     for ( const char* group : groups )

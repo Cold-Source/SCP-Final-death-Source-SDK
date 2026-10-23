@@ -35,6 +35,11 @@ void GamepadUIBasePanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 {
     BaseClass::ApplySchemeSettings( pScheme );
 
+    // This is a full-screen container above the world, including during play.
+    // Console schemes may give ordinary panels an opaque background.
+    SetPaintBackgroundEnabled( false );
+    SetPaintBorderEnabled( false );
+
     // Josh: Need to use GetVParent because this is across
     // a DLL boundary.
 	int nVParentW, nVParentH;

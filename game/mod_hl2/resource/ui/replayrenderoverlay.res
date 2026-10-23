@@ -5,9 +5,9 @@
 		"ControlName"	"EditablePanel"
 		"fieldName"		"BottomPanel"
 		"visible"		"1"
-		"bgcolor_override"	"46 43 42 255"
+		"bgcolor_override"	"28 28 28 255"
 	}
-	
+
 	"FilenameLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -22,7 +22,7 @@
 		"enabled"		"1"
 		"fgcolor_override" "235 235 235 255"
 	}
-	
+
 	"TitleLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -35,9 +35,9 @@
 		"pinCorner"		"0"
 		"visible"		"1"
 		"enabled"		"1"
-		"fgcolor_override" "200 80 60 255"
+		"fgcolor_override" "245 245 245 255"
 	}
-	
+
 	"ReplayRenderOverlay"
 	{
 		"ControlName"	"Frame"
@@ -51,7 +51,7 @@
 		"settitlebarvisible"	"0"
 		"paintbackground"	"0"
 	}
-	
+
 	"RenderProgress"
 	{
 		"ControlName"	"ProgressBar"
@@ -61,7 +61,7 @@
 		"visible"		"0"
 		"enabled"		"1"
 		"progress"		"0"
-		"bgcolor_override" "117 107 95 255"
+		"bgcolor_override" "28 28 28 255"
 		"fgcolor_override" "255 255 255 255"
 	}
 
@@ -79,7 +79,7 @@
 		"enabled"		"1"
 		"fgcolor_override" "235 235 235 255"
 	}
-	
+
 	"CancelButton"
 	{
 		"ControlName"	"CExButton"
@@ -101,8 +101,8 @@
 		"Command"		"confirmcancel"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-	}			
-	
+	}
+
 	"PreviewCheckButton"
 	{
 		"ControlName"	"CheckButton"

@@ -1,0 +1,150 @@
+"SCPPlayerModels"
+{
+    "default"
+    {
+        "model" "models/player.mdl"
+        "name" "Default"
+        "name_ru" "Стандартная"
+        "category" "special"
+    }
+    "combine"
+    {
+        "model" "models/combine_soldier.mdl"
+        "name" "Combine soldier"
+        "name_ru" "Солдат Альянса"
+        "category" "security"
+    }
+    "elite"
+    {
+        "model" "models/combine_super_soldier.mdl"
+        "name" "Elite soldier"
+        "name_ru" "Элитный солдат"
+        "category" "security"
+    }
+    "police"
+    {
+        "model" "models/police.mdl"
+        "name" "Metropolice"
+        "name_ru" "Метрокоп"
+        "category" "security"
+    }
+    "barney"
+    {
+        "model" "models/barney.mdl"
+        "name" "Barney"
+        "name_ru" "Барни"
+        "category" "special"
+    }
+    "alyx"
+    {
+        "model" "models/alyx.mdl"
+        "name" "Alyx"
+        "name_ru" "Аликс"
+        "category" "special"
+    }
+    "male1"
+    {
+        "model" "models/humans/group03/male_01.mdl"
+        "name" "Male 01"
+        "name_ru" "Мужчина 01"
+        "category" "personnel"
+    }
+    "male2"
+    {
+        "model" "models/humans/group03/male_02.mdl"
+        "name" "Male 02"
+        "name_ru" "Мужчина 02"
+        "category" "personnel"
+    }
+    "male3"
+    {
+        "model" "models/humans/group03/male_03.mdl"
+        "name" "Male 03"
+        "name_ru" "Мужчина 03"
+        "category" "personnel"
+    }
+    "male4"
+    {
+        "model" "models/humans/group03/male_04.mdl"
+        "name" "Male 04"
+        "name_ru" "Мужчина 04"
+        "category" "personnel"
+    }
+    "male5"
+    {
+        "model" "models/humans/group03/male_05.mdl"
+        "name" "Male 05"
+        "name_ru" "Мужчина 05"
+        "category" "personnel"
+    }
+    "male6"
+    {
+        "model" "models/humans/group03/male_06.mdl"
+        "name" "Male 06"
+        "name_ru" "Мужчина 06"
+        "category" "personnel"
+    }
+    "male7"
+    {
+        "model" "models/humans/group03/male_07.mdl"
+        "name" "Male 07"
+        "name_ru" "Мужчина 07"
+        "category" "personnel"
+    }
+    "male8"
+    {
+        "model" "models/humans/group03/male_08.mdl"
+        "name" "Male 08"
+        "name_ru" "Мужчина 08"
+        "category" "personnel"
+    }
+    "male9"
+    {
+        "model" "models/humans/group03/male_09.mdl"
+        "name" "Male 09"
+        "name_ru" "Мужчина 09"
+        "category" "personnel"
+    }
+    "female1"
+    {
+        "model" "models/humans/group03/female_01.mdl"
+        "name" "Female 01"
+        "name_ru" "Женщина 01"
+        "category" "personnel"
+    }
+    "female2"
+    {
+        "model" "models/humans/group03/female_02.mdl"
+        "name" "Female 02"
+        "name_ru" "Женщина 02"
+        "category" "personnel"
+    }
+    "female3"
+    {
+        "model" "models/humans/group03/female_03.mdl"
+        "name" "Female 03"
+        "name_ru" "Женщина 03"
+        "category" "personnel"
+    }
+    "female4"
+    {
+        "model" "models/humans/group03/female_04.mdl"
+        "name" "Female 04"
+        "name_ru" "Женщина 04"
+        "category" "personnel"
+    }
+    "female6"
+    {
+        "model" "models/humans/group03/female_06.mdl"
+        "name" "Female 06"
+        "name_ru" "Женщина 06"
+        "category" "personnel"
+    }
+    "female7"
+    {
+        "model" "models/humans/group03/female_07.mdl"
+        "name" "Female 07"
+        "name_ru" "Женщина 07"
+        "category" "personnel"
+    }
+}

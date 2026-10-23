@@ -17,7 +17,7 @@
 		"settitlebarvisible"	"0"
 		"PaintBackgroundType"	"0"
 	}
-	
+
 	"TitleLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -34,9 +34,9 @@
 		"pinCorner"		"0"
 		"visible"		"1"
 		"enabled"		"1"
-		"fgcolor_override" "200 80 60 255"
+		"fgcolor_override" "245 245 245 255"
 	}
-	
+
 	"UserNameLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -74,8 +74,8 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"tabPosition"	"1"
-		"fgcolor_override"		"202 190 164 255"
-		"bgcolor_override"		"60 54 46 255"
+		"fgcolor_override"		"245 245 245 255"
+		"bgcolor_override"		"28 28 28 255"
 		"Font"			"ReplayBrowserSmallest"
 	}
 
@@ -116,11 +116,11 @@
 		"enabled"		"1"
 		"tabPosition"	"2"
 		"textHidden"	"1"
-		"fgcolor_override"		"202 190 164 255"
-		"bgcolor_override"		"60 54 46 255"
+		"fgcolor_override"		"245 245 245 255"
+		"bgcolor_override"		"28 28 28 255"
 		"Font"			"ReplayBrowserSmallest"
 	}
-	
+
 	"RegisterButton"
 	{
 		"ControlName"	"CExButton"
@@ -171,7 +171,7 @@
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
 	}
-	
+
 	"CancelButton"
 	{
 		"ControlName"	"CExButton"
@@ -195,6 +195,6 @@
 		"Command"		"cancel"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-	}		
-		
+	}
+
 }

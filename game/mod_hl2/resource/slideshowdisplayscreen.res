@@ -21,33 +21,33 @@ Scheme
 		//"BaseText"		"48 192 192 255"		// used in text windows, lists
 		//"BrightBaseText" "155 255 255 255"	// brightest text
 
-		"BaseText"		"220 30 30 255"
-		"BrightBaseText" "255 0 0 255"
-		"DimBaseText"	"220 30 30 255"		// dim base text
-		"LabelDimText"	"220 30 30 255"		// slight modification on above, used for info text
+		"BaseText"		"245 245 245 255"
+		"BrightBaseText" "245 245 245 255"
+		"DimBaseText"	"245 245 245 255"		// dim base text
+		"LabelDimText"	"245 245 245 255"		// slight modification on above, used for info text
 												// could be just removed and use DimBaseText?
-		
-		"ControlText"	"48 192 192 255"		// used in all text controls
-		"BrightControlText"	"64 224 224 255"	// use for selected controls
+
+		"ControlText"	"245 245 245 255"		// used in all text controls
+		"BrightControlText"	"245 245 245 255"	// use for selected controls
 		"DisabledText1"	"32 128 128 255"		// disabled text
 		"DisabledText2"	"30 30 30 255"		// overlay color for disabled text (to give that inset look)
 
 		// background colors
-		"ControlBG"		"76 88 68 255"		// background color of controls
-		"ControlDarkBG" "90 106 80 255"		// darker background color; used for background of scrollbars
-		"WindowBG"		"62 70 55 255"		// background color of text edit panes (chat, text entries, etc.)
+		"ControlBG"		"28 28 28 255"		// background color of controls
+		"ControlDarkBG" "28 28 28 255"		// darker background color; used for background of scrollbars
+		"WindowBG"		"28 28 28 255"		// background color of text edit panes (chat, text entries, etc.)
 
-		"SelectionBG"	"76 88 68 255"		// background color of any selected text or menu item
+		"SelectionBG"	"28 28 28 255"		// background color of any selected text or menu item
 
 		// title colors
 		"TitleText"		"255 255 255 255"
-		"TitleDimText"	"120 132 114 255"
-		"TitleBG"		"76 88 68 0"
-		"TitleDimBG"	"76 88 68 0"
+		"TitleDimText"	"180 180 180 255"
+		"TitleBG"		"28 28 28 0"
+		"TitleDimBG"	"28 28 28 0"
 
 		// border colors
-		"BorderBright"	"136 145 128 255"		// the lit side of a control
-		"BorderDark"	"45 49 40 255"		// the dark/unlit side of a control
+		"BorderBright"	"180 180 180 255"		// the lit side of a control
+		"BorderDark"	"180 180 180 255"		// the dark/unlit side of a control
 		"BorderSelection"	"0 0 0 255"		// the additional border color for displaying the default/selected button
 
 		"CSlideshowDisplayScreen_Default"		"0 0 0 255"
@@ -59,7 +59,7 @@ Scheme
 	// controls use these to determine their settings
 	BaseSettings
 	{
-		Panel.FgColor		"48 192 192 255"
+		Panel.FgColor		"245 245 245 255"
 		Panel.BgColor		"0 0 0 0"			//Important! - makes the panels transparent
 
 		"FgColor"			"ControlText"
@@ -67,7 +67,7 @@ Scheme
 		"LabelBgColor"		"ControlBG"
 		"SubPanelBgColor"	"ControlBG"
 
-		"DisabledFgColor1"		"DisabledText1" 
+		"DisabledFgColor1"		"DisabledText1"
 		"DisabledFgColor2"		"DisabledText2"		// set this to the BgColor if you don't want it to draw
 
 		"TitleBarFgColor"			"TitleText"
@@ -102,8 +102,8 @@ Scheme
 		MenuButton	  // the little arrow on the side of boxes that triggers drop down menus
 		{
 			"ButtonArrowColor"	"DimBaseText"	// color of arrows
-		   	"ButtonBgColor"		"WindowBG"	// bg color of button. same as background color of text edit panes 
-			
+			"ButtonBgColor"		"WindowBG"	// bg color of button. same as background color of text edit panes
+
 			"ArmedArrowColor"		"BrightBaseText" // color of arrow when mouse is over button
 			"ArmedBgColor"		"DimBaseText"  // bg color of button when mouse is over button
 		}
@@ -131,15 +131,15 @@ Scheme
 		"WindowFgColor"				"BaseText"		// off-white
 		"WindowBgColor"				"WindowBG"
 		"WindowDisabledFgColor"		"DimBaseText"
-		"WindowDisabledBgColor"		"66 80 60 255"		// background of chat conversation
+		"WindowDisabledBgColor"		"28 28 28 255"		// background of chat conversation
 
 		"SelectionFgColor"			"255 255 255 255"		// fg color of selected text
 		"SelectionBgColor"			"SelectionBG"
-		"ListSelectionFgColor"		"255 255 255 255"			// 
+		"ListSelectionFgColor"		"255 255 255 255"			//
 
-		"ListBgColor"				"62 70 55 255"	// background of server browser control, etc
-		"BuddyListBgColor"			"62 70 55 255"	// background of buddy list pane
-		
+		"ListBgColor"				"28 28 28 255"	// background of server browser control, etc
+		"BuddyListBgColor"			"28 28 28 255"	// background of buddy list pane
+
 		// App-specific stuff
 		"ChatBgColor"				"WindowBgColor"
 
@@ -151,7 +151,7 @@ Scheme
 		"CheckButtonBorder1"   		"BorderDark" 		// the left checkbutton border
 		"CheckButtonBorder2"   		"BorderBright"		// the right checkbutton border
 		"CheckButtonCheck"			"0 0 0 255"				// color of the check itself
-		"CheckBgColor"				"158 168 150 255"
+		"CheckBgColor"				"28 28 28 255"
 
 		// buttons (default fg/bg colors are used if these are not set)
 //		"ButtonArmedFgColor"
@@ -163,7 +163,7 @@ Scheme
 		BuddyButton
 		{
 			"FgColor1"		"ControlText"
-			"FgColor2"		"117 134 102 255"
+			"FgColor2"		"180 180 180 255"
 
 			"ArmedFgColor1"	"BrightBaseText"
 			"ArmedFgColor2"	"BrightBaseText"
@@ -194,58 +194,53 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"128"	//45
-				"weight"	"600"	//900
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"	//900
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultUnderline"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"32"
-				"weight"	"900"
+				"weight"	"700"
 				"underline" "1"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultSmall"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultVerySmall"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		"DefaultLarge"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"48"
-				"weight"	"0"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		// this is the symbol font
@@ -308,7 +303,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		TitleButtonBorder
 		{
 			"inset" "0 0 1 1"

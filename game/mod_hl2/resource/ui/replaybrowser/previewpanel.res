@@ -13,7 +13,7 @@
 		"border"		"ReplayBalloonBorder"
 		"proportional"	"0"
 	}
-	
+
 	"Screenshot"
 	{
 		"ControlName"	"ImagePanel"
@@ -32,7 +32,7 @@
 		"ypos"			"0"
 		"wide"			"160"
 		"tall"			"75"
-	
+
 		"NoScreenshotLabel"
 		{
 			"ControlName"	"CExLabel"
@@ -45,7 +45,7 @@
 			"tall"			"15"
 			"TextAlignment"	"center"
 		}
-		
+
 		"MapLabel"
 		{
 			"ControlName"	"CExLabel"
@@ -57,27 +57,27 @@
 			"wide"			"160"
 			"tall"			"10"
 		}
-		
+
 		"DateTimeLabel"
 		{
 			"ControlName"	"CExLabel"
 			"FieldName"		"DateTimeLabel"
 			"Font"			"ReplayBrowserSmallest"
 			"TextAlignment"	"west"
-			"fgcolor_override"	"115 106 91 255"
+			"fgcolor_override"	"180 180 180 255"
 			"xpos"			"0"
 			"ypos"			"27"
 			"wide"			"160"
 			"tall"			"15"
 		}
-		
+
 		"Label0_0"
 		{
 			"ControlName"	"CExLabel"
 			"FieldName"		"Label0_0"
 			"Font"			"DefaultVerySmall"
 			"TextAlignment"	"west"
-			"fgcolor_override"	"247 233 198 255"
+			"fgcolor_override"	"245 245 245 255"
 			"xpos"			"0"
 			"ypos"			"45"
 			"wide"			"60"
@@ -90,7 +90,7 @@
 			"FieldName"		"Label0_1"
 			"Font"			"DefaultVerySmall"
 			"TextAlignment"	"west"
-			"fgcolor_override"	"247 233 198 255"
+			"fgcolor_override"	"245 245 245 255"
 			"xpos"			"60"
 			"ypos"			"45"
 			"wide"			"160"
@@ -102,7 +102,7 @@
 			"FieldName"		"Label1_0"
 			"Font"			"DefaultVerySmall"
 			"TextAlignment"	"west"
-			"fgcolor_override"	"247 233 198 255"
+			"fgcolor_override"	"245 245 245 255"
 			"xpos"			"0"
 			"ypos"			"55"
 			"wide"			"60"
@@ -115,7 +115,7 @@
 			"FieldName"		"Label1_1"
 			"Font"			"DefaultVerySmall"
 			"TextAlignment"	"west"
-			"fgcolor_override"	"247 233 198 255"
+			"fgcolor_override"	"245 245 245 255"
 			"xpos"			"60"
 			"ypos"			"55"
 			"wide"			"160"
@@ -127,7 +127,7 @@
 			"FieldName"		"Label2_0"
 			"Font"			"DefaultVerySmall"
 			"TextAlignment"	"west"
-			"fgcolor_override"	"247 233 198 255"
+			"fgcolor_override"	"245 245 245 255"
 			"xpos"			"0"
 			"ypos"			"65"
 			"wide"			"60"
@@ -140,14 +140,14 @@
 			"FieldName"		"Label2_1"
 			"Font"			"DefaultVerySmall"
 			"TextAlignment"	"west"
-			"fgcolor_override"	"247 233 198 255"
+			"fgcolor_override"	"245 245 245 255"
 			"xpos"			"60"
 			"ypos"			"65"
 			"wide"			"160"
 			"tall"			"10"
 		}
 	}
-	
+
 	"ClassImage"
 	{
 		"ControlName"	"Panel"

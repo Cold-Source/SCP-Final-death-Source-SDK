@@ -5,6 +5,7 @@
 // $NoKeywords: $
 //===========================================================================//
 #include "cbase.h"
+#include "../shared/scp_ui_font.h"
 #include <crtmemdebug.h>
 #include "vgui_int.h"
 #include "clientmode.h"
@@ -1380,6 +1381,7 @@ void CHLClient::Shutdown( void )
 //-----------------------------------------------------------------------------
 int CHLClient::HudVidInit( void )
 {
+    SCPUIClearTextFonts();
 	
 	gHUD.VidInit();
 
@@ -1758,7 +1760,10 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 	luasrc_LoadEntities();
 	// luasrc_LoadEffects();
 
-	//Andrew; loadup base gamemode.
+	// Mount this mode before its init.lua/cl_init.lua can require content modules.
+    luasrc_MountGamemodeContent(gamemode.GetString());
+
+    //Andrew; loadup base gamemode.
 	luasrc_LoadGamemode(LUA_BASE_GAMEMODE);
 
 	luasrc_LoadGamemode(gamemode.GetString());
@@ -1844,6 +1849,8 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 void CHLClient::LevelInitPostEntity( )
 {
 #if defined ( LUA_SDK )
+	BEGIN_LUA_CALL_HOOK("CreateDefaultPanels");
+    END_LUA_CALL_HOOK(0, 0);
 	BEGIN_LUA_CALL_HOOK("LevelInitPostEntity");
 	END_LUA_CALL_HOOK(0, 0);
 #endif
@@ -2457,6 +2464,12 @@ void OnRenderEnd()
 void CHLClient::FrameStageNotify( ClientFrameStage_t curStage )
 {
 	g_CurFrameStage = curStage;
+#ifdef LUA_SDK
+    if(curStage==FRAME_START && g_bLuaInitialized) {
+        BEGIN_LUA_CALL_HOOK("Think");
+        END_LUA_CALL_HOOK(0,0);
+    }
+#endif
 
 	switch( curStage )
 	{

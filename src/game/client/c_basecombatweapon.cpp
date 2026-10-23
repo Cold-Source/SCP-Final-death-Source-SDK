@@ -11,6 +11,7 @@
 #include "weapon_selection.h"
 #include "hud_crosshair.h"
 #include "engine/ivmodelinfo.h"
+#include "model_types.h"
 #include "tier0/vprof.h"
 #include "hltvcamera.h"
 #include "tier1/KeyValues.h"
@@ -197,8 +198,25 @@ bool C_BaseCombatWeapon::IsCarrierAlive() const
 //-----------------------------------------------------------------------------
 ShadowType_t C_BaseCombatWeapon::ShadowCastType()
 {
+#ifdef HL2_CLIENT_DLL
+	// Inventory weapons still transmit to their owner. They must not leave
+	// shadows (including an error-model silhouette) when their model is hidden.
+	if ( IsEffectActive( EF_NODRAW | EF_NOSHADOW ) || m_iWorldModelIndex <= 0 )
+		return SHADOWS_NONE;
+	C_BaseCombatCharacter *pOwner = GetOwner();
+	if ( pOwner && pOwner->IsPlayer() && m_iState != WEAPON_IS_ACTIVE )
+		return SHADOWS_NONE;
+	const model_t *pWorldModel = modelinfo->GetModel( GetWorldModelIndex() );
+	if ( !pWorldModel || modelinfo->GetModelType( pWorldModel ) != mod_studio )
+		return SHADOWS_NONE;
+	const studiohdr_t *pWorldHeader = modelinfo->GetStudiomodel( pWorldModel );
+	if ( !pWorldHeader || !Q_stricmp( pWorldHeader->pszName(), "error.mdl" )
+		|| !Q_stricmp( pWorldHeader->pszName(), "models/error.mdl" ) )
+		return SHADOWS_NONE;
+#else
 	if ( IsEffectActive( /*EF_NODRAW |*/ EF_NOSHADOW ) )
 		return SHADOWS_NONE;
+#endif
 
 	if (!IsBeingCarried())
 		return SHADOWS_RENDER_TO_TEXTURE;

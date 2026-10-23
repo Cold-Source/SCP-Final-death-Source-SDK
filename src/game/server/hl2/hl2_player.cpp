@@ -6,6 +6,8 @@
 
 #include "cbase.h"
 #include "hl2_player.h"
+#include "scp_playermodels.h"
+#include "scp_admin.h"
 #include "globalstate.h"
 #include "game.h"
 #include "gamerules.h"
@@ -105,11 +107,11 @@ ConVar player_showpredictedposition_timestep( "player_showpredictedposition_time
 ConVar player_squad_transient_commands( "player_squad_transient_commands", "1", FCVAR_REPLICATED );
 ConVar player_squad_double_tap_time( "player_squad_double_tap_time", "0.25" );
 
-ConVar sv_infinite_aux_power( "sv_infinite_aux_power", "0", FCVAR_CHEAT );
+ConVar sv_infinite_aux_power( "sv_infinite_aux_power", "0", FCVAR_CHEAT | FCVAR_REPLICATED );
 
 ConVar autoaim_unlock_target( "autoaim_unlock_target", "0.8666" );
 
-ConVar sv_stickysprint("sv_stickysprint", "0", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX);
+ConVar sv_stickysprint("sv_stickysprint", "0", FCVAR_ARCHIVE | FCVAR_ARCHIVE_XBOX | FCVAR_REPLICATED);
 
 #define	FLASH_DRAIN_TIME	 1.1111	// 100 units / 90 secs
 #define	FLASH_CHARGE_TIME	 50.0f	// 100 units / 2 secs
@@ -235,7 +237,7 @@ void CC_ToggleZoom( void )
 	{
 		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player*>(pPlayer);
 
-		if( pHL2Player && pHL2Player->IsSuitEquipped() )
+		if( pHL2Player )
 		{
 			pHL2Player->ToggleZoom();
 		}
@@ -392,6 +394,7 @@ CHL2_Player::CHL2_Player()
 	m_nNumMissPositions	= 0;
 	m_pPlayerAISquad = 0;
 	m_bSprintEnabled = true;
+	m_bSprintAllowed = true;
 
 	m_flArmorReductionTime = 0.0f;
 	m_iArmorReductionFrom = 0;
@@ -419,6 +422,8 @@ CSuitPowerDevice SuitDeviceBreather( bits_SUIT_DEVICE_BREATHER, 6.7f );		// 100 
 IMPLEMENT_SERVERCLASS_ST(CHL2_Player, DT_HL2_Player)
 	SendPropDataTable(SENDINFO_DT(m_HL2Local), &REFERENCE_SEND_TABLE(DT_HL2Local), SendProxy_SendLocalDataTable),
 	SendPropBool( SENDINFO(m_fIsSprinting) ),
+	SendPropBool( SENDINFO(m_bSprintAllowed) ),
+	SendPropFloat( SENDINFO(m_flFlashlightPowerDrainScale), 0, SPROP_NOSCALE ),
 END_SEND_TABLE()
 
 BEGIN_SEND_TABLE_NOBASE( LadderMove_t, DT_LadderMove )
@@ -454,8 +459,6 @@ void CHL2_Player::Precache( void )
 void CHL2_Player::CheckSuitZoom( void )
 {
 //#ifndef _XBOX 
-	//Adrian - No zooming without a suit!
-	if ( IsSuitEquipped() )
 	{
 		if ( m_afButtonReleased & IN_ZOOM )
 		{
@@ -476,17 +479,14 @@ void CHL2_Player::EquipSuit( bool bPlayEffects )
 	
 	m_HL2Local.m_bDisplayReticle = true;
 
-	if ( bPlayEffects == true )
-	{
-		StartAdmireGlovesAnimation();
-	}
+	// Equipping armor must not interrupt SCP weapon handling with HEV animations.
 }
 
 void CHL2_Player::RemoveSuit( void )
 {
 	BaseClass::RemoveSuit();
 
-	m_HL2Local.m_bDisplayReticle = false;
+	m_HL2Local.m_bDisplayReticle = true;
 }
 
 void CHL2_Player::StartSprinting( void )
@@ -500,101 +500,6 @@ void CHL2_Player::StopSprinting( void )
 }
 
 extern ConVar sv_maxspeed;
-
-void CHL2_Player::HandleSpeedChanges( CMoveData *mv )
-{
-	int nChangedButtons = mv->m_nButtons ^ mv->m_nOldButtons;
-
-	bool bJustPressedSpeed = !!( nChangedButtons & IN_SPEED );
-
-	const bool bWantSprint = ( CanSprint() && IsSuitEquipped() && ( mv->m_nButtons & IN_SPEED ) );
-	const bool bWantsToChangeSprinting = ( m_HL2Local.m_bNewSprinting != bWantSprint ) && ( nChangedButtons & IN_SPEED ) != 0;
-
-	bool bSprinting = m_HL2Local.m_bNewSprinting;
-	if ( bWantsToChangeSprinting )
-	{
-		if ( bWantSprint )
-		{
-			if ( m_HL2Local.m_flSuitPower < 10.0f )
-			{
-				if ( bJustPressedSpeed )
-				{
-					CPASAttenuationFilter filter( this );
-					filter.UsePredictionRules();
-					EmitSound( filter, entindex(), "HL2Player.SprintNoPower" );
-				}
-			}
-			else
-			{
-				bSprinting = true;
-			}
-		}
-		else
-		{
-			bSprinting = false;
-		}
-	}
-
-	if ( m_HL2Local.m_flSuitPower < 0.01 )
-	{
-		bSprinting = false;
-	}
-
-	bool bWantWalking;
-
-	if ( IsSuitEquipped() )
-	{
-		bWantWalking = ( mv->m_nButtons & IN_WALK ) && !bSprinting && !( mv->m_nButtons & IN_DUCK );
-	}
-	else
-	{
-		bWantWalking = true;
-	}
-
-	if ( bWantWalking )
-	{
-		bSprinting = false;
-	}
-
-	m_HL2Local.m_bNewSprinting = bSprinting;
-
-	if ( bSprinting )
-	{
-		if ( bJustPressedSpeed )
-		{
-			CPASAttenuationFilter filter( this );
-			filter.UsePredictionRules();
-			EmitSound( filter, entindex(), "HL2Player.SprintStart" );
-		}
-		mv->m_flClientMaxSpeed = HL2_SPRINT_SPEED;
-	}
-	else if ( bWantWalking )
-	{
-		mv->m_flClientMaxSpeed = HL2_WALK_SPEED;
-	}
-	else
-	{
-		mv->m_flClientMaxSpeed = HL2_NORM_SPEED;
-	}
-
-	mv->m_flMaxSpeed = sv_maxspeed.GetFloat();
-}
-
-void CHL2_Player::ReduceTimers( CMoveData *mv )
-{
-	bool bSprinting = mv->m_flClientMaxSpeed == HL2_SPRINT_SPEED;
-
-	if ( bSprinting )
-	{
-		SuitPower_AddDevice( SuitDeviceSprint );
-	}
-	else
-	{
-		SuitPower_RemoveDevice( SuitDeviceSprint );
-	}
-
-	SuitPower_Update();
-}
 
 //-----------------------------------------------------------------------------
 // This happens when we powerdown from the mega physcannon to the regular one
@@ -1269,6 +1174,7 @@ void CHL2_Player::Spawn(void)
 #endif
 
 	BaseClass::Spawn();
+	SCPApplyPlayerModel( this );
 
 	//
 	// Our player movement speed is set once here. This will override the cl_xxxx
@@ -1276,8 +1182,8 @@ void CHL2_Player::Spawn(void)
 	//
 	//m_flMaxspeed = 320;
 
-	if ( !IsSuitEquipped() )
-		 StartWalking();
+	StopWalking();
+	m_HL2Local.m_bDisplayReticle = true;
 
 	SuitPower_SetCharge( 100 );
 
@@ -2020,9 +1926,6 @@ bool CHL2_Player::SuitPower_AddDevice( const CSuitPowerDevice &device )
 	if( m_HL2Local.m_bitsActiveDevices & device.GetDeviceID() )
 		return false;
 
-	if( !IsSuitEquipped() )
-		return false;
-
 	m_HL2Local.m_bitsActiveDevices |= device.GetDeviceID();
 	m_HL2Local.m_flSuitPowerLoad += device.GetDeviceDrainRate();
 	return true;
@@ -2035,9 +1938,6 @@ bool CHL2_Player::SuitPower_RemoveDevice( const CSuitPowerDevice &device )
 {
 	// Make sure this device is active!!
 	if( ! (m_HL2Local.m_bitsActiveDevices & device.GetDeviceID()) )
-		return false;
-
-	if( !IsSuitEquipped() )
 		return false;
 
 	// Take a little bit of suit power when you disable a device. If the device is shutting off
@@ -2089,7 +1989,7 @@ ConVar	sk_battery( "sk_battery","0" );
 bool CHL2_Player::ApplyBattery( float powerMultiplier )
 {
 	const float MAX_NORMAL_BATTERY = 100;
-	if ((ArmorValue() < MAX_NORMAL_BATTERY) && IsSuitEquipped())
+	if (ArmorValue() < MAX_NORMAL_BATTERY)
 	{
 		int pct;
 		char szcharge[64];
@@ -2155,11 +2055,6 @@ void CHL2_Player::FlashlightTurnOn( void )
 		if( !SuitPower_AddDevice( SuitDeviceFlashlight ) )
 			return;
 	}
-#ifdef HL2_DLL
-	if( !IsSuitEquipped() )
-		return;
-#endif
-
 	AddEffects( EF_DIMLIGHT );
 	EmitSound( "HL2Player.FlashLightOn" );
 
@@ -2891,6 +2786,12 @@ bool CHL2_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 //-----------------------------------------------------------------------------
 bool CHL2_Player::ClientCommand( const CCommand &args )
 {
+	if ( SCPAdminCommand( this, args ) ) return true;
+	if ( FStrEq( args[0], "scp_applyplayermodel" ) )
+	{
+		SCPApplyPlayerModel( this );
+		return true;
+	}
 #if	HL2_SINGLE_PRIMARY_WEAPON_MODE
 
 	//Drop primary weapon
@@ -3416,6 +3317,7 @@ void CHL2_Player::UpdateClientData( void )
 void CHL2_Player::OnRestore()
 {
 	BaseClass::OnRestore();
+	m_HL2Local.m_bDisplayReticle = true;
 	m_pPlayerAISquad = g_AI_SquadManager.FindCreateSquad(AllocPooledString(PLAYER_SQUADNAME));
 }
 

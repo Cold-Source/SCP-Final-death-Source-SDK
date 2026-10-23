@@ -68,6 +68,7 @@ private:
 
 	virtual bool			ClientCommand( CBaseEntity *pEdict, const CCommand &args );
 	virtual void			PlayerSpawn( CBasePlayer *pPlayer );
+	virtual void ClientSettingsChanged( CBasePlayer *pPlayer ) OVERRIDE;
 
 	virtual void			InitDefaultAIRelationships( void );
 	virtual const char*		AIClassText(int classType);

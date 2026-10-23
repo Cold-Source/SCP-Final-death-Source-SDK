@@ -24,7 +24,7 @@
 
 		"PaintBackgroundType"	"2"
 
-		
+
 
 		"text_xpos" "8"
 
@@ -58,7 +58,7 @@
 
 		"PaintBackgroundType"	"2"
 
-		
+
 
 		"text_xpos" "8"
 
@@ -128,7 +128,7 @@
 
 		"PaintBackgroundType"	"2"
 
-		
+
 
 		"text_xpos" "8"
 
@@ -288,7 +288,7 @@
 
 	}
 
-	
+
 
 	HudSuitPower	[!$DECK]
 
@@ -308,11 +308,11 @@
 
 		"tall"	"48"
 
-		
 
-		"AuxPowerLowColor" "255 0 0 220"
 
-		"AuxPowerHighColor" "255 220 0 220"
+		"AuxPowerLowColor" "245 245 245 220"
+
+		"AuxPowerHighColor" "245 245 245 220"
 
 		"AuxPowerDisabledAlpha" "70"
 
@@ -368,11 +368,11 @@
 
 		"tall"	"54"
 
-		
 
-		"AuxPowerLowColor" "255 0 0 220"
 
-		"AuxPowerHighColor" "255 220 0 220"
+		"AuxPowerLowColor" "245 245 245 220"
+
+		"AuxPowerHighColor" "245 245 245 220"
 
 		"AuxPowerDisabledAlpha" "70"
 
@@ -462,7 +462,7 @@
 
 	}
 
-	
+
 
 	HudFlashlight
 
@@ -484,7 +484,7 @@
 
 		"xpos_lodef"	"c-18"		[$X360]		// centered in screen
 
-		"ypos"	"428"		[$X360]				
+		"ypos"	"428"		[$X360]
 
 		"tall"  "24" [!$DECK]
 
@@ -498,7 +498,7 @@
 
 		"font"	"FlashlightDeck" [$DECK]
 
-		
+
 
 		"icon_xpos"	"4"
 
@@ -506,7 +506,7 @@
 
 		"icon_ypos" "-12"  [$DECK]
 
-		
+
 
 		"BarInsetX" "4"
 
@@ -540,11 +540,11 @@
 
 		"enabled" "1"
 
-		"DmgColorLeft" "255 0 0 0"
+		"DmgColorLeft" "245 245 245 0"
 
-		"DmgColorRight" "255 0 0 0"
+		"DmgColorRight" "245 245 245 0"
 
-		
+
 
 		"dmg_xpos" "30"
 
@@ -578,7 +578,7 @@
 
 		"DashHeight" "4"	[$WIN32]
 
-		"DashHeight" "6"	[$X360]		
+		"DashHeight" "6"	[$X360]
 
 		"BorderThickness" "88"
 
@@ -1000,7 +1000,7 @@
 
 		"paintbackground"		"0"
 
-	}	
+	}
 
 
 
@@ -1034,7 +1034,7 @@
 
 		"text_ygap"	"8"
 
-		"TextColor"	"255 170 0 220"
+		"TextColor"	"245 245 245 220"
 
 
 
@@ -1068,7 +1068,7 @@
 
 		"text_ypos"	"34"
 
-		"SquadIconColor"	"255 220 0 160"
+		"SquadIconColor"	"245 245 245 160"
 
 		"IconInsetX"	"8"
 
@@ -1104,7 +1104,7 @@
 
 		"text_ypos"	"28"
 
-		"SquadIconColor"	"255 220 0 160"
+		"SquadIconColor"	"245 245 245 160"
 
 		"IconInsetX"	"8"
 
@@ -1146,7 +1146,7 @@
 
 		"text_ygap" "14"
 
-		"TextColor"	"255 170 0 220"
+		"TextColor"	"245 245 245 220"
 
 		"PaintBackgroundType"	"2"
 
@@ -1176,7 +1176,7 @@
 
 		"text_ygap" "14"
 
-		"TextColor"	"255 170 0 220"
+		"TextColor"	"245 245 245 220"
 
 		"PaintBackgroundType"	"2"
 
@@ -1208,7 +1208,7 @@
 
 	}
 
-	
+
 
 	HUDAutoAim
 
@@ -1250,11 +1250,11 @@
 
 		"enabled" "1"
 
-		
+
 
 		"PaintBackgroundType"	"2"
 
-		
+
 
 		"bar_xpos"		"50"
 
@@ -1272,13 +1272,13 @@
 
 		"count_ypos"	"8"
 
-		
+
 
 		"icon_texture"	"vgui/hud/icon_commentary"
 
 		"icon_xpos"		"0"
 
-		"icon_ypos"		"0"		
+		"icon_ypos"		"0"
 
 		"icon_width"	"40"
 
@@ -1286,7 +1286,7 @@
 
 	}
 
-	
+
 
 	HudHDRDemo
 
@@ -1306,13 +1306,13 @@
 
 		"enabled" "1"
 
-		
+
 
 		"Alpha"	"255"
 
 		"PaintBackgroundType"	"2"
 
-		
+
 
 		"BorderColor"	"0 0 0 255"
 
@@ -1326,7 +1326,7 @@
 
 		"BorderCenter"	"0"
 
-		
+
 
 		"TextColor"		"255 255 255 255"
 
@@ -1338,7 +1338,7 @@
 
 
 
-	AchievementNotificationPanel	
+	AchievementNotificationPanel
 
 	{
 
@@ -1368,7 +1368,7 @@
 
 		"fieldName"		"CHudVote"
 
-		"xpos"			"0"			
+		"xpos"			"0"
 
 		"ypos"			"0"
 
@@ -1384,6 +1384,18 @@
 
 		"PaintBackgroundType"	"0" // rounded corners
 
-	}	
+	}
 
+
+	HudSCPStatus
+	{
+		"fieldName" "HudSCPStatus"
+		"xpos" "0"
+		"ypos" "0"
+		"wide" "640"
+		"tall" "480"
+		"visible" "1"
+		"enabled" "1"
+		"PaintBackgroundType" "0"
+	}
 }

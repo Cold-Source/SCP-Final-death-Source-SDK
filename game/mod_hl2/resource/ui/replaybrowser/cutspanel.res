@@ -9,7 +9,7 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"paintbackground"	"0"
-		
+
 		"cut_button_width"	"70"
 		"cut_button_height"	"53"
 		"cut_button_buffer"	"3"
@@ -18,17 +18,17 @@
 		"top_margin_height"	"5"
 		"button_start_y"	"18"
 		"name_label_top_margin"	"5"
-		
+
 		"button_settings"
 		{
 			"paintbackground"		"1"
 			"image_drawcolor"		"255 255 255 255"
 			"image_armedcolor"		"255 255 255 255"
 			"image_selectedcolor"	"255 255 255 255"
-			
+
 			"sound_depressed"		"UI/buttonclick.wav"
 			"sound_released"		"UI/buttonclickrelease.wav"
-		
+
 			"SubImage"
 			{
 				"ControlName"	"ImagePanel"
@@ -37,8 +37,8 @@
 				"visible"		"1"
 				"enabled"		"1"
 				"scaleImage"	"1"
-			}				
-			
+			}
+
 			"addtorenderqueuebutton_settings"
 			{
 				"xpos"				"4"
@@ -51,16 +51,16 @@
 			}
 		}
 	}
-	
+
 	"VerticalLine"
 	{
 		"ControlName"		"EditablePanel"
 		"fieldName"			"VerticalLine"
 		"wide"				"1"
 		"PaintBackground"	"1"
-		"bgcolor_override" "122 111 98 255"
+		"bgcolor_override" "28 28 28 255"
 	}
-	
+
 	"NoCutsLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -75,9 +75,9 @@
 		"visible"		"0"
 		"enabled"		"1"
 		"centerwrap"	"1"
-		"fgcolor_override"	"117 107 94 255"
+		"fgcolor_override"	"180 180 180 255"
 	}
-	
+
 	"PrevButton"
 	{
 		"ControlName"	"CExButton"
@@ -94,7 +94,7 @@
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
 	}
-	
+
 	"NextButton"
 	{
 		"ControlName"	"CExButton"
@@ -111,35 +111,35 @@
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
 	}
-	
+
 	"OriginalLabel"
 	{
 		"ControlName"	"CExLabel"
 		"FieldName"		"OriginalLabel"
 		"Font"			"ReplayMediumSmall"
 		"TextAlignment"	"west"
-		"fgcolor_override"	"117 107 94 255"
+		"fgcolor_override"	"180 180 180 255"
 		"xpos"			"0"
 		"ypos"			"0"
 		"wide"			"65"
 		"tall"			"10"
 		"labelText"		"#Replay_Original"
 	}
-	
+
 	"CutsLabel"
 	{
 		"ControlName"	"CExLabel"
 		"FieldName"		"CutsLabel"
 		"Font"			"ReplayMediumSmall"
 		"TextAlignment"	"west"
-		"fgcolor_override"	"117 107 94 255"
+		"fgcolor_override"	"180 180 180 255"
 		"xpos"			"0"
 		"ypos"			"0"
 		"wide"			"120"
 		"tall"			"10"
 		"labelText"		"#Replay_Performances"
 	}
-	
+
 	"NameLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -152,7 +152,7 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"centerwrap"	"0"
-		"fgcolor_override"	"117 107 94 255"
+		"fgcolor_override"	"180 180 180 255"
 	}
-	
+
 }

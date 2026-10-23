@@ -43,3 +43,5 @@ protoc binary
 ccache binary
 
 *_english.txt binary
+# VGUI localization is UTF-16; newline conversion corrupts its code units.
+game/mod_hl2/resource/*_russian.txt binary

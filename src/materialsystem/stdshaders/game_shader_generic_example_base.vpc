@@ -53,6 +53,7 @@ $Project
 
 		$File	"sdk_bloom.cpp"
 		$File	"sdk_screenspace_general.cpp"
+		$File	"pbr_dx9.cpp"
 	}
 
 	$Folder	"Header Files"
@@ -66,6 +67,7 @@ $Project
 		$File	"shader_constant_register_map.h"
 
 		$File	"example_model_dx9_helper.h"
+		$File	"pbr_common_ps2_3_x.h"
 	}
 
 	$Folder "Link Libraries"
@@ -76,8 +78,11 @@ $Project
     }
 
 	$File	"buildsdkshaders.bat"
+	$File	"buildpbrshaders.ps1"
 	$File	"buildshaders.bat"
 
 	$Shaders	"sdkshaders_dx9_20b.txt"
 	$Shaders	"sdkshaders_dx9_30.txt"
+	$Shaders	"mymod_dx9_20b.txt"
+	$Shaders	"mymod_dx9_30.txt"
 }

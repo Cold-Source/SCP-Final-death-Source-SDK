@@ -71,7 +71,7 @@
 	{
 		"Title"									"255 255 255 255"
 		"GenericConfirmation"					"255 255 255 255"
-		
+
 		"Button.Background.Out"						"0 0 0 0"
 		"Button.Background.Over"					"30 30 30 210"
 		"Button.Background.Pressed"					"255 255 255 255"
@@ -82,7 +82,7 @@
 
 		"Button.Description.Out"					"0 0 0 0"
 		"Button.Description.Over"					"180 180 180 200"
-		"Button.Description.Pressed"				"180 180 180 200"
+		"Button.Description.Pressed"				"15 15 15 255"
 	}
 
 	"Fonts"
@@ -91,66 +91,67 @@
 		{
 			"settings"
 			{
-				"name"			"Alte DIN 1451 Mittelschrift"
+				"name"			"Trebuchet MS"
 				"tall"			"44"
-				"weight"		"400"
-				"antialias"		"1"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"Generic.Text.Font"
 		{
 			"settings"
 			{
-				"name"			"Noto Sans"
+				"name"			"Trebuchet MS"
 				"tall"			"26"
-				"weight"		"400"
-				"antialias"		"1"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"GenericConfirmation.Font"
 		{
 			"settings"
 			{
-				"name"			"Alte DIN 1451 Mittelschrift"
+				"name"			"Trebuchet MS"
 				"tall"			"30"
-				"weight"		"400"
-				"antialias"		"1"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"Button.Text.Font"
 		{
 			"settings"
 			{
-				"name"			"Noto Sans"
+				"name"			"Trebuchet MS"
 				"tall"			"20"
-				"weight"		"400"
-				"antialias"		"1"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"Button.Description.Font"
-		{
-			"settings"
-			{
-				"name"			"Noto Sans"
-				"tall"			"16"
-				"weight"		"400"
-				"antialias"		"1"
-			}
-		}
+        {
+            "1"
+            {
+                "name" "Trebuchet MS"
+                "tall" "16"
+                "weight" "700"
+                "antialias" "1"
+                "range" "0x0020 0x04FF"
+            }
+        }
 
 		"Goal.Font"
 		{
 			"settings"
 			{
-				"name"			"Noto Sans"
+				"name"			"Trebuchet MS"
 				"tall"			"20"
-				"weight"		"400"
-				"antialias"		"1"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 	}
 

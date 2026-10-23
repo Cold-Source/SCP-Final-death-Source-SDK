@@ -23,12 +23,36 @@ $Project "Server (HL2)"
 {
 	$Folder	"Source Files"
 	{
+		$File "hl2\scp_playermodels.cpp"
+		$File "hl2\scp_admin.cpp"
+        $File "hl2\scp_gamemode.cpp"
+        $File "hl2\scp_gamemode.h"
+        $File "$SRCDIR\game\shared\scp_gamemode_config.cpp"
+        {
+            $Configuration
+            {
+                $Compiler
+                {
+                    $Create/UsePrecompiledHeader "Not Using Precompiled Headers"
+                }
+            }
+        }
+		$File "hl2\scp_admin.h"
+        $File "$SRCDIR\game\shared\scp_gamemode_config.h"
+        $File "$SRCDIR\game\shared\scp_gamemode_content.h"
+		$File "$SRCDIR\game\shared\scp_admin_catalog.h"
+		$File "hl2\scp_playermodels.h"
+		$File "$SRCDIR\game\shared\scp_playermodels.h"
 		$File	"ai_eventresponse.cpp"
 		$File	"ai_eventresponse.h"
 		$File	"ai_relationship.cpp"
 		$File	"base_gameinterface.cpp"
 		$File "hl2\spmp_saveload.cpp"
 		$File "hl2\spmp_saveload.h"
+        $File "$SRCDIR\game\shared\hl2\scp_player_movement.cpp"
+        $File "$SRCDIR\game\shared\scp_save_file.cpp"
+        $File "$SRCDIR\game\shared\scp_save_file.h"
+        $File "$SRCDIR\game\shared\scp_save_format.h"
 		$File	"basegrenade_concussion.cpp"
 		$File	"basegrenade_contact.cpp"
 		$File	"basegrenade_timed.cpp"

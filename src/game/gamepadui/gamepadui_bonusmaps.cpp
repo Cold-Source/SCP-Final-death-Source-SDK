@@ -324,7 +324,7 @@ void GamepadUIBonusMapsPanel::OnThink()
 void GamepadUIBonusMapsPanel::ApplySchemeSettings( vgui::IScheme* pScheme )
 {
     BaseClass::ApplySchemeSettings( pScheme );
-    m_hGoalFont = pScheme->GetFont( "Goal.Font", true );
+    m_hGoalFont = SCPUIGetTextFont( vgui::surface(), pScheme, "Goal.Font", true );
 
     if (GamepadUI::GetInstance().GetScreenRatio() != 1.0f)
     {

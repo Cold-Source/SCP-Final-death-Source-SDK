@@ -19,7 +19,7 @@ Scheme
 		"White"				"255 255 255 255"
 		"OffWhite"			"216 216 216 255"
 		"DullWhite"			"142 142 142 255"
-		"Orange"			"255 155 0 255"
+		"Orange"			"245 245 245 255"
 		"TransparentBlack"		"0 0 0 128"
 		"Black"				"0 0 0 255"
 
@@ -41,11 +41,11 @@ Scheme
 		Button.BgColor					"Blank"
 		Button.ArmedTextColor			"White"
 		Button.ArmedBgColor				"Blank"				[$WIN32]
-		Button.ArmedBgColor				"190 115 0 255"		[$X360]
+		Button.ArmedBgColor				"28 28 28 255"		[$X360]
 		Button.DepressedTextColor		"White"
 		Button.DepressedBgColor			"Blank"
 		Button.FocusBorderColor			"Black"
-		
+
 		CheckButton.TextColor			"OffWhite"
 		CheckButton.SelectedTextColor	"White"
 		CheckButton.BgColor				"TransparentBlack"
@@ -103,7 +103,7 @@ Scheme
 		ListPanel.BgColor					"TransparentBlack"
 		ListPanel.SelectedTextColor			"Black"
 		ListPanel.SelectedBgColor			"Orange"
-		ListPanel.SelectedOutOfFocusBgColor	"255 155 0 128"
+		ListPanel.SelectedOutOfFocusBgColor	"28 28 28 128"
 		ListPanel.EmptyListInfoTextColor	"OffWhite"
 
 		Menu.TextColor					"White"
@@ -151,7 +151,7 @@ Scheme
 		SectionedListPanel.SelectedTextColor			"Black"
 		SectionedListPanel.SelectedBgColor				"Orange"
 		SectionedListPanel.OutOfFocusSelectedTextColor	"Black"
-		SectionedListPanel.OutOfFocusSelectedBgColor	"255 155 0 128"
+		SectionedListPanel.OutOfFocusSelectedBgColor	"28 28 28 128"
 
 		Slider.NobColor				"108 108 108 255"
 		Slider.TextColor			"180 180 180 255"
@@ -166,7 +166,7 @@ Scheme
 		TextEntry.DisabledBgColor	"Blank"
 		TextEntry.SelectedTextColor	"Black"
 		TextEntry.SelectedBgColor	"Orange"
-		TextEntry.OutOfFocusSelectedBgColor	"255 155 0 128"
+		TextEntry.OutOfFocusSelectedBgColor	"28 28 28 128"
 		TextEntry.FocusEdgeColor	"0 0 0 196"
 
 		ToggleButton.SelectedTextColor	"White"
@@ -183,7 +183,7 @@ Scheme
 		MainMenu.TextColor			"200 200 200 255"	[$X360]
 		MainMenu.ArmedTextColor		"200 200 200 255"	[$WIN32]
 		MainMenu.ArmedTextColor		"White"				[$X360]
-		MainMenu.DepressedTextColor	"192 186 80 255"
+		MainMenu.DepressedTextColor	"245 245 245 255"
 		MainMenu.MenuItemHeight		"16"	[$WIN32]
 		MainMenu.MenuItemHeight		"32"	[$X360]
 		MainMenu.Inset				"32"
@@ -218,49 +218,46 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"0"
-				"range"		"0x0000 0x017F"
+				"weight"	"700"
 				"yres"	"480 599"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"2"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"13"
-				"weight"	"0"
-				"range"		"0x0000 0x017F"
+				"weight"	"700"
 				"yres"	"600 767"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"3"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
-				"weight"	"0"
-				"range"		"0x0000 0x017F"
+				"weight"	"700"
 				"yres"	"768 1023"
-				"antialias"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"4"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"0"
-				"range"		"0x0000 0x017F"
+				"weight"	"700"
 				"yres"	"1024 1199"
-				"antialias"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"5"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"0"
-				"range"		"0x0000 0x017F"
+				"weight"	"700"
 				"yres"	"1200 6000"
-				"antialias"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
-		
+
 		// this is the symbol font
 		"Marlett"
 		{
@@ -311,44 +308,49 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
 				"weight"	"700"
 				"yres"		"480 599"
 				"dropshadow"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"2"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"14"
 				"weight"	"700"
 				"yres"		"600 767"
 				"dropshadow"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"3"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"15"
 				"weight"	"700"
 				"yres"		"768 1023"
 				"dropshadow"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"4"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"17"
 				"weight"	"700"
 				"yres"		"1024 1199"
 				"dropshadow"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 			"5"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"22"
 				"weight"	"700"
 				"yres"		"1200 10000"
 				"dropshadow"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 
@@ -451,7 +453,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		TitleButtonBorder
 		{
 			"backgroundtype" "0"
@@ -506,7 +508,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		ScrollBarButtonDepressedBorder
 		{
 			"inset" "2 2 0 0"
@@ -757,6 +759,6 @@ Scheme
 	CustomFontFiles
 	{
 		"1"		"resource/HALFLIFE2.ttf"
-		"2"		"resource/HL2EP2.ttf"		
+		"2"		"resource/HL2EP2.ttf"
 	}
 }

@@ -573,14 +573,11 @@ void CHudCustomWeaponSelector::UpdateLayout()
     m_flLayoutScale = scale;
     if (!m_hTextFont)
         m_hTextFont = vgui::surface()->CreateFont();
-    const int flags = vgui::ISurface::FONTFLAG_ANTIALIAS | vgui::ISurface::FONTFLAG_DROPSHADOW
-        | vgui::ISurface::FONTFLAG_CUSTOM;
+    const int flags = vgui::ISurface::FONTFLAG_ANTIALIAS | vgui::ISurface::FONTFLAG_DROPSHADOW;
     const int textTall = MAX(10, static_cast<int>(13 * scale));
-    // Explicit Unicode coverage keeps Cyrillic names in the same face as Latin text.
-    // The default range lets VGUI substitute its compatibility font for non-ASCII glyphs.
-    if (!vgui::surface()->SetFontGlyphSet(m_hTextFont, "Bahnschrift", textTall, 700, 0, 0,
-        flags, 0x0000, 0xFFFF))
-        Warning("Weapon selector: could not create Bahnschrift Unicode font.\n");
+    if (!vgui::surface()->SetFontGlyphSet(m_hTextFont, "Trebuchet MS", textTall, 700, 0, 0,
+        flags, 0x0020, 0x04FF))
+        Warning("Weapon selector: could not create Trebuchet MS Unicode font.\n");
 }
 
 void CHudCustomWeaponSelector::DrawSlotText(vgui::HFont font, const wchar_t* text,

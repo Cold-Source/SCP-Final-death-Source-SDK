@@ -13,9 +13,9 @@
 		"enabled"		"1"
 		"tabPosition"	"0"
 		"proportional"	"0"
-		"bgcolor_override"	"57 51 42 255"
+		"bgcolor_override"	"28 28 28 255"
 	}
-	
+
 	"AccelSlider"
 	{
 		"ControlName"	"Slider"
@@ -37,7 +37,7 @@
 		"enabled"		"1"
 		"tall"			"20"
 	}
-	
+
 	"FovSlider"
 	{
 		"ControlName"	"Slider"
@@ -48,7 +48,7 @@
 		"enabled"		"1"
 		"tall"			"20"
 	}
-	
+
 	"RotFilterSlider"
 	{
 		"ControlName"	"Slider"
@@ -59,7 +59,7 @@
 		"enabled"		"1"
 		"tall"			"20"
 	}
-	
+
 	"ShakeSpeedSlider"
 	{
 		"ControlName"	"Slider"
@@ -70,7 +70,7 @@
 		"enabled"		"1"
 		"tall"			"20"
 	}
-	
+
 	"ShakeAmountSlider"
 	{
 		"ControlName"	"Slider"
@@ -81,7 +81,7 @@
 		"enabled"		"1"
 		"tall"			"20"
 	}
-	
+
 	"ShakeDirSlider"
 	{
 		"ControlName"	"Slider"

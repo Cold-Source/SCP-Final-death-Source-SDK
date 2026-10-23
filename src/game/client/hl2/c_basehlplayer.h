@@ -39,6 +39,7 @@ public:
 	bool				IsBreatherActive( void ) { return m_HL2Local.m_bitsActiveDevices & bits_SUIT_DEVICE_BREATHER; }
 
 	virtual int			DrawModel( int flags );
+	virtual const QAngle& GetRenderAngles() OVERRIDE;
 	virtual	void		BuildTransformations( CStudioHdr *hdr, Vector *pos, Quaternion q[], const matrix3x4_t& cameraTransform, int boneMask, CBoneBitList &boneComputed );
 
 	LadderMove_t		*GetLadderMove() { return &m_HL2Local.m_LadderMove; }
@@ -52,8 +53,9 @@ public:
 
 	bool				IsWeaponLowered( void ) { return m_HL2Local.m_bWeaponLowered; }
 
-	virtual void	HandleSpeedChanges( CMoveData *mv ){}
-	virtual void	ReduceTimers( CMoveData *mv ){}
+	virtual void	HandleSpeedChanges( CMoveData *mv );
+	virtual void	ReduceTimers( CMoveData *mv );
+	bool CanSprint();
 
 public:
 
@@ -61,6 +63,8 @@ public:
 	EHANDLE				m_hClosestNPC;
 	float				m_flSpeedModTime;
 	bool				m_fIsSprinting;
+	bool m_bSprintAllowed;
+	float m_flFlashlightPowerDrainScale;
 
 private:
 	C_BaseHLPlayer( const C_BaseHLPlayer & ); // not defined, not accessible
@@ -75,6 +79,7 @@ private:
 	bool				m_bPlayUseDenySound;		// Signaled by PlayerUse, but can be unset by HL2 ladder code...
 	float				m_flSpeedMod;
 	float				m_flExitSpeedMod;
+	QAngle m_angBodyRender;
 
 
 friend class CHL2GameMovement;

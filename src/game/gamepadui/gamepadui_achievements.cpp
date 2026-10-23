@@ -75,7 +75,7 @@ public:
     {
         BaseClass::ApplySchemeSettings( pScheme );
 
-        m_hProgressFont = pScheme->GetFont( "Button.Progress.Font", true );
+        m_hProgressFont = SCPUIGetTextFont( vgui::surface(), pScheme, "Button.Progress.Font", true );
     }
 
     void Paint() OVERRIDE

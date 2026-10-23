@@ -335,6 +335,8 @@ LUA_API void  (luasrc_dumpstack) (lua_State *L);
 void       luasrc_LoadEntities (const char *path = 0);
 void       luasrc_LoadWeapons (const char *path = 0);
 
+void       luasrc_MountGamemodeContent( const char *gamemode );
+
 bool       luasrc_LoadGamemode (const char *gamemode);
 bool       luasrc_SetGamemode (const char *gamemode);
 

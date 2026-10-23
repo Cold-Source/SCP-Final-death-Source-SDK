@@ -15,12 +15,12 @@
 		"tabPosition"	"0"
 		"settitlebarvisible"	"0"
 		"PaintBackgroundType"	"0"
-		
+
 		"default_x"			"15"
 		"start_y"			"10"
 		"vertical_buffer"	"6"
 	}
-	
+
 	"BGPanel"
 	{
 		"ControlName"	"EditablePanel"
@@ -34,7 +34,7 @@
 		"paintbackground"	"1"
 		"paintborder"		"1"
 	}
-	
+
 	"TitleLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -52,7 +52,7 @@
 		"visible"		"1"
 		"enabled"		"1"
 	}
-	
+
 	"CancelButton"
 	{
 		"ControlName"	"CExButton"
@@ -109,7 +109,7 @@
 		"border_armed"		"ReplayGrayFillGrayBorder"
 		"armedBgColor_override"	"ReplayBrowser.Button.ArmedBgColor"
 		"depressedBgColor_override"	"ReplayBrowser.Button.DepressedBgColor"
-	}	
+	}
 
 	"QualityPresetLabel"
 	{
@@ -130,7 +130,7 @@
 		"brighttext"	"0"
 		"tabPosition"	"10"
 	}
-	
+
 	"QualityPresetCombo"
 	{
 		"ControlName"	"ComboBox"
@@ -149,7 +149,7 @@
 		"dulltext"		"0"
 		"brighttext"	"0"
 		"tabPosition"	"10"
-		"fgcolor_override"	"236 227 203 255"
+		"fgcolor_override"	"245 245 245 255"
 		"editable"		"0"
 	}
 
@@ -211,7 +211,7 @@
 		"image"			"replay/replaybrowser_solidline"
 		"tileImage"		"1"
 	}
-	
+
 	"VideoModeLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -231,7 +231,7 @@
 		"brighttext"	"0"
 		"tabPosition"	"10"
 	}
-	
+
 	"VideoModeCombo"
 	{
 		"ControlName"	"ComboBox"
@@ -250,7 +250,7 @@
 		"dulltext"		"0"
 		"brighttext"	"0"
 		"tabPosition"	"10"
-		"fgcolor_override"	"236 227 203 255"
+		"fgcolor_override"	"245 245 245 255"
 		"editable"		"0"
 	}
 
@@ -273,7 +273,7 @@
 		"brighttext"	"0"
 		"tabPosition"	"10"
 	}
-	
+
 	"CodecCombo"
 	{
 		"ControlName"	"ComboBox"
@@ -292,7 +292,7 @@
 		"dulltext"		"0"
 		"brighttext"	"0"
 		"tabPosition"	"10"
-		"fgcolor_override"	"236 227 203 255"
+		"fgcolor_override"	"245 245 245 255"
 		"editable"		"0"
 	}
 
@@ -315,7 +315,7 @@
 		"brighttext"	"0"
 		"tabPosition"	"10"
 	}
-	
+
 	"MotionBlurSlider"
 	{
 		"ControlName"	"Slider"
@@ -352,7 +352,7 @@
 		"brighttext"	"0"
 		"tabPosition"	"10"
 	}
-	
+
 	"QualitySlider"
 	{
 		"ControlName"	"Slider"
@@ -430,7 +430,7 @@
 		"brighttext"	"0"
 		"tabPosition"	"10"
 	}
-	
+
 	"EnterANameLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -449,7 +449,7 @@
 		"enabled"		"1"
 		"tabPosition"	"10"
 	}
-	
+
 	"TitleInput"
 	{
 		"ControlName"	"TextEntry"
@@ -468,12 +468,12 @@
 		"pinCorner"		"0"
 		"visible"		"0"
 		"enabled"		"1"
-		"bgcolor_override"		"117 107 95 255"
-		"fgcolor_override"		"202 190 164 255"
+		"bgcolor_override"		"28 28 28 255"
+		"fgcolor_override"		"245 245 245 255"
 		"tabPosition"	"10"
 		"maxchars"		"255"
 	}
-	
+
 	"ResolutionNoteLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -490,9 +490,9 @@
 		"visible"		"0"
 		"enabled"		"1"
 		"wrap"			"1"
-		"fgcolor_override" "200 80 60 255"
+		"fgcolor_override" "245 245 245 255"
 	}
-	
+
 	"QuitWhenDone"
 	{
 		"ControlName"	"CheckButton"
@@ -514,7 +514,7 @@
 		"brighttext"	"0"
 		"tabPosition"	"10"
 	}
-	
+
 	"ExportRaw"
 	{
 		"ControlName"	"CheckButton"
@@ -536,7 +536,7 @@
 		"brighttext"	"0"
 		"tabPosition"	"10"
 	}
-	
+
 	"GlowEnabled"
 	{
 		"ControlName"	"CheckButton"
@@ -557,8 +557,8 @@
 		"dulltext"		"0"
 		"brighttext"	"0"
 		"tabPosition"	"10"
-	}	
-	
+	}
+
 	"LockWarningLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -576,6 +576,6 @@
 		"visible"		"1"
 		"wrap"			"1"
 		"enabled"		"1"
-		"fgcolor_override" "200 80 60 255"
+		"fgcolor_override" "245 245 245 255"
 	}
 }

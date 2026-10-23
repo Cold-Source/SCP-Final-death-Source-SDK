@@ -308,6 +308,7 @@ private:
 	CNetworkVarEmbedded( CHL2PlayerLocalData, m_HL2Local );
 
 	bool				m_bSprintEnabled;		// Used to disable sprint temporarily
+	CNetworkVar( bool, m_bSprintAllowed );
 	bool				m_bIsAutoSprinting;		// A proxy for holding down the sprint key.
 	float				m_fAutoSprintMinTime;	// Minimum time to maintain autosprint regardless of player speed. 
 
@@ -334,7 +335,7 @@ private:
 	float				m_flAdmireGlovesAnimTime;
 
 	float				m_flNextFlashlightCheckTime;
-	float				m_flFlashlightPowerDrainScale;
+	CNetworkVar( float, m_flFlashlightPowerDrainScale );
 
 	// Aiming heuristics code
 	float				m_flIdleTime;		//Amount of time we've been motionless

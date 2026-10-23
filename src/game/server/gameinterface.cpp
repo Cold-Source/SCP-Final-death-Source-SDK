@@ -989,7 +989,10 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	luasrc_LoadEntities();
 	// luasrc_LoadEffects();
 
-	//Andrew; loadup base gamemode.
+	// Mount this mode before its init.lua/cl_init.lua can require content modules.
+    luasrc_MountGamemodeContent(gamemode.GetString());
+
+    //Andrew; loadup base gamemode.
 	luasrc_LoadGamemode(LUA_BASE_GAMEMODE);
 
 	luasrc_LoadGamemode(gamemode.GetString());
@@ -1259,6 +1262,12 @@ void CServerGameDLL::GameFrame( bool simulating )
 		gpGlobals->frametime *= 2.0f;
 	}
 
+#ifdef LUA_SDK
+    if(simulating && g_bLuaInitialized) {
+        BEGIN_LUA_CALL_HOOK("Think");
+        END_LUA_CALL_HOOK(0,0);
+    }
+#endif
 	g_flServerCurTime = gpGlobals->curtime;
 	float oldframetime = gpGlobals->frametime;
 

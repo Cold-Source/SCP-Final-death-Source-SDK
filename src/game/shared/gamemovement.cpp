@@ -51,6 +51,8 @@ ConVar xc_uncrouch_on_jump( "xc_uncrouch_on_jump", "1", FCVAR_ARCHIVE, "Uncrouch
 
 #if defined( HL2_DLL ) || defined( HL2_CLIENT_DLL )
 ConVar player_limit_jump_speed( "player_limit_jump_speed", "1", FCVAR_REPLICATED );
+ConVar scp_jump_multiplier( "scp_jump_multiplier", "1", FCVAR_REPLICATED | FCVAR_CHEAT,
+    "Admin jump impulse multiplier.", true, 0.1f, true, 5.0f );
 #endif
 
 // option_duck_method is a carrier convar. Its sole purpose is to serve an easy-to-flip
@@ -2431,7 +2433,7 @@ bool CGameMovement::CheckJumpButton( void )
 	if ( g_bMovementOptimizations )
 	{
 #if defined(HL2_DLL) || defined(HL2_CLIENT_DLL)
-		Assert( GetCurrentGravity() == 600.0f );
+		// HL2's fixed impulse also works with gravity changed by the admin panel.
 		flMul = 160.0f;	// approx. 21 units.
 #else
 		Assert( GetCurrentGravity() == 800.0f );
@@ -2444,6 +2446,9 @@ bool CGameMovement::CheckJumpButton( void )
 		flMul = sqrt(2 * GetCurrentGravity() * GAMEMOVEMENT_JUMP_HEIGHT);
 	}
 
+#if defined( HL2_DLL ) || defined( HL2_CLIENT_DLL )
+	flMul *= scp_jump_multiplier.GetFloat();
+#endif
 	// Acclerate upward
 	// If we are ducking...
 	float startz = mv->m_vecVelocity[2];

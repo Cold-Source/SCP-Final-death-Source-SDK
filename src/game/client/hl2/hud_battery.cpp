@@ -15,6 +15,7 @@
 #include "hudelement.h"
 #include "hud_macros.h"
 #include "hud_numericdisplay.h"
+#include "hud_scp_status.h"
 #include "iclientmode.h"
 
 #include "vgui_controls/AnimationController.h"
@@ -144,4 +145,5 @@ void CHudBattery::OnThink( void )
 void CHudBattery::MsgFunc_Battery( bf_read &msg )
 {
 	m_iNewBat = msg.ReadShort();
+	SCPStatusHudSetArmor( m_iNewBat );
 }

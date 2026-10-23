@@ -37,14 +37,16 @@ void GamepadUIFrame::ApplySchemeSettings( vgui::IScheme* pScheme )
     SetPaintBackgroundEnabled( false );
     SetPaintBorderEnabled( false );
     SetTitleBarVisible( false );
+    // Full-screen menu layers must not inherit native console window fades.
+    DisableFadeEffect();
 
 	int nParentW, nParentH;
 	GetParent()->GetSize( nParentW, nParentH );
 	SetBounds( 0, 0, nParentW, nParentH );
     UpdateSchemeProperties( this, pScheme );
 
-    m_hTitleFont = pScheme->GetFont( "Title.Font", true );
-    m_hGenericFont = pScheme->GetFont( "Generic.Text.Font", true );
+    m_hTitleFont = SCPUIGetTextFont( vgui::surface(), pScheme, "Title.Font", true );
+    m_hGenericFont = SCPUIGetTextFont( vgui::surface(), pScheme, "Generic.Text.Font", true );
 }
 
 void GamepadUIFrame::OnThink()
@@ -64,6 +66,11 @@ void GamepadUIFrame::Paint()
 
 void GamepadUIFrame::UpdateGradients()
 {
+    const float time = GamepadUI::GetInstance().GetTime();
+    GradientHelper *gradients = GamepadUI::GetInstance().GetGradientHelper();
+    gradients->ResetTargets( time );
+    gradients->SetTargetGradient( GradientSide::Up, { 1.0f, 1.0f }, time );
+    gradients->SetTargetGradient( GradientSide::Down, { 1.0f, 1.0f }, time );
 }
 
 void GamepadUIFrame::PaintBackgroundGradients()

@@ -16,22 +16,22 @@
 		"setclosebuttonvisible"	"0"
 		"settitlebarvisible"	"1"
 		"PaintBackgroundType"	"0"
-		"bgcolor_override"				"46 43 42 0"
-		"infocus_bgcolor_override"		"46 43 42 0"
-		"outoffocus_bgcolor_override"	"46 43 42 0"
-		
+		"bgcolor_override"				"28 28 28 0"
+		"infocus_bgcolor_override"		"28 28 28 0"
+		"outoffocus_bgcolor_override"	"28 28 28 0"
+
 		"title"			"#Replay_Replay"
 		"title_font"	"HudFontMediumBold"
 		"titletextinsetX"	"40"
 		"titletextinsetY"	"15"
-		"titlebarfgcolor_override"				"200 187 161 255"
-		"titlebardisabledfgcolor_override"		"200 187 161 255"
-		"titlebarbgcolor_override"				"46 43 42 255"
-		
+		"titlebarfgcolor_override"				"245 245 245 255"
+		"titlebardisabledfgcolor_override"		"245 245 245 255"
+		"titlebarbgcolor_override"				"28 28 28 255"
+
 		"clientinsetx_override"			"0"
 		"sheetinset_bottom"				"40"
 	}
-	
+
 	"BackgroundHeader"
 	{
 		"ControlName"	"ImagePanel"
@@ -45,7 +45,7 @@
 		"enabled"		"1"
 		"image"			"replay/replaybrowser_header"
 		"tileImage"		"1"
-	}				
+	}
 	"BackgroundFooter"
 	{
 		"ControlName"	"ImagePanel"
@@ -59,7 +59,7 @@
 		"enabled"		"1"
 		"image"			"replay/replaybrowser_bottomgradient"
 		"tileImage"		"1"
-	}				
+	}
 	"FooterLine"
 	{
 		"ControlName"	"ImagePanel"
@@ -73,8 +73,8 @@
 		"enabled"		"1"
 		"image"			"replay/replaybrowser_solidline"
 		"scaleImage"	"1"
-	}				
-	
+	}
+
 	"Sheet"
 	{
 		"ControlName"	"EditablePanel"
@@ -84,7 +84,7 @@
 		"tabwidth"		"240"
 		"tabheight"		"34"
 		"transition_time" "0"
-		
+
 		"HeaderLine"
 		{
 			"ControlName"	"ImagePanel"
@@ -98,21 +98,21 @@
 			"enabled"		"1"
 			"image"			"replay/replaybrowser_solidline"
 			"scaleImage"	"1"
-		}				
-		
+		}
+
 		"tabskv"
 		{
 			"textinsetx"		"40"
 			"font"				"ReplayBrowserTab"
-			"selectedcolor"		"200 187 161 255"
-			"unselectedcolor"	"130 120 104 255"	
-			"defaultBgColor_override"	"41 37 38 255"
+			"selectedcolor"		"245 245 245 255"
+			"unselectedcolor"	"180 180 180 255"
+			"defaultBgColor_override"	"28 28 28 255"
 			"paintbackground"	"0"
 			"activeborder_override"	"ReplayOutlinedGreyBox"
 			"normalborder_override" "ReplayOutlinedDullGreyBox"
 		}
 	}
-	
+
 	"BackButton"
 	{
 		"ControlName"	"CExButton"
@@ -140,5 +140,5 @@
 		"border_armed"		"ReplayGrayFillGrayBorder"
 		"armedBgColor_override"	"ReplayBrowser.Button.ArmedBgColor"
 		"depressedBgColor_override"	"ReplayBrowser.Button.DepressedBgColor"
-	}		
+	}
 }

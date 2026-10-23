@@ -4,6 +4,7 @@
 //
 //==================================================================================================
 
+//  STATIC: "LIGHTMAPPED"              "0..1"
 //  DYNAMIC: "COMPRESSED_VERTS"         "0..1"
 //  DYNAMIC: "DOWATERFOG"               "0..1"
 //  DYNAMIC: "SKINNING"                 "0..1"
@@ -27,6 +28,7 @@ struct VS_INPUT
     float4 vBoneIndices             : BLENDINDICES;
     float4 vNormal                  : NORMAL;
     float4 vTangent                 : TANGENT;
+    float3 vTangentT                : BINORMAL;
     float2 vTexCoord0               : TEXCOORD0;
     float4 vLightmapTexCoord        : TEXCOORD1;
     float4 vLightmapTexCoordOffset  : TEXCOORD2;
@@ -41,7 +43,7 @@ struct VS_OUTPUT
     float2 baseTexCoord             : TEXCOORD0;
     float4 lightAtten               : TEXCOORD1;
     float3 worldNormal              : TEXCOORD2;
-    float3 worldTangent             : TEXCOORD3;
+    float4 worldTangent             : TEXCOORD3;
     float3 worldPos                 : TEXCOORD4;
     float3 projPos                  : TEXCOORD5;
     float4 lightmapTexCoord1And2    : TEXCOORD6;
@@ -68,11 +70,18 @@ VS_OUTPUT main( const VS_INPUT v )
 
     o.lightmapTexCoord3.xy = lightmapTexCoord3;
 
-    // Get normal and tangent and stuff
+    float3 worldNormal, worldPos, worldTangentS, worldTangentT;
+#if LIGHTMAPPED
+    float3 vNormal;
+    DecompressVertex_Normal(v.vNormal, vNormal);
+    SkinPositionAndNormal(false, v.vPos, vNormal, v.vBoneWeights, v.vBoneIndices, worldPos, worldNormal);
+    worldTangentS = mul(v.vTangent.xyz, (float3x3)cModel[0]);
+    worldTangentT = mul(v.vTangentT, (float3x3)cModel[0]);
+#else
     float3 vNormal; float4 vTangent;
     DecompressVertex_NormalTangent(v.vNormal, v.vTangent, vNormal, vTangent);
-    float3 worldNormal, worldPos, worldTangentS, worldTangentT;
     SkinPositionNormalAndTangentSpace(g_bSkinning, v.vPos, vNormal, vTangent, v.vBoneWeights, v.vBoneIndices, worldPos, worldNormal, worldTangentS, worldTangentT);
+#endif
 
     // Transform into projection space
     float4 vProjPos = mul(float4(worldPos, 1), cViewProj);
@@ -85,8 +94,8 @@ VS_OUTPUT main( const VS_INPUT v )
     // Needed for water fog alpha and diffuse lighting 
     o.worldPos = worldPos;
     o.worldNormal = normalize(worldNormal);
-    //o.worldTangent = float4(worldTangentS.xyz, vTangent.w);
-    o.worldTangent = normalize(worldTangentS);
+    o.worldTangent.xyz = normalize(worldTangentS);
+    o.worldTangent.w = dot(cross(worldNormal, worldTangentS), worldTangentT) < 0 ? -1.0 : 1.0;
 
     // Scalar attenuations for four lights
 
@@ -109,8 +118,8 @@ VS_OUTPUT main( const VS_INPUT v )
     #endif
 
     // Base texture coordinate transform
-    o.baseTexCoord.x = dot(v.vTexCoord0, cBaseTexCoordTransform[0].xy);
-    o.baseTexCoord.y = dot(v.vTexCoord0, cBaseTexCoordTransform[1].xy);
+    o.baseTexCoord.x = dot(v.vTexCoord0, cBaseTexCoordTransform[0].xy) + cBaseTexCoordTransform[0].w;
+    o.baseTexCoord.y = dot(v.vTexCoord0, cBaseTexCoordTransform[1].xy) + cBaseTexCoordTransform[1].w;
 
     return o;
 }

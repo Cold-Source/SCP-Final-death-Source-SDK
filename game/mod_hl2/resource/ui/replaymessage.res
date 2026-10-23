@@ -12,7 +12,7 @@
 		"visible"		"1"
 		"enabled"		"1"
 	}
-	
+
 	"ReplayLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -27,7 +27,7 @@
 		"enabled"		"1"
 		"labelText"		"#Replay_ReplayMsgTitle"
 		"textAlignment"	"north-west"
-		"fgcolor"		"235 226 202 255"
+		"fgcolor"		"245 245 245 255"
 	}
 	"MessageLabel"
 	{
@@ -40,7 +40,7 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"textAlignment"	"north"
-		"fgcolor"		"235 226 202 255"
+		"fgcolor"		"245 245 245 255"
 		"centerwrap"	"0"
 		"wrap"			"1"
 	}
@@ -56,6 +56,6 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"image"			"replay/replayicon"
-		"scaleImage"	"1"	
-	}		
+		"scaleImage"	"1"
+	}
 }

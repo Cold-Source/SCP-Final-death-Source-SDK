@@ -78,34 +78,36 @@
 		{
 			"settings"
 			{
-				"name" "Noto Sans"
+				"name" "Trebuchet MS"
 				"tall"			"20"
-				"weight"		"400"
-				"antialias"		"1"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		
 		"Button.Text.Font"
-		{
-			"settings"
-			{
-				"name"			"Noto Sans"
-				"tall"			"16"
-				"weight"		"400"
-				"antialias"		"1"
-			}
-		}
+        {
+            "1"
+            {
+                "name" "Trebuchet MS"
+                "tall" "16"
+                "weight" "700"
+                "antialias" "1"
+                "range" "0x0020 0x04FF"
+            }
+        }
 
 		"Button.Text.Font.Over"
-		{
-			"settings"
-			{
-				"name"			"Noto Sans"
-				"tall"			"16"
-				"weight"		"600"
-				"antialias"		"1"
-			}
-		}
+        {
+            "1"
+            {
+                "name" "Trebuchet MS"
+                "tall" "16"
+                "weight" "700"
+                "antialias" "1"
+                "range" "0x0020 0x04FF"
+            }
+        }
 	}
 
 	"CustomFontFiles"

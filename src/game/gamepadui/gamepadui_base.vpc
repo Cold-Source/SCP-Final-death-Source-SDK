@@ -35,7 +35,7 @@ $Configuration
 
     $Compiler
     {
-        $AdditionalIncludeDirectories "$BASE;.\;$SRCDIR\vgui2\include;$SRCDIR\vgui2\controls;$SRCDIR\game\gamepadui;..\..\public"
+        $AdditionalIncludeDirectories "$BASE;.\;$SRCDIR\vgui2\include;$SRCDIR\vgui2\controls;$SRCDIR\game\gamepadui;..\..\public;$SRCDIR\lua-5.1.5\src;$SRCDIR\lua-5.1.5\etc"
         $PreprocessorDefinitions      "$BASE;GAMEPADUI_DLL;VERSION_SAFE_STEAM_API_INTERFACES;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead"
     }
 
@@ -68,11 +68,17 @@ $Project
         $File "gamepadui_image.h"
         $File "gamepadui_interface.h"
         $File "gamepadui_mainmenu.h"
+        $File "gamepadui_adminmenu.h"
+        $File "$SRCDIR\game\shared\scp_ui_font.h"
+          $File "$SRCDIR\game\shared\scp_admin_catalog.h"
+        $File "$SRCDIR\game\shared\scp_playermodels.h"
         $File "gamepadui_news.h"
         $File "gamepadui_news_http.h"
         $File "gamepadui_news_format.h"
         $File "gamepadui_loading.h"
         $File "gamepadui_mode.h"
+        $File "$SRCDIR\game\shared\scp_gamemode_config.h"
+        $File "$SRCDIR\game\shared\scp_gamemode_content.h"
         $File "gamepadui_language.h"
         $File "gamepadui_loading.h"
         $File "gamepadui_mode.h"
@@ -89,6 +95,10 @@ $Project
         {
             $File "$SRCDIR\public\vgui_controls\vgui_controls.cpp"
             $File "$SRCDIR\common\language.cpp"
+            $File "$SRCDIR\public\studio.cpp"
+            $File "$SRCDIR\game\shared\scp_gamemode_config.cpp"
+            $File "$SRCDIR\public\bone_setup.cpp"
+            $File "$SRCDIR\public\collisionutils.cpp"
         }
 
         $File "gamepadui_achievements.cpp"
@@ -98,6 +108,7 @@ $Project
         $File "gamepadui_genericconfirmation.cpp"
         $File "gamepadui_interface.cpp"
         $File "gamepadui_mainmenu.cpp"
+        $File "gamepadui_adminmenu.cpp"
         $File "gamepadui_news.cpp"
         $File "gamepadui_news_http.cpp"
         $File "gamepadui_loading.cpp"
@@ -108,6 +119,8 @@ $Project
         $File "gamepadui_language.cpp"
         $File "gamepadui_newgame.cpp"
         $File "gamepadui_savegame.cpp"
+        $File "gamepadui_savegame.h"
+        $File "$SRCDIR\game\shared\scp_save_format.h"
         $File "gamepadui_options.cpp"
         $File "gamepadui_util.cpp"
     }
@@ -115,9 +128,11 @@ $Project
     $Folder "Link Libraries"
     {
         $Lib  bitmap
+        $Lib  dmxloader
         $Lib  choreoobjects
         $Lib  mathlib
         $Lib  matsys_controls
+        $ImpLib lua51
         $Lib  tier1
         $Lib  tier2
         $Lib  tier3

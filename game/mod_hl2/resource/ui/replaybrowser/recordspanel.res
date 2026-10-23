@@ -19,9 +19,9 @@
 		"autoResize"		"0"
 		"pinCorner"			"0"
 		"visible"			"0"
-		"fgcolor_override"	"117 108 93 255"
+		"fgcolor_override"	"180 180 180 255"
 	}
-	
+
 	"RecordInfoLabel"
 	{
 		"ControlName"		"CExLabel"
@@ -35,9 +35,9 @@
 		"autoResize"		"0"
 		"pinCorner"			"0"
 		"visible"			"0"
-		"fgcolor_override"	"117 108 93 255"
+		"fgcolor_override"	"180 180 180 255"
 	}
-	
+
 	"ScoreBackgroundPanel"
 	{
 		"ControlName"		"EditablePanel"
@@ -45,9 +45,9 @@
 		"zpos"				"0"
 		"visible"			"0"
 		"Border"			"ButtonBorder"
-		"bgcolor_override"	"32 31 29 255"
+		"bgcolor_override"	"28 28 28 255"
 	}
-	
+
 	"ScoreLabel"
 	{
 		"ControlName"		"CExLabel"
@@ -61,6 +61,6 @@
 		"autoResize"		"0"
 		"pinCorner"			"0"
 		"visible"			"0"
-		"fgcolor_override"	"117 108 93 255"
+		"fgcolor_override"	"180 180 180 255"
 	}
 }

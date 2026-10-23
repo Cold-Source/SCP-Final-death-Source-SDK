@@ -1,6 +1,6 @@
 "Resource/UI/VoteHud.res"
 
-{	
+{
 	// This file is likely out-of-date.  See TF's version for an example of a shipped UI.
 	"VotePassed"
 	{
@@ -15,7 +15,7 @@
 		"bgcolor_override"	"0 0 0 120"
 		"PaintBackgroundType"	"2" // rounded corners
 		"border"		"TFThinLineBorder"
-				
+
 		"PassedIcon"
 		{
 			"ControlName"	"ImagePanel"
@@ -29,7 +29,7 @@
 			"scaleImage"	"1"
 			"image"			"hud/vote_yes"
 		}
-		
+
 		"PassedTitle"
 		{
 			"ControlName"	"Label"
@@ -48,7 +48,7 @@
 			"wrap"			"1"
 			"fgcolor_override"	"255 255 255 255"
 		}
-		
+
 		"PassedResult"
 		{
 			"ControlName"	"Label"
@@ -67,9 +67,9 @@
 			"wrap"			"1"
 			"fgcolor_override"	"255 255 255 255"
 			"noshortcutsyntax" "1"
-		}		
+		}
 	}
-	
+
 	"VoteActive"
 	{
 		"ControlName"	"EditablePanel"
@@ -83,7 +83,7 @@
 		"PaintBackgroundType"	"2" // rounded corners
 		"bgcolor_override"	"0 0 0 120"
 		"border"		"TFThinLineBorder"
-		
+
 		"Header"
 		{
 			"ControlName"	"Label"
@@ -102,7 +102,7 @@
 			"wrap"			"1"
 			"fgcolor_override"	"128 128 128 255"
 		}
-		
+
 		"Issue"
 		{
 			"ControlName"	"Label"
@@ -122,7 +122,7 @@
 			"wrap"			"1"
 			"noshortcutsyntax" "1"
 		}
-		
+
 		// divider
 		"Divider"
 		{
@@ -135,9 +135,9 @@
 			"fillcolor"		"128 128 128 255"
 			"zpos"			"0"
 		}
-		
+
 		// Temp UI
-		
+
 		"LabelOption1"
 		{
 			"ControlName"	"Label"
@@ -156,7 +156,7 @@
 			"font"			"ScoreboardVerySmall"
 			"fgcolor_override"	"255 255 255 255"
 		}
-		
+
 		"Option1Background_Selected"
 		{
 			"ControlName"	"ImagePanel"
@@ -167,10 +167,10 @@
 			"wide"			"180"
 			"tall"			"16"
 			"zpos"			"1"
-			"fillcolor"		"88 119 140 180"
+			"fillcolor"		"180 180 180 180"
 			"visible"		"1"
 		}
-		
+
 		"Option1CountLabel"
 		{
 			"ControlName"	"Label"
@@ -189,7 +189,7 @@
 			"font"			"ScoreboardSmall"
 			"fgcolor_override"	"255 255 255 255"
 		}
-		
+
 		"LabelOption2"
 		{
 			"ControlName"	"Label"
@@ -208,7 +208,7 @@
 			"font"			"ScoreboardVerySmall"
 			"fgcolor_override"	"255 255 255 255"
 		}
-		
+
 		"Option2Background_Selected"
 		{
 			"ControlName"	"ImagePanel"
@@ -219,10 +219,10 @@
 			"wide"			"180"
 			"tall"			"16"
 			"zpos"			"1"
-			"fillcolor"		"88 119 140 180"
+			"fillcolor"		"180 180 180 180"
 			"visible"		"1"
 		}
-		
+
 		"Option2CountLabel"
 		{
 			"ControlName"	"Label"
@@ -241,7 +241,7 @@
 			"font"			"ScoreboardSmall"
 			"fgcolor_override"	"255 255 255 255"
 		}
-		
+
 		"LabelOption3"
 		{
 			"ControlName"	"Label"
@@ -260,7 +260,7 @@
 			"font"			"ScoreboardVerySmall"
 			"fgcolor_override"	"255 255 255 255"
 		}
-		
+
 		"Option3Background_Selected"
 		{
 			"ControlName"	"ImagePanel"
@@ -271,10 +271,10 @@
 			"wide"			"180"
 			"tall"			"16"
 			"zpos"			"1"
-			"fillcolor"		"88 119 140 180"
+			"fillcolor"		"180 180 180 180"
 			"visible"		"1"
 		}
-		
+
 		"LabelOption4"
 		{
 			"ControlName"	"Label"
@@ -293,7 +293,7 @@
 			"font"			"ScoreboardVerySmall"
 			"fgcolor_override"	"255 255 255 255"
 		}
-		
+
 		"Option4Background_Selected"
 		{
 			"ControlName"	"ImagePanel"
@@ -304,10 +304,10 @@
 			"wide"			"180"
 			"tall"			"16"
 			"zpos"			"1"
-			"fillcolor"		"88 119 140 180"
+			"fillcolor"		"180 180 180 180"
 			"visible"		"1"
 		}
-		
+
 		"LabelOption5"
 		{
 			"ControlName"	"Label"
@@ -326,7 +326,7 @@
 			"font"			"ScoreboardVerySmall"
 			"fgcolor_override"	"255 255 255 255"
 		}
-		
+
 		"Option5Background_Selected"
 		{
 			"ControlName"	"ImagePanel"
@@ -337,10 +337,10 @@
 			"wide"			"180"
 			"tall"			"16"
 			"zpos"			"1"
-			"fillcolor"		"88 119 140 180"
+			"fillcolor"		"180 180 180 180"
 			"visible"		"1"
 		}
-		
+
 		// divider
 		"Divider2"
 		{
@@ -353,7 +353,7 @@
 			"fillcolor"		"128 128 128 255"
 			"zpos"			"0"
 		}
-		
+
 		"VoteCountLabel"
 		{
 			"ControlName"	"Label"
@@ -371,7 +371,7 @@
 			"font"			"ScoreboardVerySmall"
 			"fgcolor_override"	"128 128 128 255"
 		}
-		
+
 		// vote bar
 		"VoteBar"
 		{
@@ -383,15 +383,15 @@
 			"tall"			"18"
 			"zpos"			"2"
 			"visible"		"1"
-			"enabled"		"1"			
+			"enabled"		"1"
 			"box_size"		"16"
 			"spacer"		"6"
 			"box_inset"		"1"
 			"yes_texture"	"vgui/hud/vote_yes"
-			"no_texture"	"vgui/hud/vote_no"			
-		}			
+			"no_texture"	"vgui/hud/vote_no"
+		}
 	}
-	
+
 	// This is sent to the vote caller when they're not able to start the vote
 	"CallVoteFailed"
 	{
@@ -406,7 +406,7 @@
 		"bgcolor_override"	"0 0 0 120"
 		"PaintBackgroundType"	"2" // rounded corners
 		"border"		"TFThinLineBorder"
-				
+
 		"FailedIcon"
 		{
 			"ControlName"	"ImagePanel"
@@ -420,7 +420,7 @@
 			"scaleImage"	"1"
 			"image"			"hud/vote_no"
 		}
-		
+
 		"FailedTitle"
 		{
 			"ControlName"	"Label"
@@ -437,9 +437,9 @@
 			"brighttext"	"0"
 			"font"			"ScoreboardSmall"
 			"wrap"			"1"
-			"fgcolor_override"	"200 30 30 255"
+			"fgcolor_override"	"245 245 245 255"
 		}
-		
+
 		"FailedReason"
 		{
 			"ControlName"	"Label"
@@ -457,9 +457,9 @@
 			"font"			"ScoreboardVerySmall"
 			"wrap"			"1"
 			"fgcolor_override"	"255 255 255 255"
-		}		
+		}
 	}
-	
+
 	// This is shown to everyone when a vote fails due to lack of votes
 	"VoteFailed"
 	{
@@ -474,7 +474,7 @@
 		"bgcolor_override"	"0 0 0 120"
 		"PaintBackgroundType"	"2" // rounded corners
 		"border"		"TFThinLineBorder"
-				
+
 		"FailedIcon"
 		{
 			"ControlName"	"ImagePanel"
@@ -488,7 +488,7 @@
 			"scaleImage"	"1"
 			"image"			"hud/vote_no"
 		}
-		
+
 		"FailedTitle"
 		{
 			"ControlName"	"Label"
@@ -505,9 +505,9 @@
 			"brighttext"	"0"
 			"font"			"ScoreboardSmall"
 			"wrap"			"1"
-			"fgcolor_override"	"200 30 30 255"
+			"fgcolor_override"	"245 245 245 255"
 		}
-		
+
 		"FailedReason"
 		{
 			"ControlName"	"Label"
@@ -525,9 +525,9 @@
 			"font"			"ScoreboardVerySmall"
 			"wrap"			"1"
 			"fgcolor_override"	"255 255 255 255"
-		}		
+		}
 	}
-	
+
 	"VoteSetupDialog"
 	{
 		"ControlName"		"CVoteSetupDialog"
@@ -547,7 +547,7 @@
 		"border"				"TFThinLineBorder"
 		"issue_width"		"100"
 		"parameter_width"	"150"
-									
+
 		"VoteSetupList"
 		{
 			"ControlName"	"SectionedListPanel"
@@ -565,7 +565,7 @@
 			"linespacing"	"22"
 			"font"			"ScoreboardVerySmall"
 		}
-		
+
 		"VoteParameterList"
 		{
 			"ControlName"		"SectionedListPanel"
@@ -583,7 +583,7 @@
 			"linespacing"	"22"
 			"font"			"ScoreboardVerySmall"
 		}
-		
+
 		"CallVoteButton"
 		{
 			"ControlName"		"Button"

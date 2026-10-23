@@ -31,6 +31,8 @@ ConVar cl_npc_speedmod_outtime( "cl_npc_speedmod_outtime", "1.5", FCVAR_CLIENTDL
 IMPLEMENT_CLIENTCLASS_DT(C_BaseHLPlayer, DT_HL2_Player, CHL2_Player)
 	RecvPropDataTable( RECVINFO_DT(m_HL2Local),0, &REFERENCE_RECV_TABLE(DT_HL2Local) ),
 	RecvPropBool( RECVINFO( m_fIsSprinting ) ),
+	RecvPropBool( RECVINFO( m_bSprintAllowed ) ),
+	RecvPropFloat( RECVINFO( m_flFlashlightPowerDrainScale ) ),
 END_RECV_TABLE()
 
 BEGIN_PREDICTION_DATA( C_BaseHLPlayer )
@@ -76,6 +78,9 @@ static ConCommand dropprimary("dropprimary", CC_DropPrimary, "dropprimary: Drops
 //-----------------------------------------------------------------------------
 C_BaseHLPlayer::C_BaseHLPlayer()
 {
+	m_fIsSprinting = false;
+	m_bSprintAllowed = true;
+	m_flFlashlightPowerDrainScale = 1.0f;
 	m_flZoomStart		= 0.0f;
 	m_flZoomEnd			= 0.0f;
 	m_flZoomRate		= 0.0f;
@@ -166,21 +171,20 @@ void C_BaseHLPlayer::Zoom( float FOVOffset, float time )
 // Input  : flags - 
 // Output : int
 //-----------------------------------------------------------------------------
+const QAngle& C_BaseHLPlayer::GetRenderAngles()
+{
+	// Bones may be evaluated for a carried weapon before DrawModel runs.
+	// Use one upright transform for the body, attachments and shadow passes;
+	// eye angles and the first-person camera are left untouched.
+	if ( IsRagdoll() || IsInAVehicle() )
+		return BaseClass::GetRenderAngles();
+	m_angBodyRender.Init( 0.0f, BaseClass::GetRenderAngles()[YAW], 0.0f );
+	return m_angBodyRender;
+}
+
 int C_BaseHLPlayer::DrawModel( int flags )
 {
-	// Not pitch for player
-	QAngle saveAngles = GetLocalAngles();
-
-	QAngle useAngles = saveAngles;
-	useAngles[ PITCH ] = 0.0f;
-
-	SetLocalAngles( useAngles );
-
-	int iret = BaseClass::DrawModel( flags );
-
-	SetLocalAngles( saveAngles );
-
-	return iret;
+	return BaseClass::DrawModel( flags );
 }
 
 //-----------------------------------------------------------------------------

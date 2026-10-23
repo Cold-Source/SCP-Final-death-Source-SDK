@@ -19,48 +19,48 @@ Scheme
 		"White"				"255 255 255 255"
 		"OffWhite"			"221 221 221 255"
 		"DullWhite"			"211 211 211 255"
-		
+
 		"TransparentBlack"	"0 0 0 128"
 		"Black"				"0 0 0 255"
 
 		"Blank"				"0 0 0 0"
 
 		// base colors
-		"BaseText"			"216 222 211 255"	// used in text windows, lists
+		"BaseText"			"245 245 245 255"	// used in text windows, lists
 		"BrightBaseText"	"255 255 255 255"	// brightest text
 		"SelectedText"		"255 255 255 255"	// selected text
-		"DimBaseText"		"160 170 149 255"	// dim base text
-		"LabelDimText"		"160 170 149 255"	// used for info text
-		"ControlText"		"216 222 211 255"	// used in all text controls
-		"BrightControlText"	"196 181 80 255"	// use for selected controls
+		"DimBaseText"		"245 245 245 255"	// dim base text
+		"LabelDimText"		"245 245 245 255"	// used for info text
+		"ControlText"		"245 245 245 255"	// used in all text controls
+		"BrightControlText"	"245 245 245 255"	// use for selected controls
 		"DisabledText1"		"117 128 111 255"	// disabled text
 		"DisabledText2"		"40 46 34 255"		// overlay color for disabled text (to give that inset look)
-		"DimListText"		"117 134 102 255"	// offline friends, unsubscribed games, etc.
+		"DimListText"		"180 180 180 255"	// offline friends, unsubscribed games, etc.
 
 		// background colors
-		"ControlBG"			"76 88 68 255"		// background color of controls
-		"ControlDarkBG"		"90 106 80 255"		// darker background color; used for background of scrollbars
-		"WindowBG"			"62 70 55 255"		// background color of text edit panes (chat, text entries, etc.)
-		"SelectionBG"		"149 136 49 255"	// background color of any selected text or menu item
-		"SelectionBG2"		"40 46 34 255"		// selection background in window w/o focus
-		"ListBG"			"62 70 55 255"		// background of server browser, buddy list, etc.
+		"ControlBG"			"28 28 28 255"		// background color of controls
+		"ControlDarkBG"		"28 28 28 255"		// darker background color; used for background of scrollbars
+		"WindowBG"			"28 28 28 255"		// background color of text edit panes (chat, text entries, etc.)
+		"SelectionBG"		"28 28 28 255"	// background color of any selected text or menu item
+		"SelectionBG2"		"28 28 28 255"		// selection background in window w/o focus
+		"ListBG"			"28 28 28 255"		// background of server browser, buddy list, etc.
 
 		// titlebar colors
 		"TitleText"			"255 255 255 255"
-		"TitleDimText"		"136 145 128 255"
-		"TitleBG"			"76 88 68 0"
-		"TitleDimBG"		"76 88 68 0"
-		
+		"TitleDimText"		"180 180 180 255"
+		"TitleBG"			"28 28 28 0"
+		"TitleDimBG"		"28 28 28 0"
+
 		// slider tick colors
-		"SliderTickColor"	"127 140 127 255"
+		"SliderTickColor"	"180 180 180 255"
 		"SliderTrackColor"	"31 31 31 255"
 
 		// border colors
-		"BorderBright"		"136 145 128 255"	// the lit side of a control
-		"BorderDark"		"40 46 34 255"		// the dark/unlit side of a control
+		"BorderBright"		"180 180 180 255"	// the lit side of a control
+		"BorderDark"		"180 180 180 255"		// the dark/unlit side of a control
 		"BorderSelection"	"0 0 0 255"			// the additional border color for displaying the default/selected button
 
-		"TestColor"		"255 0 255 255"
+		"TestColor"		"245 245 245 255"
 	}
 
 	///////////////////// BASE SETTINGS ////////////////////////
@@ -79,9 +79,9 @@ Scheme
 //		Button.ArmedTextColor			"BrightBaseText"
 //		Button.ArmedBgColor				"SelectionBG"
 //		Button.DepressedTextColor		"DimBaseText"
-//		Button.DepressedBgColor			"ControlDarkBG"	
+//		Button.DepressedBgColor			"ControlDarkBG"
 		Button.FocusBorderColor			"TransparentBlack"
-		
+
 		CheckButton.TextColor			"BaseText"
 		CheckButton.SelectedTextColor	"BrightControlText"
 		CheckButton.BgColor				"ListBG"
@@ -125,13 +125,13 @@ Scheme
 		Label.TextBrightColor			"BrightBaseText"
 		Label.SelectedTextColor			"BrightControlText"
 		Label.BgColor					"ControlBG"
-		Label.DisabledFgColor1			"DisabledText1"	
-		Label.DisabledFgColor2			"DisabledText2"	
+		Label.DisabledFgColor1			"DisabledText1"
+		Label.DisabledFgColor2			"DisabledText2"
 		Label.TextInsetX				4
 		Label.TextInsetY				4
 
-		StatusLabel.ValidColor			"0 192 0 255"
-		StatusLabel.InvalidColor		"192 0 0 255"
+		StatusLabel.ValidColor			"245 245 245 255"
+		StatusLabel.InvalidColor		"245 245 245 255"
 
 		ListPanel.TextColor					"BaseText"
 		ListPanel.BgColor					"ListBG"
@@ -190,7 +190,7 @@ Scheme
 		SectionedListPanel.OutOfFocusSelectedTextColor	"SelectedText"
 		SectionedListPanel.OutOfFocusSelectedBgColor	"SelectionBG2"
 
-		Slider.NobColor				"ControlDarkBG"		
+		Slider.NobColor				"ControlDarkBG"
 		Slider.TextColor			"ControlBG"
 		Slider.TrackColor			"ControlDarkBG"
 //		Slider.DisabledTextColor1	"117 117 117 255"
@@ -230,127 +230,137 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"500"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		// fonts are used in order that they are listed
 		"DebugFixedSmall"
 		{
 			"1"
 			{
-				"name"		"Courier New"
+				"name"		"Trebuchet MS"
 				"tall"		"7"
-				"weight"	"500"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultFixedOutline"
 		{
 			"1"
 			{
-				"name"		"Lucida Console"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"0"
+				"weight"	"700"
 				"outline"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"Default"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultBold"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"1000"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultUnderline"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
+				"weight"	"700"
 				"underline" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultSmall"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"13"
-				"weight"	"0"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultSmallDropShadow"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"13"
-				"weight"	"0"
+				"weight"	"700"
 				"dropshadow" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultVerySmall"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"0"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"DefaultLarge"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"0"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"UiBold"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"12"
-				"weight"	"1000"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"MenuLarge"
 		{
 			"1"
 			{
-				"name"		"Verdana"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"600"
+				"weight"	"700"
 				"antialias" "1"
-			}
+			"range" "0x0020 0x04FF" }
 		}
 
 		"ConsoleText"
 		{
 			"1"
 			{
-				"name"		"Lucida Console"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"500"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		// this is the symbol font
@@ -371,8 +381,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 
@@ -382,8 +393,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"20"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"Trebuchet18"
@@ -392,8 +404,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		// HUD numbers
@@ -404,8 +417,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"40"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber1"
 		{
@@ -413,8 +427,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"41"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber2"
 		{
@@ -422,8 +437,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"42"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber3"
 		{
@@ -431,8 +447,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"43"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber4"
 		{
@@ -440,8 +457,9 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"44"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"HUDNumber5"
 		{
@@ -449,79 +467,86 @@ Scheme
 			{
 				"name"		"Trebuchet MS"
 				"tall"		"45"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultFixed"
 		{
 			"1"
 			{
-				"name"		"Lucida Console"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"0"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 //			"1"
 //			{
-//				"name"		"FixedSys"
+//				"name"		"Trebuchet MS"
 //				"tall"		"20"
-//				"weight"	"0"
-//			}
+//				"weight"	"700"
+//			"range" "0x0020 0x04FF" }
 		}
 
 		"DefaultFixedDropShadow"
 		{
 			"1"
 			{
-				"name"		"Lucida Console"
+				"name"		"Trebuchet MS"
 				"tall"		"10"
-				"weight"	"0"
+				"weight"	"700"
 				"dropshadow" "1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 //			"1"
 //			{
-//				"name"		"FixedSys"
+//				"name"		"Trebuchet MS"
 //				"tall"		"20"
-//				"weight"	"0"
-//			}
+//				"weight"	"700"
+//			"range" "0x0020 0x04FF" }
 		}
 
 		"CloseCaption_Normal"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Italic"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"500"
+				"weight"	"700"
 				"italic"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_Bold"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"900"
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"CloseCaption_BoldItalic"
 		{
 			"1"
 			{
-				"name"		"Tahoma"
+				"name"		"Trebuchet MS"
 				"tall"		"16"
-				"weight"	"900"
+				"weight"	"700"
 				"italic"	"1"
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		TitleFont
@@ -731,7 +756,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		ScrollBarButtonBorder
 		{
 			"inset" "2 2 0 0"
@@ -771,7 +796,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		ScrollBarButtonDepressedBorder
 		{
 			"inset" "2 2 0 0"
@@ -990,6 +1015,6 @@ Scheme
 	CustomFontFiles
 	{
 		"1"		"resource/HALFLIFE2.ttf"
-	
+
 	}
 }

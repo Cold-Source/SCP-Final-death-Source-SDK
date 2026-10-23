@@ -5,6 +5,7 @@
 #endif
 
 #include "igamepadui.h"
+#include "../shared/scp_ui_font.h"
 
 #include "cdll_int.h"
 #include "engine/IEngineSound.h"

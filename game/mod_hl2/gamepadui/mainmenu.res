@@ -13,7 +13,7 @@
 	
 	"NewGame"
 	{
-		"text"			"#GameUI_GameMenu_NewGame"
+		"text"			"#SCPSession_Menu"
 		"command"		"cmd gamepadui_opennewgamedialog"
 		"priority"		"6"
 		"family"		"all"

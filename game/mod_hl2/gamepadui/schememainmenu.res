@@ -79,48 +79,59 @@
 	
 	"Fonts"
 	{
+        "Logo.Mode.Font"
+        {
+            "1"
+            {
+                "name" "Trebuchet MS"
+                "tall" "13"
+                "weight" "700"
+                "antialias" "1"
+                "range" "0x0020 0x04FF"
+            }
+        }
         "News.Body.Font"
         {
-            "settings"
+            "1"
             {
-                "name" "Noto Sans"
+                "name" "Trebuchet MS"
                 "tall" "12"
-                "weight" "500"
+                "weight" "700"
                 "antialias" "1"
-                "range" "0x0000 0xFFFF"
+                "range" "0x0020 0x04FF"
             }
         }
         "News.Entry.Font"
         {
-            "settings"
+            "1"
             {
-                "name" "Noto Sans"
+                "name" "Trebuchet MS"
                 "tall" "14"
                 "weight" "700"
                 "antialias" "1"
-                "range" "0x0000 0xFFFF"
+                "range" "0x0020 0x04FF"
             }
         }
         "News.Heading.Font"
         {
-            "settings"
+            "1"
             {
-                "name" "Noto Sans"
+                "name" "Trebuchet MS"
                 "tall" "16"
                 "weight" "700"
                 "antialias" "1"
-                "range" "0x0000 0xFFFF"
+                "range" "0x0020 0x04FF"
             }
         }
         "News.Date.Font"
         {
-            "settings"
+            "1"
             {
-                "name" "Noto Sans"
+                "name" "Trebuchet MS"
                 "tall" "10"
-                "weight" "400"
+                "weight" "700"
                 "antialias" "1"
-                "range" "0x0000 0xFFFF"
+                "range" "0x0020 0x04FF"
             }
         }
 		"Logo.Font"
@@ -139,24 +150,22 @@
 		{
 			"settings"
 			{
-				"name"			"Noto Sans"
+				"name"			"Trebuchet MS"
 				"tall"			"25"
-				"weight"		"400"
-				"antialias"		"1"
-                "range" "0x0000 0xFFFF"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"Button.Text.Font.Over"
 		{
 			"settings"
 			{
-				"name"			"Noto Sans"
+				"name"			"Trebuchet MS"
 				"tall"			"25"
-				"weight"		"600"
-				"antialias"		"1"
-                "range" "0x0000 0xFFFF"
-			}
+				"weight"		"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 	}
 

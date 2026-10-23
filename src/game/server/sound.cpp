@@ -1435,6 +1435,10 @@ void UTIL_RestartAmbientSounds( void )
 
 void UTIL_EmitSoundSuit(edict_t *entity, const char *sample)
 {
+#ifdef HL2_DLL
+	// SCP does not use the HEV voice, including pickup and death announcements.
+	return;
+#endif
 	float fvol;
 	int pitch = PITCH_NORM;
 
@@ -1468,6 +1472,9 @@ void UTIL_EmitSoundSuit(edict_t *entity, const char *sample)
 
 int UTIL_EmitGroupIDSuit(edict_t *entity, int isentenceg)
 {
+#ifdef HL2_DLL
+	return -1;
+#endif
 	float fvol;
 	int pitch = PITCH_NORM;
 	int sentenceIndex = -1;
@@ -1492,6 +1499,9 @@ int UTIL_EmitGroupIDSuit(edict_t *entity, int isentenceg)
 
 int UTIL_EmitGroupnameSuit(edict_t *entity, const char *groupname)
 {
+#ifdef HL2_DLL
+	return -1;
+#endif
 	float fvol;
 	int pitch = PITCH_NORM;
 	int sentenceIndex = -1;

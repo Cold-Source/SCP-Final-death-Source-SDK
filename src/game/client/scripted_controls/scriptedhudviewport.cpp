@@ -49,6 +49,7 @@ void CScriptedHudViewport::SetParent(vgui::VPANEL parent)
 
 void CScriptedHudViewport::Paint()
 {
+    if(!g_bLuaInitialized || !L) return;
 	BEGIN_LUA_CALL_HOOK( "HudViewportPaint" );
 	END_LUA_CALL_HOOK( 0, 0 );
 }

@@ -17,7 +17,7 @@
 		"settitlebarvisible"	"0"
 		"PaintBackgroundType"	"0"
 	}
-	
+
 	"TitleLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -34,9 +34,9 @@
 		"pinCorner"		"0"
 		"visible"		"1"
 		"enabled"		"1"
-		"fgcolor_override" "200 80 60 255"
+		"fgcolor_override" "245 245 245 255"
 	}
-	
+
 	"MovieTitleLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -74,8 +74,8 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"tabPosition"	"1"
-		"fgcolor_override"		"202 190 164 255"
-		"bgcolor_override"		"60 54 46 255"
+		"fgcolor_override"		"245 245 245 255"
+		"bgcolor_override"		"28 28 28 255"
 		"Font"			"HudFontSmallest"
 	}
 
@@ -116,8 +116,8 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"tabPosition"	"2"
-		"fgcolor_override"		"202 190 164 255"
-		"bgcolor_override"		"60 54 46 255"
+		"fgcolor_override"		"245 245 245 255"
+		"bgcolor_override"		"28 28 28 255"
 		"Font"			"HudFontSmallest"
 	}
 
@@ -141,9 +141,9 @@
 		"brighttext"	"0"
 		"wrap"			"0"
 		"font"			"HudFontSmallest"
-		"selected_fgcolor_override" "255 0 0 255"
+		"selected_fgcolor_override" "245 245 245 255"
 	}
-	
+
 	"DisclaimerLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -212,8 +212,8 @@
 		"Command"		"confirm"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-	}			
-	
+	}
+
 	"CancelButton"
 	{
 		"ControlName"	"CExButton"
@@ -237,5 +237,5 @@
 		"Command"		"cancel"
 		"sound_depressed"	"UI/buttonclick.wav"
 		"sound_released"	"UI/buttonclickrelease.wav"
-	}		
+	}
 }

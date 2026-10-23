@@ -1,33 +1,20 @@
 #include "gamepadui_interface.h"
+#include "gamepadui_basepanel.h"
+#include "gamepadui_mode.h"
+#include "gamepadui_language.h"
 #include "gamepadui_image.h"
-#include "gamepadui_util.h"
 #include "gamepadui_frame.h"
-#include "gamepadui_scroll.h"
 #include "gamepadui_genericconfirmation.h"
-
-#include "ienginevgui.h"
-#include "vgui/ILocalize.h"
+#include "../shared/scp_save_format.h"
 #include "vgui/ISurface.h"
-#include "vgui/IVGui.h"
-
-#include "vgui_controls/ComboBox.h"
-#include "vgui_controls/ImagePanel.h"
-#include "vgui_controls/ScrollBar.h"
-
-#include "KeyValues.h"
+#include "vgui_controls/Button.h"
+#include "vgui_controls/TextEntry.h"
 #include "filesystem.h"
-
+#include "KeyValues.h"
 #include "icommandline.h"
-
+#include "tier1/utlstring.h"
 #include "tier0/memdbgon.h"
 
-class GamepadUIChapterButton;
-struct chapter_t;
-
-#define GAMEPADUI_CHAPTER_SCHEME GAMEPADUI_RESOURCE_FOLDER "schemechapterbutton.res"
-
-// Modders should override this if necessary. (Madi)
-// TODO - merge these into scheme config?
 bool GameHasCommentary()
 {
     const char *pszGameDir = CommandLine()->ParmValue( "-game", CommandLine()->ParmValue( "-defaultgamedir", "hl2" ) );
@@ -43,441 +30,397 @@ bool GameHasBonusMaps()
     return !V_strcmp( pszGameDir, "portal" );
 }
 
-class GamepadUINewGamePanel : public GamepadUIFrame
+
+namespace
 {
-    DECLARE_CLASS_SIMPLE( GamepadUINewGamePanel, GamepadUIFrame );
+const char *const SESSION_SCHEME = GAMEPADUI_RESOURCE_FOLDER "schemesession.res";
+const int MAPS_PER_PAGE = 4;
 
+void SessionText( vgui::HFont font, const char *text, int x, int y, int width, Color color, bool center = false )
+{
+    GamepadUIString localized( text );
+    wchar_t line[512]; V_wcsncpy( line, localized.String(), sizeof( line ) );
+    int w = 0, h = 0, length = V_wcslen( line );
+    vgui::surface()->GetTextSize( font, line, w, h );
+    while ( w > width && length > 1 )
+    {
+        --length; line[length - 1] = 0x2026; line[length] = 0;
+        vgui::surface()->GetTextSize( font, line, w, h );
+    }
+    vgui::surface()->DrawSetTextFont( font );
+    vgui::surface()->DrawSetTextColor( color );
+    vgui::surface()->DrawSetTextPos( x + ( center ? Max( 0, ( width - w ) / 2 ) : 0 ), y );
+    vgui::surface()->DrawPrintText( line, length );
+}
+
+class SessionButton : public GamepadUIActionButton
+{
+    DECLARE_CLASS_SIMPLE( SessionButton, GamepadUIActionButton );
 public:
-    GamepadUINewGamePanel( vgui::Panel *pParent, const char* pPanelName );
-
-    void UpdateGradients();
-
-    void OnThink() OVERRIDE;
-    void ApplySchemeSettings( vgui::IScheme *pScheme ) OVERRIDE;
-    void OnCommand( char const* pCommand ) OVERRIDE;
-
-    MESSAGE_FUNC_HANDLE( OnGamepadUIButtonNavigatedTo, "OnGamepadUIButtonNavigatedTo", button );
-
-    void LayoutChapterButtons();
-
-    void OnMouseWheeled( int delta ) OVERRIDE;
-
-    void StartGame( int nChapter );
-
-private:
-    CUtlVector< GamepadUIChapterButton* > m_pChapterButtons;
-    CUtlVector< chapter_t > m_Chapters;
-
-    GamepadUIScrollState m_ScrollState;
-
-    GAMEPADUI_PANEL_PROPERTY( float, m_ChapterOffsetX, "Chapters.OffsetX", "0", SchemeValueTypes::ProportionalFloat );
-    GAMEPADUI_PANEL_PROPERTY( float, m_ChapterOffsetY, "Chapters.OffsetY", "0", SchemeValueTypes::ProportionalFloat );
-    GAMEPADUI_PANEL_PROPERTY( float, m_ChapterSpacing, "Chapters.Spacing", "0", SchemeValueTypes::ProportionalFloat );
-
-    bool m_bCommentaryMode = false;
+    SessionButton( vgui::Panel *parent, const char *name, const char *text, const char *command )
+        : BaseClass( parent, name, text, command ) {}
+    void OnKeyCodePressed( vgui::KeyCode code ) OVERRIDE
+    {
+        if ( code == KEY_ESCAPE || code == KEY_XBUTTON_B ) GetParent()->OnCommand( "action_back" );
+        else BaseClass::OnKeyCodePressed( code );
+    }
+    void OnMouseWheeled( int delta ) OVERRIDE { GetParent()->OnMouseWheeled( delta ); }
 };
 
-class GamepadUIChapterButton : public GamepadUIButton
+class SessionEntry : public vgui::TextEntry
 {
+    DECLARE_CLASS_SIMPLE( SessionEntry, vgui::TextEntry );
 public:
-    DECLARE_CLASS_SIMPLE( GamepadUIChapterButton, GamepadUIButton );
-
-    GamepadUIChapterButton( vgui::Panel* pParent, vgui::Panel* pActionSignalTarget, const char* pSchemeFile, const char* pCommand, const char* pText, const char* pDescription, const char *pChapterImage )
-        : BaseClass( pParent, pActionSignalTarget, pSchemeFile, pCommand, pText, pDescription )
-        , m_Image( pChapterImage )
+    SessionEntry( vgui::Panel *parent, const char *name ) : BaseClass( parent, name )
     {
+        SetAllowNonAsciiCharacters( true ); SetMultiline( false );
     }
-
-    GamepadUIChapterButton( vgui::Panel* pParent, vgui::Panel* pActionSignalTarget, const char* pSchemeFile, const char* pCommand, const wchar* pText, const wchar* pDescription, const char *pChapterImage )
-        : BaseClass( pParent, pActionSignalTarget, pSchemeFile, pCommand, pText, pDescription )
-        , m_Image( pChapterImage )
+    void ApplySchemeSettings( vgui::IScheme *scheme ) OVERRIDE
     {
+        BaseClass::ApplySchemeSettings( scheme ); SetFont( SCPUIGetTextFont( vgui::surface(), scheme, "Session.Body", true ) );
+        SetFgColor( Color( 240, 240, 240, 255 ) ); SetBgColor( Color( 24, 24, 24, 255 ) );
+        SetSelectionBgColor( Color( 80, 80, 80, 255 ) );
     }
-
-    ~GamepadUIChapterButton()
+    void OnKeyCodeTyped( vgui::KeyCode code ) OVERRIDE
     {
-        if ( s_pLastNewGameButton == this )
-            s_pLastNewGameButton = NULL;
+        if ( code == KEY_ESCAPE ) GetParent()->OnCommand( "action_back" );
+        else BaseClass::OnKeyCodeTyped( code );
     }
+};
 
-    ButtonState GetCurrentButtonState() OVERRIDE
+bool SessionContains( const char *text, const char *search )
+{
+    wchar_t haystack[256], needle[128];
+    V_UTF8ToUnicode( text, haystack, sizeof( haystack ) );
+    V_UTF8ToUnicode( search, needle, sizeof( needle ) );
+    wchar_t *strings[] = { haystack, needle };
+    for ( int i = 0; i < ARRAYSIZE( strings ); ++i )
+        for ( wchar_t *c = strings[i]; *c; ++c )
+        {
+            if ( *c >= L'A' && *c <= L'Z' ) *c += L'a' - L'A';
+            else if ( *c >= 0x0410 && *c <= 0x042f ) *c += 32;
+            else if ( *c == 0x0401 ) *c = 0x0451;
+        }
+    return wcsstr( haystack, needle ) != NULL;
+}
+
+struct SessionMap
+{
+    char name[64], title[128], image[MAX_PATH], chapterTitle[128];
+    int chapter = 0;
+};
+
+class SessionMapTile : public SessionButton
+{
+    DECLARE_CLASS_SIMPLE( SessionMapTile, SessionButton );
+public:
+    SessionMapTile( vgui::Panel *parent, int slot ) : BaseClass( parent, "SessionMapTile", "", "" )
     {
-        if ( s_pLastNewGameButton == this )
-            return ButtonState::Over;
-        return BaseClass::GetCurrentButtonState();
+        char command[32]; V_snprintf( command, sizeof( command ), "map_tile %d", slot ); SetCommand( command );
     }
-
+    void SetMap( const SessionMap &map )
+    {
+        SetName( map.name ); SetCaption( map.title );
+        if ( !V_stricmp( m_ImagePath, map.image ) ) return;
+        V_strncpy( m_ImagePath, map.image, sizeof( m_ImagePath ) );
+        m_Image.Cleanup();
+        if ( !map.image[0] ) return;
+        char path[MAX_PATH]; V_snprintf( path, sizeof( path ), "materials/%s.tga", map.image );
+        if ( g_pFullFileSystem->FileExists( path, "GAME" ) ) m_Image.SetTGAImage( path );
+        else
+        {
+            V_snprintf( path, sizeof( path ), "materials/%s.vmt", map.image );
+            if ( g_pFullFileSystem->FileExists( path, "GAME" ) ) m_Image.SetImage( map.image );
+        }
+    }
     void Paint() OVERRIDE
     {
-        int x, y, w, t;
-        GetBounds( x, y, w, t );
-
-        PaintButton();
-
-        vgui::surface()->DrawSetColor( Color( 255, 255, 255, 255 ) );
-        vgui::surface()->DrawSetTexture( m_Image );
-        int imgH = ( w * 9 ) / 16;
-        //vgui::surface()->DrawTexturedRect( 0, 0, w, );
-        float offset = m_flTextOffsetYAnimationValue[ButtonStates::Out] - m_flTextOffsetY;
-        vgui::surface()->DrawTexturedSubRect( 0, 0, w, imgH - offset, 0.0f, 0.0f, 1.0f, ( imgH - offset ) / imgH );
-        vgui::surface()->DrawSetTexture( 0 );
-        if ( !IsEnabled() )
+        const int captionH = Max( 26, GetTall() / 5 );
+        const int imageH = GetTall() - captionH;
+        vgui::surface()->DrawSetTexture( -1 );
+        vgui::surface()->DrawSetColor( m_colBackgroundColor );
+        vgui::surface()->DrawFilledRect( 0, 0, GetWide(), GetTall() );
+        if ( m_Image.IsValid() )
         {
-            vgui::surface()->DrawSetColor( Color( 255, 255, 255, 16 ) );
-            vgui::surface()->DrawFilledRect( 0, 0, w, imgH - offset );
+            vgui::surface()->DrawSetTexture( m_Image );
+            vgui::surface()->DrawSetColor( Color( 255, 255, 255, 190 + m_colLeftBorder.a() * 65 / 255 ) );
+            vgui::surface()->DrawTexturedRect( 1, 1, GetWide() - 1, imageH );
         }
-
-        PaintText();
-    }
-	
-    void ApplySchemeSettings( vgui::IScheme* pScheme )
-    {
-        BaseClass::ApplySchemeSettings( pScheme );
-
-        if (GamepadUI::GetInstance().GetScreenRatio() != 1.0f)
+        else
         {
-            float flScreenRatio = GamepadUI::GetInstance().GetScreenRatio();
-
-            m_flHeight *= flScreenRatio;
-            for (int i = 0; i < ButtonStates::Count; i++)
-                m_flHeightAnimationValue[i] *= flScreenRatio;
-
-            // Also change the text offset
-            m_flTextOffsetY *= flScreenRatio;
-            for (int i = 0; i < ButtonStates::Count; i++)
-                m_flTextOffsetYAnimationValue[i] *= flScreenRatio;
-
-            SetSize( m_flWidth, m_flHeight + m_flExtraHeight );
-            DoAnimations( true );
+            // A neutral placeholder keeps uncatalogued installed maps usable.
+            vgui::surface()->DrawSetTexture( -1 );
+            vgui::surface()->DrawSetColor( Color( 51, 51, 51, 255 ) );
+            const int step = Max( 18, GetWide() / 9 );
+            for ( int x = 0; x < GetWide(); x += step ) vgui::surface()->DrawLine( x, 0, x, imageH );
+            for ( int y = 0; y < imageH; y += step ) vgui::surface()->DrawLine( 0, y, GetWide(), y );
         }
+        vgui::surface()->DrawSetTexture( -1 );
+        vgui::surface()->DrawSetColor( m_colLeftBorder );
+        vgui::surface()->DrawOutlinedRect( 0, 0, GetWide(), GetTall() );
+        PaintBorders();
+        char text[1024]; V_UnicodeToUTF8( GetButtonText().String(), text, sizeof( text ) );
+        const vgui::HFont font = m_hTextFont;
+        SessionText( font, text, 12, imageH + ( captionH - vgui::surface()->GetFontTall( font ) ) / 2,
+            GetWide() - 24, m_colTextColor );
+        m_bNavigateTo = false;
     }
-
-    void NavigateTo() OVERRIDE
-    {
-        BaseClass::NavigateTo();
-        s_pLastNewGameButton = this;
-    }
-
-    static GamepadUIChapterButton* GetLastNewGameButton() { return s_pLastNewGameButton; }
-
 private:
     GamepadUIImage m_Image;
-
-    static GamepadUIChapterButton *s_pLastNewGameButton;
+    char m_ImagePath[MAX_PATH] = "";
 };
 
-GamepadUIChapterButton* GamepadUIChapterButton::s_pLastNewGameButton = NULL;
+class GamepadUISessionPanel;
+vgui::DHANDLE<GamepadUISessionPanel> s_SessionPanel;
 
-/* From GameUI: */
-// TODO: Modders may need to override this. (Madi)
-static const int MAX_CHAPTERS = 32;
-
-struct chapter_t
+class GamepadUISessionPanel : public GamepadUIFrame
 {
-    char filename[32];
+    DECLARE_CLASS_SIMPLE( GamepadUISessionPanel, GamepadUIFrame );
+public:
+    GamepadUISessionPanel() : BaseClass( GamepadUI::GetInstance().GetBasePanel(), "SessionCreate" )
+    {
+        SetScheme( vgui::scheme()->LoadSchemeFromFile( SESSION_SCHEME, "SCPSession" ) );
+        m_Coop = GamepadUIIsCoopMode(); m_Players = GamepadUIGetModeConfig()->GetInt("default_players",1);
+        m_ModeRevision = GamepadUIModeRevision();
+        m_Chapters = !m_Coop;
+        LoadMaps();
+        m_Search = new SessionEntry( this, "SessionMapSearch" ); m_Search->SetMaximumCharCount( 64 );
+        m_Search->AddActionSignalTarget( this );
+        m_Name = new SessionEntry( this, "SessionName" ); m_Name->SetMaximumCharCount( 63 );
+        m_Name->SetText( "SCP: Final Death" );
+        m_ChapterTab = new SessionButton( this, "SessionChapters", "#SCPSession_ChaptersTab", "tab_chapters" );
+        m_MapTab = new SessionButton( this, "SessionMaps", "#SCPSession_MapsTab", "tab_maps" );
+        m_ChapterTab->SetNavRight( m_MapTab ); m_MapTab->SetNavLeft( m_ChapterTab );
+        m_Less = new SessionButton( this, "SessionPlayersLess", "-", "players_less" );
+        m_More = new SessionButton( this, "SessionPlayersMore", "+", "players_more" );
+        m_CheatsButton = new SessionButton( this, "SessionCheats", "", "toggle_cheats" );
+        m_Start = new SessionButton( this, "SessionStart", "#SCPSession_Start", "start_session" ); m_Start->SetHighlighted( true );
+        m_Back = new SessionButton( this, "SessionBack", "#SCPSession_Back", "action_back" );
+        m_Previous = new SessionButton( this, "SessionPrevious", "<", "previous_page" );
+        m_Next = new SessionButton( this, "SessionNext", ">", "next_page" );
+        for ( int i = 0; i < MAPS_PER_PAGE; ++i ) m_Tiles[i] = new SessionMapTile( this, i );
+        m_SelectedImage = new SessionMapTile( this, -1 ); m_SelectedImage->SetName( "SessionSelectedMap" );
+        m_SelectedImage->SetMouseInputEnabled( false ); m_SelectedImage->SetKeyBoardInputEnabled( false );
+        FilterMaps(); RefreshControls(); Activate(); Layout(); UpdateGradients();
+    }
+    void OnThink() OVERRIDE
+    {
+        BaseClass::OnThink();
+        const bool coop = GamepadUIIsCoopMode();
+        if ( coop != m_Coop || m_ModeRevision != GamepadUIModeRevision() ) {
+            m_ModeRevision = GamepadUIModeRevision(); m_Coop = coop;
+            m_Players = GamepadUIGetModeConfig()->GetInt("default_players",1);
+            m_Page=0; LoadMaps(); FilterMaps();
+        }
+        Layout();
+    }
+    void OnMouseWheeled( int delta ) OVERRIDE { ChangePage( delta > 0 ? -1 : 1 ); }
+    MESSAGE_FUNC_PARAMS( OnSearchChanged, "TextChanged", data )
+    {
+        if ( data->GetPtr( "panel" ) == m_Search ) { m_Page = 0; FilterMaps(); }
+    }
+    void OnCommand( const char *command ) OVERRIDE
+    {
+        if ( !V_strcmp( command, "action_back" ) ) { Close(); return; }
+        if ( !V_strcmp( command, "tab_chapters" ) || !V_strcmp( command, "tab_maps" ) )
+        {
+            m_Chapters = !V_strcmp( command, "tab_chapters" );
+            m_Page = 0; m_Selected = -1; FilterMaps();
+        }
+        else if ( !V_strcmp( command, "players_less" ) || !V_strcmp( command, "players_more" ) )
+        {
+            if ( m_Coop ) m_Players = clamp( m_Players + ( !V_strcmp( command, "players_more" ) ? 1 : -1 ), GamepadUIGetModeConfig()->GetInt("min_players",1), GamepadUIGetModeConfig()->GetInt("max_players",4) );
+            RefreshControls();
+        }
+        else if ( !V_strcmp( command, "toggle_cheats" ) ) { m_Cheats = !m_Cheats; RefreshControls(); }
+        else if ( !V_strcmp( command, "previous_page" ) ) ChangePage( -1 );
+        else if ( !V_strcmp( command, "next_page" ) ) ChangePage( 1 );
+        else if ( !V_strncmp( command, "map_tile ", 9 ) )
+        {
+            const int tile = atoi( command + 9 ), row = m_Page * MAPS_PER_PAGE + tile;
+            if ( tile >= 0 && tile < MAPS_PER_PAGE && row < m_Filtered.Count() )
+            {
+                m_Selected = m_Filtered[row]; RefreshControls();
+            }
+        }
+        else if ( !V_strcmp( command, "start_session" ) ) StartSession();
+        else BaseClass::OnCommand( command );
+    }
+    void Paint() OVERRIDE
+    {
+        vgui::surface()->DrawSetTexture( -1 );
+        PaintBackgroundGradients();
+        vgui::surface()->DrawSetColor( Color( 255, 255, 255, 45 ) );
+        vgui::surface()->DrawLine( m_Right - S( 18 ), m_GridY, m_Right - S( 18 ), m_Footer );
+        vgui::IScheme *scheme = vgui::scheme()->GetIScheme( GetScheme() );
+        const vgui::HFont title = SCPUIGetTextFont( vgui::surface(), scheme, "Session.Title", true );
+        const vgui::HFont body = SCPUIGetTextFont( vgui::surface(), scheme, "Session.Body", true ), small = SCPUIGetTextFont( vgui::surface(), scheme, "Session.Small", true );
+        const Color white( 245, 245, 245, 255 ), muted( 164, 164, 164, 255 );
+        SessionText( title, "#SCPSession_Title", m_Left, m_Y + S( 22 ), m_W - S( 48 ), white );
+        SessionText( small, "#SCPSession_Subtitle", m_Left, m_Y + S( 62 ), m_W - S( 48 ), muted );
+        SessionText( small, "#SCPSession_Maps", m_Left, m_Y + S( 132 ), S( 125 ), muted );
+        SessionText( small, "#SCPSession_Settings", m_Right, m_Y + S( 117 ), m_RightW, muted );
+        SessionText( body, GamepadUIGetModeName(), m_Right, m_Y + S( 410 ), m_RightW, white );
+        SessionText( small, "#SCPSession_Name", m_Right, m_Y + S( 337 ), m_RightW, muted );
+        SessionText( small, "#SCPSession_Players", m_Right, m_Y + S( 462 ), m_RightW - S( 140 ), muted );
+        char count[16]; V_snprintf( count, sizeof( count ), "%d", m_Players );
+        SessionText( body, count, m_Right + m_RightW - S( 97 ), m_Y + S( 457 ), S( 52 ), white, true );
+        SessionText( small, m_Coop ? "#SCPSession_CoopHint" : "#SCPSession_StoryHint", m_Right, m_Y + S( 558 ), m_RightW, muted );
+        char pages[64]; V_snprintf( pages, sizeof( pages ), "%d / %d", m_Filtered.IsEmpty() ? 0 : m_Page + 1, Max( 1, ( m_Filtered.Count() + MAPS_PER_PAGE - 1 ) / MAPS_PER_PAGE ) );
+        SessionText( small, pages, m_Left + m_GridW / 2 - S( 45 ), m_Footer + S( 12 ), S( 90 ), muted, true );
+        if ( m_Filtered.IsEmpty() ) SessionText( body, m_Chapters ? "#SCPSession_NoChapters" : "#SCPSession_NoMaps", m_Left, m_GridY + S( 60 ), m_GridW, muted, true );
+    }
+private:
+    int S( float value ) const { return Max( 1, int( value * m_Scale + 0.5f ) ); }
+    void LoadMaps()
+    {
+        m_Maps.RemoveAll();
+        KeyValues *config=GamepadUIGetModeConfig();
+        KeyValues *catalog = new KeyValues( "SCPSessionMaps" );
+        const char *lists[]={"maps","chapters"};
+        for(int kind=0;kind<2;++kind) {
+            KeyValues *list=config->FindKey(lists[kind]);
+            for(KeyValues *item=list ? list->GetFirstSubKey() : nullptr;item;item=item->GetNextKey()) {
+                KeyValues *entry=catalog->FindKey(item->GetString("map"),true);
+                const char *fields[]={"title","title_ru","image"};
+                for(int field=0;field<3;++field) if(item->FindKey(fields[field]))
+                    entry->SetString(kind==1 && field<2 ? (field==0 ? "chapter_title" : "chapter_title_ru") : fields[field],item->GetString(fields[field]));
+                if(kind==1) entry->SetInt("chapter",item->GetInt("number",1));
+                else entry->SetBool("hidden",item->GetBool("hidden"));
+            }
+        }
+        FileFindHandle_t find;
+        for ( const char *file = g_pFullFileSystem->FindFirstEx( "maps/*.bsp", "GAME", &find ); file && m_Maps.Count() < 512; file = g_pFullFileSystem->FindNext( find ) )
+        {
+            char name[64];
+            if ( V_strlen( file ) >= sizeof( name ) + 4 ) continue;
+            V_FileBase( file, name, sizeof( name ) );
+            if ( !SCPSafeSaveSlot( name ) || !V_strnicmp( name, "background", 10 ) || g_pFullFileSystem->FindIsDirectory( find ) ) continue;
+            bool duplicate = false;
+            FOR_EACH_VEC( m_Maps, i ) if ( !V_stricmp( name, m_Maps[i].name ) ) duplicate = true;
+            if ( duplicate ) continue;
+            KeyValues *entry = catalog->FindKey( name ); if ( (entry && entry->GetBool("hidden")) || (!config->GetBool("all_maps",true) && !entry) ) continue;
+            SessionMap map = {};
+            V_strncpy( map.name, name, sizeof( map.name ) );
+            const char *title = entry ? entry->GetString( !V_stricmp( GamepadUIGetLanguageCode(), "RU" ) ? "title_ru" : "title", entry->GetString("title",name) ) : name;
+            V_strncpy( map.title, title, sizeof( map.title ) );
+            if ( entry )
+            {
+                map.chapter = clamp( entry->GetInt( "chapter", 0 ), 0, 999 );
+                V_strncpy( map.chapterTitle, entry->GetString( !V_stricmp( GamepadUIGetLanguageCode(), "RU" ) ? "chapter_title_ru" : "chapter_title", entry->GetString("chapter_title",title) ), sizeof( map.chapterTitle ) );
+            }
+            V_snprintf( map.image, sizeof( map.image ), "vgui/maps/%s", name );
+            if ( entry ) V_strncpy( map.image, entry->GetString( "image", map.image ), sizeof( map.image ) );
+            if ( V_strstr( map.image, ".." ) || V_strstr( map.image, ":" ) || map.image[0] == '/' || map.image[0] == '\\' ) map.image[0] = 0;
+            m_Maps.AddToTail( map );
+        }
+        g_pFullFileSystem->FindClose( find ); catalog->deleteThis();
+        m_Maps.Sort( []( const SessionMap *a, const SessionMap *b ) { return V_stricmp( a->name, b->name ); } );
+        m_Selected = m_Maps.IsEmpty() ? -1 : 0;
+    }
+    void FilterMaps()
+    {
+        char search[128]; m_Search->GetText( search, sizeof( search ) ); m_Filtered.RemoveAll();
+        FOR_EACH_VEC( m_Maps, i )
+        {
+            GamepadUIString title( m_Maps[i].title ); char text[512];
+            V_UnicodeToUTF8( title.String(), text, sizeof( text ) );
+            if ( m_Chapters && !m_Maps[i].chapter ) continue;
+            GamepadUIString chapterTitle( m_Maps[i].chapterTitle ); char chapterText[512];
+            V_UnicodeToUTF8( chapterTitle.String(), chapterText, sizeof( chapterText ) );
+            if ( search[0] && !SessionContains( m_Maps[i].name, search ) && !SessionContains( text, search ) &&
+                 !( m_Chapters && SessionContains( chapterText, search ) ) ) continue;
+            if ( m_Chapters )
+            {
+                int at = 0;
+                while ( at < m_Filtered.Count() && m_Maps[m_Filtered[at]].chapter <= m_Maps[i].chapter ) ++at;
+                m_Filtered.InsertBefore( at, i );
+            }
+            else m_Filtered.AddToTail( i );
+        }
+        if ( m_Page * MAPS_PER_PAGE >= m_Filtered.Count() ) m_Page = 0;
+        if ( m_Filtered.Find( m_Selected ) == m_Filtered.InvalidIndex() )
+            m_Selected = m_Filtered.IsEmpty() ? -1 : m_Filtered[0];
+        RefreshControls();
+    }
+    void ChangePage( int delta )
+    {
+        const int pages = Max( 1, ( m_Filtered.Count() + MAPS_PER_PAGE - 1 ) / MAPS_PER_PAGE );
+        m_Page = clamp( m_Page + delta, 0, pages - 1 ); RefreshControls();
+    }
+    void RefreshControls()
+    {
+        m_ChapterTab->SetHighlighted( m_Chapters ); m_MapTab->SetHighlighted( !m_Chapters );
+        m_Less->SetEnabled( m_Coop && m_Players > GamepadUIGetModeConfig()->GetInt("min_players",1) ); m_More->SetEnabled( m_Coop && m_Players < GamepadUIGetModeConfig()->GetInt("max_players",4) );
+        m_CheatsButton->SetCaption( m_Cheats ? "#SCPSession_CheatsOn" : "#SCPSession_CheatsOff" );
+        m_CheatsButton->SetHighlighted( m_Cheats );
+        m_Previous->SetEnabled( m_Page > 0 ); m_Next->SetEnabled( ( m_Page + 1 ) * MAPS_PER_PAGE < m_Filtered.Count() );
+        m_Start->SetEnabled( m_Selected >= 0 && GamepadUIGetModeId()[0] ); m_SelectedImage->SetVisible( m_Selected >= 0 );
+        if ( m_Selected >= 0 ) { SessionMap display = DisplayMap( m_Selected ); m_SelectedImage->SetMap( display ); m_SelectedImage->SetName( "SessionSelectedMap" ); m_SelectedImage->SetHighlighted( true ); }
+        for ( int i = 0; i < MAPS_PER_PAGE; ++i )
+        {
+            const int row = m_Page * MAPS_PER_PAGE + i; const bool visible = row < m_Filtered.Count();
+            m_Tiles[i]->SetVisible( visible );
+            if ( visible ) { SessionMap display = DisplayMap( m_Filtered[row] ); m_Tiles[i]->SetMap( display ); m_Tiles[i]->SetHighlighted( m_Filtered[row] == m_Selected ); }
+        }
+    }
+    SessionMap DisplayMap( int index ) const
+    {
+        SessionMap map = m_Maps[index];
+        if ( m_Chapters && map.chapterTitle[0] ) V_strncpy( map.title, map.chapterTitle, sizeof( map.title ) );
+        return map;
+    }
+    void Layout()
+    {
+        int w, h; GetParent()->GetSize( w, h ); SetBounds( 0, 0, w, h );
+        m_Scale = Min( w / 1280.0f, h / 720.0f );
+        m_W = Min( w - S( 32 ), S( 1180 ) ); m_H = Min( h - S( 32 ), S( 664 ) );
+        m_X = ( w - m_W ) / 2; m_Y = ( h - m_H ) / 2;
+        m_Left = m_X + S( 24 ); m_RightW = S( 318 ); m_Right = m_X + m_W - S( 24 ) - m_RightW;
+        m_GridW = m_Right - m_Left - S( 36 ); m_GridY = m_Y + S( 176 ); m_Footer = m_Y + m_H - S( 62 );
+        m_ChapterTab->SetBounds( m_Left, m_Y + S( 82 ), S( 170 ), S( 35 ) );
+        m_MapTab->SetBounds( m_Left + S( 182 ), m_Y + S( 82 ), S( 170 ), S( 35 ) );
+        m_Search->SetBounds( m_Left + S( 130 ), m_Y + S( 124 ), Max( S( 80 ), m_GridW - S( 130 ) ), S( 33 ) );
+        const int gap = S( 16 ), tileW = ( m_GridW - gap ) / 2, tileH = ( m_Footer - m_GridY - S( 20 ) - gap ) / 2;
+        for ( int i = 0; i < MAPS_PER_PAGE; ++i ) m_Tiles[i]->SetBounds( m_Left + ( i % 2 ) * ( tileW + gap ), m_GridY + ( i / 2 ) * ( tileH + gap ), tileW, tileH );
+        m_SelectedImage->SetBounds( m_Right, m_Y + S( 144 ), m_RightW, S( 174 ) );
+        m_Name->SetBounds( m_Right, m_Y + S( 359 ), m_RightW, S( 36 ) );
+        m_Less->SetBounds( m_Right + m_RightW - S( 138 ), m_Y + S( 451 ), S( 34 ), S( 34 ) );
+        m_More->SetBounds( m_Right + m_RightW - S( 34 ), m_Y + S( 451 ), S( 34 ), S( 34 ) );
+        m_CheatsButton->SetBounds( m_Right, m_Y + S( 508 ), m_RightW, S( 36 ) );
+        m_Start->SetBounds( m_Right, m_Footer, m_RightW, S( 40 ) );
+        m_Back->SetBounds( m_Left, m_Footer, S( 126 ), S( 40 ) );
+        m_Previous->SetBounds( m_Left + m_GridW / 2 - S( 91 ), m_Footer, S( 36 ), S( 36 ) );
+        m_Next->SetBounds( m_Left + m_GridW / 2 + S( 55 ), m_Footer, S( 36 ), S( 36 ) );
+    }
+    void StartSession()
+    {
+        if ( m_Selected < 0 || m_Selected >= m_Maps.Count() || !GamepadUIGetModeId()[0] ) return;
+        char mapFile[128]; V_snprintf( mapFile, sizeof( mapFile ), "maps/%s.bsp", m_Maps[m_Selected].name );
+        if ( !g_pFullFileSystem->FileExists( mapFile, "GAME" ) ) { LoadMaps(); FilterMaps(); return; }
+        char name[256]; m_Name->GetText( name, sizeof( name ) );
+        // The title is data, but must also be safe inside a quoted console value.
+        for ( char *c = name; *c; ++c ) if ( (unsigned char)*c < 32 || *c == '"' || *c == ';' || *c == '\\' ) *c = ' ';
+        if ( !name[0] ) V_strncpy( name, "SCP: Final Death", sizeof( name ) );
+        char command[1024]; V_snprintf( command, sizeof( command ),
+            "gamemode %s\ndeathmatch 0\nspmp_coop %d\ncoop %d\nmaxplayers %d\nsv_cheats %d\ncommentary 0\nhostname \"%s\"\nprogress_enable\nmap %s\n",
+            GamepadUIGetModeId(), m_Coop, m_Coop, m_Coop ? m_Players : 1, m_Cheats, name, m_Maps[m_Selected].name );
+        GamepadUIStartSession( command ); Close();
+    }
+    CUtlVector<SessionMap> m_Maps;
+    CUtlVector<int> m_Filtered;
+    SessionMapTile *m_Tiles[MAPS_PER_PAGE], *m_SelectedImage;
+    SessionEntry *m_Search, *m_Name;
+    SessionButton *m_ChapterTab, *m_MapTab, *m_Less, *m_More, *m_CheatsButton, *m_Start, *m_Back, *m_Previous, *m_Next;
+    int m_Selected = -1, m_Page = 0, m_Players = 1, m_ModeRevision = -1;
+    bool m_Coop = false, m_Cheats = false, m_Chapters = true;
+    float m_Scale = 1;
+    int m_X = 0, m_Y = 0, m_W = 0, m_H = 0, m_Left = 0, m_Right = 0, m_RightW = 0, m_GridW = 0, m_GridY = 0, m_Footer = 0;
 };
-
-static int __cdecl ChapterSortFunc( const void *elem1, const void *elem2 )
-{
-    chapter_t *c1 = ( chapter_t * )elem1;
-    chapter_t *c2 = ( chapter_t * )elem2;
-
-    // compare chapter number first
-    static int chapterlen = strlen( "chapter" );
-    if ( atoi( c1->filename + chapterlen ) > atoi( c2->filename + chapterlen ) )
-        return 1;
-    else if ( atoi( c1->filename + chapterlen ) < atoi( c2->filename + chapterlen ) )
-        return -1;
-
-    // compare length second ( longer string show up later in the list, eg. chapter9 before chapter9a )
-    if ( strlen( c1->filename ) > strlen( c2->filename ) )
-        return 1;
-    else if ( strlen( c1->filename ) < strlen( c2->filename ) )
-        return -1;
-
-    // compare strings third
-    return strcmp( c1->filename, c2->filename );
 }
 
-static int FindChapters( chapter_t *pChapters )
+CON_COMMAND( gamepadui_opennewgamedialog, "Open the session creation menu." )
 {
-    int chapterIndex = 0;
-    char szFullFileName[MAX_PATH];
-
-    FileFindHandle_t findHandle = FILESYSTEM_INVALID_FIND_HANDLE;
-    const char *fileName = "cfg/chapter*.cfg";
-    fileName = g_pFullFileSystem->FindFirst( fileName, &findHandle );
-    while ( fileName && chapterIndex < MAX_CHAPTERS )
-    {
-        if ( fileName[0] )
-        {
-            // Only load chapter configs from the current mod's cfg dir
-            // or else chapters appear that we don't want!
-            Q_snprintf( szFullFileName, sizeof( szFullFileName ), "cfg/%s", fileName );
-            FileHandle_t f = g_pFullFileSystem->Open( szFullFileName, "rb", "MOD" );
-            if ( f )
-            {
-                // don't load chapter files that are empty, used in the demo
-                if ( g_pFullFileSystem->Size( f ) > 0	 )
-                {
-                    Q_strncpy( pChapters[chapterIndex].filename, fileName, sizeof( pChapters[chapterIndex].filename ) );
-                    ++chapterIndex;
-                }
-                g_pFullFileSystem->Close( f );
-            }
-        }
-        fileName = g_pFullFileSystem->FindNext( findHandle );
-    }
-
-    qsort( pChapters, chapterIndex, sizeof( chapter_t ), &ChapterSortFunc );
-    return chapterIndex;
-}
-/* End from GameUI */
-
-static int GetUnlockedChapters()
-{
-    ConVarRef var( "sv_unlockedchapters" );
-
-    return var.IsValid() ? MAX( var.GetInt(), 1 ) : 1;
-}
-
-GamepadUINewGamePanel::GamepadUINewGamePanel( vgui::Panel *pParent, const char* PanelName ) : BaseClass( pParent, PanelName )
-{
-    vgui::HScheme hScheme = vgui::scheme()->LoadSchemeFromFile( GAMEPADUI_DEFAULT_PANEL_SCHEME, "SchemePanel" );
-    SetScheme( hScheme );
-
-    GetFrameTitle() = GamepadUIString( "#GameUI_NewGame" );
-    FooterButtonMask buttons = FooterButtons::Back | FooterButtons::Select;
-    if ( GameHasCommentary() )
-        buttons |= FooterButtons::Commentary;
-    if ( GameHasBonusMaps() )
-        buttons |= FooterButtons::BonusMaps;
-    SetFooterButtons( buttons, FooterButtons::Select );
-
-    Activate();
-
-    chapter_t chapters[MAX_CHAPTERS];
-    int nChapterCount = FindChapters( chapters );
-
-    for ( int i = 0; i < nChapterCount; i++ )
-    {
-        const char *fileName = chapters[i].filename;
-        char chapterID[32] = { 0 };
-        sscanf( fileName, "chapter%s", chapterID );
-        // strip the extension
-        char *ext = V_stristr( chapterID, ".cfg" );
-        if ( ext )
-        {
-            *ext = 0;
-        }
-        const char* pGameDir = COM_GetModDirectory();
-
-        char chapterName[64];
-        Q_snprintf( chapterName, sizeof( chapterName ), "#%s_Chapter%s_Title", pGameDir, chapterID );
-
-        char command[32];
-        Q_snprintf( command, sizeof( command ), "chapter %d", i );
-
-        wchar_t text[32];
-        wchar_t num[32];
-        wchar_t* chapter = g_pVGuiLocalize->Find( "#GameUI_Chapter" );
-        g_pVGuiLocalize->ConvertANSIToUnicode( chapterID, num, sizeof( num ) );
-        _snwprintf( text, ARRAYSIZE( text ), L"%ls %ls", chapter ? chapter : L"CHAPTER", num );
-
-        GamepadUIString strChapterName( chapterName );
-
-        char chapterImage[64];
-        Q_snprintf( chapterImage, sizeof( chapterImage ), "gamepadui/chapter%s.vmt", chapterID );
-        GamepadUIChapterButton *pChapterButton = new GamepadUIChapterButton(
-            this, this,
-            GAMEPADUI_CHAPTER_SCHEME, command,
-            strChapterName.String(), text, chapterImage);
-        pChapterButton->SetEnabled( i < GetUnlockedChapters() );
-        pChapterButton->SetPriority( i );
-        pChapterButton->SetForwardToParent( true );
-
-        m_pChapterButtons.AddToTail( pChapterButton );
-        m_Chapters.AddToTail( chapters[i] );
-    }
-
-    if ( m_pChapterButtons.Count() > 0 )
-        m_pChapterButtons[0]->NavigateTo();
-
-    for ( int i = 1; i < m_pChapterButtons.Count(); i++ )
-    {
-        m_pChapterButtons[i]->SetNavLeft( m_pChapterButtons[i - 1] );
-        m_pChapterButtons[i - 1]->SetNavRight( m_pChapterButtons[i] );
-    }
-
-    UpdateGradients();
-}
-
-void GamepadUINewGamePanel::UpdateGradients()
-{
-    const float flTime = GamepadUI::GetInstance().GetTime();
-    GamepadUI::GetInstance().GetGradientHelper()->ResetTargets( flTime );
-    GamepadUI::GetInstance().GetGradientHelper()->SetTargetGradient( GradientSide::Up, { 1.0f, 1.0f }, flTime );
-    GamepadUI::GetInstance().GetGradientHelper()->SetTargetGradient( GradientSide::Down, { 1.0f, 0.5f }, flTime );
-}
-
-void GamepadUINewGamePanel::OnThink()
-{
-    BaseClass::OnThink();
-
-    LayoutChapterButtons();
-}
-
-void GamepadUINewGamePanel::ApplySchemeSettings( vgui::IScheme* pScheme )
-{
-    BaseClass::ApplySchemeSettings( pScheme );
-
-    if (GamepadUI::GetInstance().GetScreenRatio() != 1.0f)
-    {
-        float flScreenRatio = GamepadUI::GetInstance().GetScreenRatio();
-        m_ChapterOffsetX *= (flScreenRatio*flScreenRatio);
-    }
-}
-
-void GamepadUINewGamePanel::OnGamepadUIButtonNavigatedTo( vgui::VPANEL button )
-{
-    GamepadUIButton *pButton = dynamic_cast< GamepadUIButton * >( vgui::ipanel()->GetPanel( button, GetModuleName() ) );
-    if ( pButton )
-    {
-        int nParentW, nParentH;
-	    GetParent()->GetSize( nParentW, nParentH );
-
-        int nX, nY;
-        pButton->GetPos( nX, nY );
-        if ( nX + pButton->m_flWidth > nParentW || nX < 0 )
-        {
-            int nTargetX = pButton->GetPriority() * (pButton->m_flWidth + m_ChapterSpacing);
-
-            if ( nX < nParentW / 2 )
-            {
-                nTargetX += nParentW - m_ChapterOffsetX;
-                // Add a bit of spacing to make this more visually appealing :)
-                nTargetX -= m_ChapterSpacing;
-            }
-            else
-            {
-                nTargetX += pButton->m_flWidth;
-                // Add a bit of spacing to make this more visually appealing :)
-                nTargetX += (pButton->m_flWidth / 2) + m_ChapterSpacing;
-            }
-
-
-            m_ScrollState.SetScrollTarget( nTargetX - ( nParentW - m_ChapterOffsetX ), GamepadUI::GetInstance().GetTime() );
-        }
-    }
-}
-
-void GamepadUINewGamePanel::LayoutChapterButtons()
-{
-    int nParentW, nParentH;
-	GetParent()->GetSize( nParentW, nParentH );
-
-    float flScrollClamp = 0.0f;
-    for ( int i = 0; i < m_pChapterButtons.Count(); i++ )
-    {
-        int nSize = ( m_pChapterButtons[0]->GetWide() + m_ChapterSpacing );
-
-        if ( i < m_pChapterButtons.Count() - 2 )
-            flScrollClamp += nSize;
-    }
-
-    m_ScrollState.UpdateScrollBounds( 0.0f, flScrollClamp );
-
-    for ( int i = 0; i < m_pChapterButtons.Count(); i++ )
-    {
-        int size = ( m_pChapterButtons[0]->GetWide() + m_ChapterSpacing );
-
-        m_pChapterButtons[i]->SetPos( m_ChapterOffsetX + i * size - m_ScrollState.GetScrollProgress(), m_ChapterOffsetY );
-        m_pChapterButtons[i]->SetVisible( true );
-    }
-
-    m_ScrollState.UpdateScrolling( 2.0f, GamepadUI::GetInstance().GetTime() );
-}
-
-void GamepadUINewGamePanel::OnCommand( char const* pCommand )
-{
-    if ( !V_strcmp( pCommand, "action_back" ) )
-    {
-        Close();
-    }
-    else if ( !V_strcmp( pCommand, "action_commentary" ) )
-    {
-        GamepadUIChapterButton *pPanel = GamepadUIChapterButton::GetLastNewGameButton();
-        if ( pPanel )
-        {
-            m_bCommentaryMode = true;
-            pPanel->DoClick();
-        }
-    }
-    else if ( !V_strcmp( pCommand, "action_bonus_maps" ) )
-    {
-        GamepadUI::GetInstance().GetEngineClient()->ClientCmd_Unrestricted( "gamepadui_openbonusmapsdialog\n" );
-    }
-    else if ( StringHasPrefixCaseSensitive( pCommand, "chapter " ) )
-    {
-        const char* pszEngineCommand = pCommand + 8;
-        if ( *pszEngineCommand )
-            StartGame( atoi( pszEngineCommand ) );
-
-        Close();
-    }
-    else
-    {
-        BaseClass::OnCommand( pCommand );
-    }
-}
-
-void GamepadUINewGamePanel::OnMouseWheeled( int nDelta )
-{
-    m_ScrollState.OnMouseWheeled( nDelta * m_ChapterSpacing * 20.0f, GamepadUI::GetInstance().GetTime() );
-}
-
-struct MapCommand_t
-{
-    char szCommand[512];
-};
-
-void GamepadUINewGamePanel::StartGame( int nChapter )
-{
-    MapCommand_t cmd;
-    cmd.szCommand[0] = 0;
-    Q_snprintf( cmd.szCommand, sizeof( cmd.szCommand ), "disconnect\ndeathmatch 0\nprogress_enable\nexec %s\n", m_Chapters[nChapter].filename );
-
-    // Set commentary
-    ConVarRef commentary( "commentary" );
-    commentary.SetValue( m_bCommentaryMode );
-
-    ConVarRef sv_cheats( "sv_cheats" );
-    sv_cheats.SetValue( m_bCommentaryMode );
-
-    // If commentary is on, we go to the explanation dialog ( but not for teaser trailers )
-    if ( m_bCommentaryMode )//&& !m_ChapterPanels[m_iSelectedChapter]->IsTeaserChapter() )
-    {
-        // Check our current state and disconnect us from any multiplayer server we're connected to.
-        // This fixes an exploit where players would click "start" on the commentary dialog to enable
-        // sv_cheats on the client ( via the code above ) and then hit <esc> to get out of the explanation dialog.
-        if ( GamepadUI::GetInstance().IsInMultiplayer() )
-        {
-            GamepadUI::GetInstance().GetEngineClient()->ExecuteClientCmd( "disconnect" );
-        }
-
-		new GamepadUIGenericConfirmationPanel( GamepadUI::GetInstance().GetBasePanel(), "SaveOverwriteConfirmationPanel", "#GameUI_LoadCommentary", "#GAMEUI_Commentary_Console_Explanation",
-		[cmd]()
-		{
-			GamepadUI::GetInstance().GetEngineClient()->ClientCmd_Unrestricted( cmd.szCommand );
-		}, true);
-    }
-    else
-    {
-        GamepadUI::GetInstance().GetEngineClient()->ClientCmd_Unrestricted( cmd.szCommand );
-    }
-}
-
-CON_COMMAND( gamepadui_opennewgamedialog, "" )
-{
-    new GamepadUINewGamePanel( GamepadUI::GetInstance().GetBasePanel(), "" );
+    if ( s_SessionPanel.Get() ) s_SessionPanel->Activate();
+    else s_SessionPanel = new GamepadUISessionPanel();
 }

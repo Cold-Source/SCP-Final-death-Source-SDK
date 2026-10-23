@@ -11,7 +11,7 @@
 		"enabled" "1"
 
 		"PaintBackgroundType"	"2"
-		
+
 		"text_xpos" "8"
 		"text_ypos" "20"
 		"digit_xpos" "50"
@@ -39,7 +39,7 @@
 	    "text_xpos" "8"
 	    "text_ypos" "4"
 	}
-	
+
 	HudVoiceSelfStatus
 	{
 		"fieldName" "HudVoiceSelfStatus"
@@ -62,24 +62,24 @@
 		"tall" "400"
 
 		"item_wide"	"135"
-		
+
 		"show_avatar"		"0"
-		
+
 		"show_dead_icon"	"1"
 		"dead_xpos"			"1"
 		"dead_ypos"			"0"
 		"dead_wide"			"16"
 		"dead_tall"			"16"
-		
+
 		"show_voice_icon"	"1"
 		"icon_ypos"			"0"
 		"icon_xpos"			"15"
 		"icon_tall"			"16"
 		"icon_wide"			"16"
-		
+
 		"text_xpos"			"33"
 	}
-	
+
 	HudSuit
 	{
 		"fieldName"		"HudSuit"
@@ -92,7 +92,7 @@
 
 		"PaintBackgroundType"	"2"
 
-		
+
 		"text_xpos" "8"
 		"text_ypos" "20"
 		"digit_xpos" "50"
@@ -134,7 +134,7 @@
 		"digit_xpos" "10"
 		"digit_ypos" "2"
 	}
-	
+
 	HudSuitPower
 	{
 		"fieldName" "HudSuitPower"
@@ -144,9 +144,9 @@
 		"ypos"	"396"
 		"wide"	"102"
 		"tall"	"26"
-		
-		"AuxPowerLowColor" "255 0 0 220"
-		"AuxPowerHighColor" "255 220 0 220"
+
+		"AuxPowerLowColor" "245 245 245 220"
+		"AuxPowerHighColor" "245 245 245 220"
 		"AuxPowerDisabledAlpha" "70"
 
 		"BarInsetX" "8"
@@ -164,7 +164,7 @@
 
 		"PaintBackgroundType"	"2"
 	}
-	
+
 	HudFlashlight
 	{
 		"fieldName" "HudFlashlight"
@@ -174,22 +174,22 @@
 		"ypos"	"370"
 		"wide"	"102"
 		"tall"	"20"
-		
+
 		"text_xpos" "8"
 		"text_ypos" "6"
-		"TextColor"	"255 170 0 220"
+		"TextColor"	"245 245 245 220"
 
 		"PaintBackgroundType"	"2"
 	}
-	
+
 	HudDamageIndicator
 	{
 		"fieldName" "HudDamageIndicator"
 		"visible" "1"
 		"enabled" "1"
-		"DmgColorLeft" "255 0 0 0"
-		"DmgColorRight" "255 0 0 0"
-		
+		"DmgColorLeft" "245 245 245 0"
+		"DmgColorRight" "245 245 245 0"
+
 		"dmg_xpos" "30"
 		"dmg_ypos" "100"
 		"dmg_wide" "36"
@@ -397,7 +397,7 @@
 		"text_ypos"	"8"
 		"text_xgap"	"8"
 		"text_ygap"	"8"
-		"TextColor"	"255 170 0 220"
+		"TextColor"	"245 245 245 220"
 
 		"PaintBackgroundType"	"2"
 	}
@@ -413,7 +413,7 @@
 		"tall"	"46"
 		"text_xpos"	"8"
 		"text_ypos"	"34"
-		"SquadIconColor"	"255 220 0 160"
+		"SquadIconColor"	"245 245 245 160"
 		"IconInsetX"	"8"
 		"IconInsetY"	"0"
 		"IconGap"		"24"
@@ -433,7 +433,7 @@
 		"text_xpos"	"8"
 		"text_ypos"	"8"
 		"text_ygap" "14"
-		"TextColor"	"255 170 0 220"
+		"TextColor"	"245 245 245 220"
 		"PaintBackgroundType"	"2"
 	}
 	HudCredits
@@ -460,42 +460,42 @@
 		"tall"	 		"120"
 		"PaintBackgroundType"	"2"
 	}
-	
-	AchievementNotificationPanel	
+
+	AchievementNotificationPanel
 	{
 		"fieldName"	"AchievementNotificationPanel"
 		"visible"	"0"
 		"enabled"	"0"
 	}
-	
+
 	HudHintKeyDisplay
 	{
 		"fieldName"	"HudHintKeyDisplay"
 		"visible"	"0"
 		"enabled" 	"0"
 	}
-	
+
 	HUDAutoAim
 	{
 		"fieldName"	"HUDAutoAim"
 		"visible"	"0"
 		"enabled"	"0"
-	}	
-	
+	}
+
 	HudHDRDemo
 	{
 		"fieldName"	"HudHDRDemo"
 		"visible"	"0"
 		"enabled"	"0"
 	}
-	
+
 	HudCommentary
 	{
 		"fieldName"	"HudCommentary"
 		"visible"	"0"
 		"enabled"	"0"
 	}
-	
+
 	"CHudVote"
 	{
 		"fieldName"		"CHudVote"

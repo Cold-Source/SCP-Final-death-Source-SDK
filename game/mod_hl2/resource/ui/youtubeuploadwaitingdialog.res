@@ -15,9 +15,9 @@
 		"settitlebarvisible"	"0"
 		"border"				"EconItemBorder"
 	}
-	
+
 	"CenterPositioner"
-	{	
+	{
 		"ControlName"		"Label"
 		"fieldName"		"CenterPositioner"
 		"font"			"EconFontSmall"
@@ -38,7 +38,7 @@
 	}
 
 	"CenterPositioner2"
-	{	
+	{
 		"ControlName"		"Label"
 		"fieldName"		"CenterPositioner2"
 		"font"			"EconFontSmall"
@@ -59,7 +59,7 @@
 	}
 
 	"CenterPositioner3"
-	{	
+	{
 		"ControlName"		"Label"
 		"fieldName"		"CenterPositioner3"
 		"font"			"EconFontSmall"
@@ -78,9 +78,9 @@
 		"textAlignment"		"center"
 		"bgcolor_override" "0 0 0 0"
 	}
-	
+
 	"TitleLabel"
-	{	
+	{
 		"ControlName"	"Label"
 		"fieldName"		"TitleLabel"
 		"font"			"EconFontSmall"
@@ -97,10 +97,10 @@
 		"centerwrap"	"1"
 		"labelText"		"%updatetext%"
 		"textAlignment"		"center"
-		"fgcolor_override" "200 80 60 255"
+		"fgcolor_override" "245 245 245 255"
 		"bgcolor_override" "0 0 0 0"
 		"auto_wide_tocontents" "1"
-		
+
 		"pin_to_sibling"               "CenterPositioner"
         "pin_corner_to_sibling"        "4"
         "pin_to_sibling_corner"        "4"
@@ -119,15 +119,15 @@
 		"visible"		"0"
 		"enabled"		"1"
 		"progress"		"0"
-		"bgcolor_override" "117 107 95 255"
+		"bgcolor_override" "28 28 28 255"
 		"fgcolor_override" "255 255 255 255"
 		"pin_to_sibling"               "CenterPositioner2"
 	    "pin_corner_to_sibling"        "4"
-        "pin_to_sibling_corner"        "4"  
+        "pin_to_sibling_corner"        "4"
 	}
 
 	"DurationLabel"
-	{	
+	{
 		"ControlName"	"Label"
 		"fieldName"		"DurationLabel"
 		"font"			"EconFontSmall"
@@ -142,13 +142,13 @@
 		"enabled"		"1"
 		"labelText"		"%duration%"
 		"textAlignment"		"center"
-		"fgcolor_override" "200 80 60 255"
+		"fgcolor_override" "245 245 245 255"
 		"bgcolor_override" "0 0 0 0"
 		"pin_to_sibling"               "CenterPositioner3"
         "pin_corner_to_sibling"        "4"
-        "pin_to_sibling_corner"        "4"  
+        "pin_to_sibling_corner"        "4"
 	}
-	
+
 	"CloseButton"
 	{
 		"ControlName"	"CExButton"

@@ -13,7 +13,7 @@
 #include "pbr_ps30.inc"
 
 // Includes for PS20b
-#include "pbr_vs20b.inc"
+#include "pbr_vs20.inc"
 #include "pbr_ps20b.inc"
 
 // Defining samplers
@@ -116,9 +116,20 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
         if (!params[MRAOTEXTURE]->IsDefined())
             params[MRAOTEXTURE]->SetStringValue("dev/pbr_mraotexture");
 
-        // PBR relies heavily on envmaps
+        // Models use the engine's local cubemap; compiled brush materials must
+        // reference a cubemap selected by VBSP instead of this placeholder.
         if (!params[ENVMAP]->IsDefined())
             params[ENVMAP]->SetStringValue("env_cubemap");
+
+        // Match LightmappedGeneric: an unresolved brush env_cubemap samples the
+        // fallback sky, which washes enclosed rooms out after PBR conversion.
+        // Keep it available to map tools so a subsequent compile can resolve it.
+        if (!IS_FLAG_SET(MATERIAL_VAR_MODEL) && IsUsingGraphics() && !CanUseEditorMaterials() &&
+            !Q_stricmp(params[ENVMAP]->GetStringValue(), "env_cubemap"))
+        {
+            Warning("PBR: unresolved env_cubemap on world material %s; reflections disabled until the map is rebuilt.\n", pMaterialName);
+            params[ENVMAP]->SetUndefined();
+        }
 
         // Check if the hardware supports flashlight border color
         if (g_pHardwareConfig->SupportsBorderColor())
@@ -128,6 +139,26 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
         else
         {
             params[FLASHLIGHTTEXTURE]->SetStringValue("effects/flashlight001");
+        }
+
+        // Map tools inspect these flags before texture initialization.
+        if (IS_FLAG_SET(MATERIAL_VAR_MODEL)) // Set material var2 flags specific to models
+        {
+            SET_FLAGS2(MATERIAL_VAR2_SUPPORTS_HW_SKINNING);             // Required for skinning
+            SET_FLAGS2(MATERIAL_VAR2_DIFFUSE_BUMPMAPPED_MODEL);         // Required for dynamic lighting
+            SET_FLAGS2(MATERIAL_VAR2_NEEDS_TANGENT_SPACES);             // Required for dynamic lighting
+            SET_FLAGS2(MATERIAL_VAR2_LIGHTING_VERTEX_LIT);              // Required for dynamic lighting
+            SET_FLAGS2(MATERIAL_VAR2_NEEDS_BAKED_LIGHTING_SNAPSHOTS);   // Required for ambient cube
+            SET_FLAGS2(MATERIAL_VAR2_SUPPORTS_FLASHLIGHT);              // Required for flashlight
+            SET_FLAGS2(MATERIAL_VAR2_USE_FLASHLIGHT);                   // Required for flashlight
+        }
+        else // Set material var2 flags specific to brushes
+        {
+            SET_FLAGS2(MATERIAL_VAR2_LIGHTING_LIGHTMAP);                // Required for lightmaps
+            SET_FLAGS2(MATERIAL_VAR2_LIGHTING_BUMPED_LIGHTMAP);         // Required for lightmaps
+            SET_FLAGS2(MATERIAL_VAR2_NEEDS_TANGENT_SPACES);
+            SET_FLAGS2(MATERIAL_VAR2_SUPPORTS_FLASHLIGHT);              // Required for flashlight
+            SET_FLAGS2(MATERIAL_VAR2_USE_FLASHLIGHT);                   // Required for flashlight
         }
     };
 
@@ -151,7 +182,8 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
         Assert(info.envMap >= 0);
         int envMapFlags = g_pHardwareConfig->GetHDRType() == HDR_TYPE_NONE ? TEXTUREFLAGS_SRGB : 0;
         envMapFlags |= TEXTUREFLAGS_ALL_MIPS;
-        LoadCubeMap(info.envMap, envMapFlags);
+        if (params[info.envMap]->IsDefined())
+            LoadCubeMap(info.envMap, envMapFlags);
 
         if (info.emissionTexture >= 0 && params[EMISSIONTEXTURE]->IsDefined())
             LoadTexture(info.emissionTexture, TEXTUREFLAGS_SRGB);
@@ -169,23 +201,6 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
             LoadTexture(info.specularTexture, TEXTUREFLAGS_SRGB);
         }
 
-        if (IS_FLAG_SET(MATERIAL_VAR_MODEL)) // Set material var2 flags specific to models
-        {
-            SET_FLAGS2(MATERIAL_VAR2_SUPPORTS_HW_SKINNING);             // Required for skinning
-            SET_FLAGS2(MATERIAL_VAR2_DIFFUSE_BUMPMAPPED_MODEL);         // Required for dynamic lighting
-            SET_FLAGS2(MATERIAL_VAR2_NEEDS_TANGENT_SPACES);             // Required for dynamic lighting
-            SET_FLAGS2(MATERIAL_VAR2_LIGHTING_VERTEX_LIT);              // Required for dynamic lighting
-            SET_FLAGS2(MATERIAL_VAR2_NEEDS_BAKED_LIGHTING_SNAPSHOTS);   // Required for ambient cube
-            SET_FLAGS2(MATERIAL_VAR2_SUPPORTS_FLASHLIGHT);              // Required for flashlight
-            SET_FLAGS2(MATERIAL_VAR2_USE_FLASHLIGHT);                   // Required for flashlight
-        }
-        else // Set material var2 flags specific to brushes
-        {
-            SET_FLAGS2(MATERIAL_VAR2_LIGHTING_LIGHTMAP);                // Required for lightmaps
-            SET_FLAGS2(MATERIAL_VAR2_LIGHTING_BUMPED_LIGHTMAP);         // Required for lightmaps
-            SET_FLAGS2(MATERIAL_VAR2_SUPPORTS_FLASHLIGHT);              // Required for flashlight
-            SET_FLAGS2(MATERIAL_VAR2_USE_FLASHLIGHT);                   // Required for flashlight
-        }
     };
 
     // Drawing the shader
@@ -204,7 +219,8 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
         bool bHasFlashlight = UsingFlashlight(params);
         bool bHasColor = (info.baseColor != -1) && params[info.baseColor]->IsDefined();
         bool bLightMapped = !IS_FLAG_SET(MATERIAL_VAR_MODEL);
-        bool bUseEnvAmbient = (info.useEnvAmbient != -1) && (params[info.useEnvAmbient]->GetIntValue() == 1);
+        // Brushes have no model ambient cube; derive their rough reflections from the envmap.
+        bool bUseEnvAmbient = bHasEnvTexture && (bLightMapped || ((info.useEnvAmbient != -1) && (params[info.useEnvAmbient]->GetIntValue() == 1)));
         bool bHasSpecularTexture = (info.specularTexture != -1) && params[info.specularTexture]->IsTexture();
 
         // Determining whether we're dealing with a fully opaque material
@@ -239,7 +255,7 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
             pShaderShadow->EnableTexture(SAMPLER_EMISSIVE, true);       // Emission texture
             pShaderShadow->EnableSRGBRead(SAMPLER_EMISSIVE, true);      // Emission is sRGB
             pShaderShadow->EnableTexture(SAMPLER_LIGHTMAP, true);       // Lightmap texture
-            pShaderShadow->EnableSRGBRead(SAMPLER_LIGHTMAP, false);     // Lightmaps aren't sRGB
+            pShaderShadow->EnableSRGBRead(SAMPLER_LIGHTMAP, g_pHardwareConfig->GetHDRType() == HDR_TYPE_NONE);
             pShaderShadow->EnableTexture(SAMPLER_MRAO, true);           // MRAO texture
             pShaderShadow->EnableSRGBRead(SAMPLER_MRAO, false);         // MRAO isn't sRGB
             pShaderShadow->EnableTexture(SAMPLER_NORMAL, true);         // Normal texture
@@ -275,16 +291,14 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
 
             if (IS_FLAG_SET(MATERIAL_VAR_MODEL))
             {
-                // We only need the position and surface normal
+                // Models provide their tangent and handedness as four userdata components.
                 unsigned int flags = VERTEX_POSITION | VERTEX_NORMAL | VERTEX_FORMAT_COMPRESSED;
-                // We need three texcoords, all in the default float2 size
-                pShaderShadow->VertexShaderVertexFormat(flags, 1, 0, 0);
+                pShaderShadow->VertexShaderVertexFormat(flags, 1, 0, 4);
             }
             else
             {
-                // We need the position, surface normal, and vertex compression format
-                unsigned int flags = VERTEX_POSITION | VERTEX_NORMAL;
-                // We only need one texcoord, in the default float2 size
+                // Brushes provide both tangent axes and three float2 texture coordinates.
+                unsigned int flags = VERTEX_POSITION | VERTEX_NORMAL | VERTEX_TANGENT_S | VERTEX_TANGENT_T;
                 pShaderShadow->VertexShaderVertexFormat(flags, 3, 0, 0);
             }
         
@@ -297,8 +311,9 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
             if (!g_pHardwareConfig->SupportsShaderModel_3_0() || mat_pbr_force_20b.GetBool())
             {
                 // Setting up static vertex shader
-                DECLARE_STATIC_VERTEX_SHADER(pbr_vs20b);
-                SET_STATIC_VERTEX_SHADER(pbr_vs20b);
+                DECLARE_STATIC_VERTEX_SHADER(pbr_vs20);
+                SET_STATIC_VERTEX_SHADER_COMBO(LIGHTMAPPED, bLightMapped);
+                SET_STATIC_VERTEX_SHADER(pbr_vs20);
 
                 // Setting up static pixel shader
                 DECLARE_STATIC_PIXEL_SHADER(pbr_ps20b);
@@ -348,14 +363,14 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
             }
 
             // Setting up vmt color
-            Vector color;
+            Vector4D color(1.f, 1.f, 1.f, 1.f);
             if (bHasColor)
             {
                 params[info.baseColor]->GetVecValue(color.Base(), 3);
             }
             else
             {
-                color = Vector{1.f, 1.f, 1.f};
+                color = Vector4D(1.f, 1.f, 1.f, 1.f);
             }
             pShaderAPI->SetPixelShaderConstant(PSREG_SELFILLUMTINT, color.Base());
 
@@ -463,7 +478,7 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
 
             // Determining the max level of detail for the envmap
             int iEnvMapLOD = 6;
-            auto envTexture = params[info.envMap]->GetTextureValue();
+            ITexture *envTexture = bHasEnvTexture ? params[info.envMap]->GetTextureValue() : NULL;
             if (envTexture)
             {
                 // Get power of 2 of texture width
@@ -487,18 +502,19 @@ BEGIN_VS_SHADER(PBR, "PBR shader")
             pShaderAPI->SetPixelShaderConstant(PSREG_EYEPOS_SPEC_EXPONENT, vEyePos_SpecExponent, 1);
 
             // Setting lightmap texture
-            s_pShaderAPI->BindStandardTexture(SAMPLER_LIGHTMAP, TEXTURE_LIGHTMAP_BUMPED);
+            // The current lightmap page contains the bumped samples as well.
+            s_pShaderAPI->BindStandardTexture(SAMPLER_LIGHTMAP, TEXTURE_LIGHTMAP);
 
             if (!g_pHardwareConfig->SupportsShaderModel_3_0() || mat_pbr_force_20b.GetBool())
             {
                 // Setting up dynamic vertex shader
-                DECLARE_DYNAMIC_VERTEX_SHADER(pbr_vs20b);
+                DECLARE_DYNAMIC_VERTEX_SHADER(pbr_vs20);
                 SET_DYNAMIC_VERTEX_SHADER_COMBO(DOWATERFOG, fogIndex);
                 SET_DYNAMIC_VERTEX_SHADER_COMBO(SKINNING, numBones > 0);
                 SET_DYNAMIC_VERTEX_SHADER_COMBO(LIGHTING_PREVIEW, pShaderAPI->GetIntRenderingParameter(INT_RENDERPARM_ENABLE_FIXED_LIGHTING) != 0);
                 SET_DYNAMIC_VERTEX_SHADER_COMBO(COMPRESSED_VERTS, (int)vertexCompression);
                 SET_DYNAMIC_VERTEX_SHADER_COMBO(NUM_LIGHTS, lightState.m_nNumLights);
-                SET_DYNAMIC_VERTEX_SHADER(pbr_vs20b);
+                SET_DYNAMIC_VERTEX_SHADER(pbr_vs20);
 
                 // Setting up dynamic pixel shader
                 DECLARE_DYNAMIC_PIXEL_SHADER(pbr_ps20b);

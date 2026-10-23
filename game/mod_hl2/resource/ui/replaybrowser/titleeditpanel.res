@@ -14,7 +14,7 @@
 		"enabled"		"1"
 		"tabPosition"	"0"
 	}
-	
+
 	"CaratLabel"
 	{
 		"ControlName"		"CExLabel"
@@ -33,7 +33,7 @@
 		"enabled"		"1"
 		"fgcolor"		"ReplayBrowser.Details.TitleEdit.Carat.FgColor"
 	}
-	
+
 	"TitleInput"
 	{
 		"ControlName"	"TextEntry"
@@ -51,11 +51,11 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"tabPosition"	"0"
-		"fgcolor_override"		"202 190 164 255"
+		"fgcolor_override"		"245 245 245 255"
 		"bgcolor_override"		"0 0 0 0"		// Background is drawn explicitly in CTitleEditPanel::PaintBackground()
 		"Font"			"ReplayLarger"
 	}
-	
+
 	"HeaderLine"
 	{
 		"ControlName"	"ImagePanel"
@@ -70,7 +70,7 @@
 		"scaleImage"	"0"
 		"tileHorizontally" "1"
 	}
-			
+
 	"ClickToEditLabel"
 	{
 		"ControlName"		"CExLabel"
@@ -79,6 +79,6 @@
 		"zpos"				"1000"
 		"font"				"ReplayBrowserSmallest"
 		"Visible"			"1"
-		"fgcolor_override" "118 106 94 255"
+		"fgcolor_override" "180 180 180 255"
 	}
 }

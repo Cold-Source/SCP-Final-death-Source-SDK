@@ -2744,17 +2744,30 @@ void CEntitySaveRestoreBlockHandler::Restore( IRestore *pRestore, bool createPla
 			if ( pEntInfo->classname != NULL_STRING )
 			{
 				pent = CreateEntityByName( STRING(pEntInfo->classname) );
-				pent->InitializeAsClientEntity( NULL, RENDER_GROUP_OPAQUE_ENTITY );
-				
-				pRestore->SetReadPos( pEntInfo->location );
-
-				if ( pent )
+				// A saved client class can be unavailable after a DLL update.
+				// Do not dereference a failed factory result or restore an entity
+				// which could not register itself with the client entity list.
+				if ( !pent )
 				{
+					Warning( "Save restore: unavailable client entity class '%s'; skipping.\n", STRING(pEntInfo->classname) );
+				}
+				else if ( !pent->InitializeAsClientEntity( NULL, RENDER_GROUP_OPAQUE_ENTITY ) )
+				{
+					Warning( "Save restore: could not initialize client entity '%s'; skipping.\n", STRING(pEntInfo->classname) );
+					pent->Release();
+				}
+				else
+				{
+					pRestore->SetReadPos( pEntInfo->location );
 					if ( RestoreEntity( pent, pRestore, pEntInfo ) >= 0 )
 					{
 						pEntInfo->hEnt = pent;
 						AddRestoredEntity( pent );
 						bRestoredCorrectly = true;
+					}
+					else
+					{
+						pent->Release();
 					}
 				}
 			}

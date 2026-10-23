@@ -13,7 +13,7 @@
 		"tabPosition"			"0"
 		"settitlebarvisible"	"1"
 	}
-	
+
 	"CaratLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -31,7 +31,7 @@
 		"wide"			"f0"
 		"fgcolor"		"ReplayBrowser.CollectionTitle.FgColor"
 	}
-	
+
 	"TitleLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -47,7 +47,7 @@
 		"wide"			"f0"
 		"fgcolor"		"ReplayBrowser.CollectionTitle.FgColor"
 	}
-	
+
 	"DateLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -60,9 +60,9 @@
 		"visible"		"0"
 		"enabled"		"1"
 		"wide"			"f0"
-		"fgcolor_override" "116 107 98 255"
+		"fgcolor_override" "180 180 180 255"
 	}
-	
+
 	"WarningLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -77,7 +77,7 @@
 		"fgcolor"		 "ReplayBrowser.Warning.FgColor"
 		"wrap"			"1"
 	}
-	
+
 	"Line"
 	{
 		"ControlName"	"Panel"
@@ -87,10 +87,10 @@
 		"pinCorner"		"0"
 		"visible"		"0"
 		"enabled"		"1"
-		"bgcolor_override" "106 91 86 255"
+		"bgcolor_override" "28 28 28 255"
 	}
 
-	
+
 	"UnconvertedBg"
 	{
 		"ControlName"	"Panel"
@@ -102,7 +102,7 @@
 		"enabled"		"1"
 		"bgcolor_override" "0 0 0 255"
 	}
-	
+
 	"NoReplayItemsLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -116,9 +116,9 @@
 		"visible"		"1"
 		"enabled"		"1"
 		"centerwrap"	"1"
-		"fgcolor_override"	"117 107 94 255"
+		"fgcolor_override"	"180 180 180 255"
 	}
-	
+
 	"ShowPrevButton"
 	{
 		"ControlName"	"CExButton"
@@ -175,7 +175,7 @@
 		"armedBgColor_override"	"ReplayBrowser.Button.ArmedBgColor"
 		"depressedBgColor_override"	"ReplayBrowser.Button.DepressedBgColor"
 	}
-	
+
 	"RenderAllButton"
 	{
 		"ControlName"	"CExButton"

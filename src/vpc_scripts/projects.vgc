@@ -23,6 +23,11 @@ $Project "fgdlib"
 	"fgdlib\fgdlib.vpc" [$WINDOWS]
 }
 
+$Project "lzma"
+{
+	"utils\lzma\lzma.vpc" [$WINDOWS]
+}
+
 $Project "game_shader_generic_example"
 {
 	"materialsystem\stdshaders\game_shader_generic_example_hl2.vpc" [$HL2]

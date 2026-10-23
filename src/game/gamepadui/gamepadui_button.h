@@ -133,6 +133,7 @@ public:
     MESSAGE_FUNC( OnSiblingGamepadUIButtonOpened, "OnSiblingGamepadUIButtonOpened" );
 
     virtual void RunAnimations( ButtonState state );
+    void RunStyleAnimations( ButtonState state );
     void DoAnimations( bool bForce = false );
     void PaintButton();
     void PaintBorders();
@@ -212,6 +213,27 @@ public:
     vgui::HFont m_hTextFont        = vgui::INVALID_FONT;
     vgui::HFont m_hTextFontOver    = vgui::INVALID_FONT;
     vgui::HFont m_hDescriptionFont = vgui::INVALID_FONT;
+};
+
+// GamepadUI controls whose geometry is owned by a grid or a form layout.
+// Keep the native animation and input path without animating neighboring cells.
+class GamepadUIActionButton : public GamepadUIButton
+{
+    DECLARE_CLASS_SIMPLE( GamepadUIActionButton, GamepadUIButton );
+public:
+    GamepadUIActionButton( vgui::Panel *parent, const char *name, const char *text, const char *command );
+    GamepadUIActionButton( vgui::Panel *parent, const char *name, const wchar_t *text, const char *command );
+    void ApplySchemeSettings( vgui::IScheme *scheme ) OVERRIDE;
+    void OnThink() OVERRIDE;
+    void RunAnimations( ButtonState state ) OVERRIDE;
+    ButtonState GetCurrentButtonState() OVERRIDE;
+    void Paint() OVERRIDE;
+    void SetCaption( const char *text ) { GetButtonText().SetText( text ); }
+    void SetHighlighted( bool highlighted ) { m_Highlighted = highlighted; }
+protected:
+    bool m_Highlighted = false;
+private:
+    void KeepLayoutSize();
 };
 
 #endif // GAMEPADUI_BUTTON_H

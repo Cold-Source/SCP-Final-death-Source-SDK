@@ -1,5 +1,7 @@
 #include "cbase.h"
 #include "spmp_saveload.h"
+#include "../../shared/scp_save_format.h"
+#include "../../shared/scp_save_file.h"
 #include "saverestore.h"
 #include "saverestoretypes.h"
 #include "entityapi.h"
@@ -7,7 +9,7 @@
 #include "globalstate.h"
 #include "world.h"
 #include "player.h"
-#include "vehicle_base.h"
+#include "physics.h"
 #include "igamesystem.h"
 #include "tier1/utlbuffer.h"
 #include "filesystem.h"
@@ -35,10 +37,7 @@ struct CScopedSaveMemory
 
 bool ValidSlot( const char *slot )
 {
-    if ( !slot || !*slot || Q_strlen(slot) > 64 ) return false;
-    for ( const char *p = slot; *p; ++p )
-        if ( !((*p >= 'a' && *p <= 'z') || (*p >= 'A' && *p <= 'Z') || (*p >= '0' && *p <= '9') || *p == '_') ) return false;
-    return true;
+    return SCPSafeSaveSlot( slot );
 }
 bool HostCommand()
 {
@@ -102,7 +101,7 @@ bool SaveWorld( const char *slot )
     output.Put(data->GetBuffer(), data->GetCurPos());
     char path[MAX_PATH]; Q_snprintf(path, sizeof(path), "save/%s.spmp", slot);
     filesystem->CreateDirHierarchy("save", "MOD");
-    const bool result = output.IsValid() && filesystem->WriteFile(path, "MOD", output);
+    const bool result = SCPWriteSaveAtomic( filesystem, path, output );
     if ( !result ) Warning("SPMP save: file write failed (%s), valid %d, bytes %d.\n", path, output.IsValid(), output.TellPut());
     const int entities = data->NumEntities();
     ReleaseSaveData(data); gpGlobals->pSaveData = previous;
@@ -151,6 +150,11 @@ bool LoadWorld( const char *slot )
     data->levelInfo.time = time;
     data->levelInfo.mapVersion = gpGlobals->mapversion;
     Q_strncpy(data->levelInfo.szCurrentMapName, map, sizeof(data->levelInfo.szCurrentMapName));
+    // Flush pending bodies before restoring their owners. Destroy old entities
+    // through their normal removal lifecycle, with immediate physics cleanup;
+    // shutting vehicle controllers down before their chassis double-frees airboats.
+    gEntList.CleanupDeleteList();
+    if ( physenv ) physenv->EnableDeleteQueue( false );
     BeginRestoreEntities(); s_RestoringWorld = true;
     for ( int i = 1; i <= gpGlobals->maxClients; ++i )
     {
@@ -158,18 +162,22 @@ bool LoadWorld( const char *slot )
         if ( player && player->IsInAVehicle() ) player->LeaveVehicle();
         if ( player ) player->VPhysicsDestroyObject();
     }
-    for ( CBaseEntity *entity = gEntList.FirstEnt(); entity; )
+    CUtlVector<EHANDLE> oldEntities;
+    for ( CBaseEntity *entity = gEntList.FirstEnt(); entity; entity = gEntList.NextEnt( entity ) )
     {
-        CBaseEntity *next = gEntList.NextEnt(entity);
         if ( !entity->IsPlayer() && entity != GetWorldEntity() )
+            oldEntities.AddToTail( entity );
+    }
+    FOR_EACH_VEC( oldEntities, i )
+    {
+        CBaseEntity *entity = oldEntities[i].Get();
+        if ( entity )
         {
-            CPropVehicle *vehicle = dynamic_cast<CPropVehicle *>(entity);
-            if ( vehicle ) vehicle->GetPhysics()->ShutdownController();
-            UTIL_RemoveImmediate(entity);
+            UTIL_Remove(entity);
         }
-        entity = next;
     }
     gEntList.CleanupDeleteList();
+    if ( physenv ) physenv->EnableDeleteQueue( true );
     data->Seek(0); RestoreGlobalState(data);
     CRestore restore(data);
     g_pGameSaveRestoreBlockSet->PreRestore();
@@ -186,11 +194,21 @@ bool LoadWorld( const char *slot )
 class CSpmpSaveSystem : public CAutoGameSystemPerFrame
 {
 public:
-    CSpmpSaveSystem() : CAutoGameSystemPerFrame("SPMP save/restore"), m_load(false) {}
-    void Request(const char *slot, bool load) { m_slot = slot; m_load = load; }
+    CSpmpSaveSystem() : CAutoGameSystemPerFrame("SPMP save/restore"), m_load(false), m_readyFrames(0), m_requested(0) {}
+    void Request(const char *slot, bool load) { m_slot = slot; m_load = load; m_readyFrames = 0; m_requested = Plat_FloatTime(); }
     void FrameUpdatePreEntityThink() OVERRIDE
     {
         if ( m_slot.IsEmpty() ) return;
+        if ( m_load )
+        {
+            // Main-menu loading starts the map before the host joins.
+            CBasePlayer *host = UTIL_PlayerByIndex( 1 );
+            if ( !host || !host->IsConnected() || ++m_readyFrames < 3 )
+            {
+                if ( Plat_FloatTime() - m_requested > 30 ) { Warning( "SPMP_LOAD_FAILED: host did not join.\n" ); m_slot.Clear(); }
+                return;
+            }
+        }
         CUtlString slot = m_slot; m_slot.Clear();
         CScopedSaveMemory ownMemory;
         const bool success = m_load ? LoadWorld(slot.String()) : SaveWorld(slot.String());
@@ -199,6 +217,8 @@ public:
 private:
     CUtlString m_slot;
     bool m_load;
+    int m_readyFrames;
+    double m_requested;
 } s_SaveSystem;
 }
 

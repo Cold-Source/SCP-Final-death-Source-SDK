@@ -25,9 +25,16 @@ private:
 }
 #endif
 
-static bool DownloadPath( const std::string& path, unsigned limit, std::string& body, unsigned& status, const std::atomic<bool>& cancel )
+static bool DownloadPath( const std::string& repository, const std::string& branch, const std::string& path, unsigned limit, std::string& body, unsigned& status, const std::atomic<bool>& cancel )
 {
     body.clear(); status = 0;
+    const std::string parts[]={repository,branch,path};
+    for(const std::string& part : parts) {
+        if(part.empty() || part.size()>240 || part.front()=='/' || part.back()=='/' || part.find("..")!=std::string::npos || part.find("//")!=std::string::npos) return false;
+        for(unsigned char c : part) if(!((c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9') || c=='_' || c=='-' || c=='.' || c=='/')) return false;
+    }
+    const auto slash=repository.find('/');
+    if(slash==std::string::npos || repository.find('/',slash+1)!=std::string::npos) return false;
 #ifdef _WIN32
     // A fixed HTTPS endpoint needs neither a GitHub account nor a token in the game.
     InternetHandle session( WinHttpOpen( L"SCP-Final-Death-News/1.0", WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
@@ -36,7 +43,8 @@ static bool DownloadPath( const std::string& path, unsigned limit, std::string& 
     WinHttpSetTimeouts( session, 3000, 4000, 4000, 4000 );
     InternetHandle connection( WinHttpConnect( session, L"raw.githubusercontent.com", INTERNET_DEFAULT_HTTPS_PORT, 0 ) );
     if ( !connection || cancel.load() ) return false;
-    std::wstring resource = L"/Cold-Source/SCP-FD-News/main/";
+    const std::string base="/"+repository+"/"+branch+"/";
+    std::wstring resource(base.begin(),base.end());
     resource.append( path.begin(), path.end() );
     InternetHandle request( WinHttpOpenRequest( connection, L"GET", resource.c_str(),
                                                nullptr, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE ) );
@@ -69,9 +77,9 @@ static bool DownloadPath( const std::string& path, unsigned limit, std::string& 
 #endif
 }
 
-bool GamepadUINewsHTTP::Download( std::string& body, unsigned& status, const std::atomic<bool>& cancel )
+bool GamepadUINewsHTTP::Download( std::string& body, unsigned& status, const std::atomic<bool>& cancel, const std::string& repository, const std::string& branch, const std::string& file )
 {
-    return DownloadPath( "news.vdf", MAX_FEED_BYTES, body, status, cancel );
+    return DownloadPath( repository, branch, file, MAX_FEED_BYTES, body, status, cancel );
 }
 
 bool GamepadUINewsHTTP::IsImagePath( const std::string& path )
@@ -86,9 +94,9 @@ bool GamepadUINewsHTTP::IsImagePath( const std::string& path )
     return extension == ".png" || extension == ".jpg" || extension == ".jpeg";
 }
 
-bool GamepadUINewsHTTP::DownloadImage( const std::string& path, std::string& encoded, unsigned& status, const std::atomic<bool>& cancel )
+bool GamepadUINewsHTTP::DownloadImage( const std::string& path, std::string& encoded, unsigned& status, const std::atomic<bool>& cancel, const std::string& repository, const std::string& branch )
 {
-    return IsImagePath( path ) && DownloadPath( path, 2 * 1024 * 1024, encoded, status, cancel );
+    return IsImagePath( path ) && DownloadPath( repository, branch, path, 2 * 1024 * 1024, encoded, status, cancel );
 }
 
 bool GamepadUINewsHTTP::DecodeImage( const std::string& encoded, Image& image )

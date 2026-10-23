@@ -10,14 +10,16 @@
 namespace GamepadUINewsHTTP
 {
     const unsigned MAX_FEED_BYTES = 256 * 1024;
-    bool Download( std::string& body, unsigned& status, const std::atomic<bool>& cancel );
+    bool Download( std::string& body, unsigned& status, const std::atomic<bool>& cancel,
+        const std::string& repository = "Cold-Source/SCP-FD-News", const std::string& branch = "main", const std::string& file = "news.vdf" );
     struct Image
     {
         std::vector<unsigned char> rgba;
         unsigned width = 0, height = 0;
     };
     bool IsImagePath( const std::string& path );
-    bool DownloadImage( const std::string& path, std::string& encoded, unsigned& status, const std::atomic<bool>& cancel );
+    bool DownloadImage( const std::string& path, std::string& encoded, unsigned& status, const std::atomic<bool>& cancel,
+        const std::string& repository = "Cold-Source/SCP-FD-News", const std::string& branch = "main" );
     bool DecodeImage( const std::string& encoded, Image& image );
 }
 

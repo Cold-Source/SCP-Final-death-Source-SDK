@@ -26,7 +26,7 @@
 		"enabled"				"1"
 		"border"				"ReplayDefaultBorder"
 	}
-	
+
 	"ScreenshotThumbnail"
 	{
 		"ControlName"	"Panel"
@@ -39,7 +39,7 @@
 		"autoResize"	"0"
 		"pinCorner"		"0"
 	}
-	
+
 	"DownloadProgress"
 	{
 		"ControlName"	"ProgressBar"
@@ -50,10 +50,10 @@
 		"visible"		"0"
 		"tall"			"10"
 		"enabled"		"1"
-		"bgcolor_override" "117 107 95 255"
-		"fgcolor_override" "202 186 160 255"
+		"bgcolor_override" "28 28 28 255"
+		"fgcolor_override" "245 245 245 255"
 	}
-	
+
 	"RecordingInProgressLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -68,9 +68,9 @@
 		"enabled"		"1"
 		"centerwrap"	"1"
 		"paintbackground"	"0"
-		"fgcolor_override" "200 33 27 255"
+		"fgcolor_override" "245 245 245 255"
 	}
-	
+
 	"DownloadLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -83,9 +83,9 @@
 		"pinCorner"		"0"
 		"visible"		"1"
 		"enabled"		"1"
-		"fgcolor_override" "44 33 27 255"
+		"fgcolor_override" "180 180 180 255"
 	}
-	
+
 	"ErrorLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -98,9 +98,9 @@
 		"pinCorner"		"0"
 		"visible"		"0"
 		"enabled"		"1"
-		"fgcolor_override" "200 33 27 255"
+		"fgcolor_override" "245 245 245 255"
 	}
-	
+
 	"TitleLabel"
 	{
 		"ControlName"	"CExLabel"
@@ -116,9 +116,9 @@
 		"autoResize"	"0"
 		"pinCorner"		"0"
 		"enabled"		"1"
-		"fgcolor_override"	"198 186 160 255"
+		"fgcolor_override"	"245 245 245 255"
 	}
-	
+
 	"DownloadButton"
 	{
 		"ControlName"	"CExButton"
@@ -139,7 +139,7 @@
 		"wrap"			"0"
 		"Command"		"download"
 	}
-	
+
 	"DownloadOverlay"
 	{
 		"ControlName"	"Panel"
@@ -152,7 +152,7 @@
 		"bgcolor_override"	"0 0 0 200"
 		"Command"		"overlay_clicked"
 	}
-	
+
 	"DeleteButton"
 	{
 		"ControlName"	"CExButton"
@@ -172,6 +172,6 @@
 		"textAlignment"	"center"
 		"wrap"			"0"
 		"Command"		"delete_replayitem"
-		"fgcolor"		"200 80 60 255"
+		"fgcolor"		"245 245 245 255"
 	}
 }

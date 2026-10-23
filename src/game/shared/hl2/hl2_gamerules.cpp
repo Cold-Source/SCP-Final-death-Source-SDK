@@ -6,6 +6,9 @@
 //=============================================================================
 
 #include "cbase.h"
+#ifndef CLIENT_DLL
+#include "../../server/hl2/scp_playermodels.h"
+#endif
 #include "hl2_gamerules.h"
 #include "ammodef.h"
 #include "hl2_shareddefs.h"
@@ -281,6 +284,12 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 	//-----------------------------------------------------------------------------
 	// Purpose: Player has just spawned. Equip them.
 	//-----------------------------------------------------------------------------
+	void CHalfLife2::ClientSettingsChanged( CBasePlayer *pPlayer )
+	{
+		BaseClass::ClientSettingsChanged( pPlayer );
+		SCPApplyPlayerModel( pPlayer );
+	}
+
 	void CHalfLife2::PlayerSpawn( CBasePlayer *pPlayer )
 	{
 	}

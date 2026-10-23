@@ -63,7 +63,7 @@ struct PS_INPUT
     float2 baseTexCoord             : TEXCOORD0;
     float4 lightAtten               : TEXCOORD1;
     float3 worldNormal              : TEXCOORD2;
-    float3 worldTangent             : TEXCOORD3;
+    float4 worldTangent             : TEXCOORD3;
     float3 worldPos                 : TEXCOORD4;
     float3 projPos                  : TEXCOORD5;
     float4 lightmapTexCoord1And2    : TEXCOORD6;
@@ -86,7 +86,9 @@ float4 main(PS_INPUT i) : COLOR
 #if SPECULAR
     float3 specular = tex2D(SpecularTextureSampler, correctedTexCoord).xyz;
 #endif
-    float3x3 normalBasis = float3x3(i.worldTangent, cross(i.worldNormal, i.worldTangent), i.worldNormal);
+    float3 surfNormal = normalize(i.worldNormal);
+    float3 surfTangent = normalize(i.worldTangent.xyz);
+    float3x3 normalBasis = float3x3(surfTangent, cross(surfNormal, surfTangent) * i.worldTangent.w, surfNormal);
     float3 textureNormal = normalize((tex2D( NormalTextureSampler, correctedTexCoord).xyz - float3(0.5, 0.5, 0.5)) * 2);
     float3 normal = normalize(mul(textureNormal, normalBasis)); // World Normal
 
@@ -116,9 +118,13 @@ float4 main(PS_INPUT i) : COLOR
         float3 diffuseIBL = diffuseContributionFactor * albedo.rgb * diffuseIrradiance;
 
         float4 specularUV = float4(specularReflectionVector, roughness * ENVMAPLOD);
-        float3 lookupHigh = ENV_MAP_SCALE * texCUBE(EnvmapSampler, specularUV).xyz;
+        float3 lookupHigh = ENV_MAP_SCALE * texCUBEbias(EnvmapSampler, specularUV).xyz;
 
+#if LIGHTMAPPED
+        float3 lookupLow = ENV_MAP_SCALE * texCUBEbias(EnvmapSampler, float4(specularReflectionVector, ENVMAPLOD)).xyz;
+#else
         float3 lookupLow = PixelShaderAmbientLight(specularReflectionVector, cAmbientCube);
+#endif
         float3 specularIrradiance = lerp(lookupHigh, lookupLow, roughness * roughness);
         float3 specularIBL = specularIrradiance * EnvBRDFApprox(fresnelReflectance, roughness, lightDirectionAngle);
 

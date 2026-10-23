@@ -22,7 +22,7 @@ Scheme
 		"OffWhite"			"221 221 221 255"
 		"DullWhite"			"211 211 211 255"
 		"Red"				"255 0 0 255"
-		
+
 		"TransparentBlack"	"0 0 0 128"
 		"DarkGrey"			"128 128 128 255"
 		"Black"				"0 0 0 255"
@@ -48,7 +48,7 @@ Scheme
 		Button.DepressedTextColor		"White"
 		Button.DepressedBgColor			"Blank"
 		Button.FocusBorderColor			"Black"
-		
+
 		CheckButton.TextColor			"DullWhite"
 		CheckButton.SelectedTextColor	"White"
 		CheckButton.BgColor				"TransparentBlack"
@@ -98,14 +98,14 @@ Scheme
 		ListPanel.TextColor					"OffWhite"
 		ListPanel.BgColor					"TransparentBlack"
 		ListPanel.SelectedTextColor			"Black"
-		ListPanel.SelectedBgColor			"255 155 0 255"
-		ListPanel.SelectedOutOfFocusBgColor	"255 155 0 128"
+		ListPanel.SelectedBgColor			"28 28 28 255"
+		ListPanel.SelectedOutOfFocusBgColor	"28 28 28 128"
 		ListPanel.EmptyListInfoTextColor	"OffWhite"
 
 		Menu.TextColor					"White"
 		Menu.BgColor					"160 160 160 64"
 		Menu.ArmedTextColor				"Black"
-		Menu.ArmedBgColor				"255 155 0 255"
+		Menu.ArmedBgColor				"28 28 28 255"
 		Menu.TextInset					"6"
 
 		Panel.FgColor					"DullWhite"
@@ -124,7 +124,7 @@ Scheme
 		RichText.TextColor				"OffWhite"
 		RichText.BgColor				"TransparentBlack"
 		RichText.SelectedTextColor		"Black"
-		RichText.SelectedBgColor		"255 155 0 255"
+		RichText.SelectedBgColor		"28 28 28 255"
 
 		ScrollBar.Wide					17
 
@@ -145,12 +145,12 @@ Scheme
 		SectionedListPanel.BrightTextColor	"White"
 		SectionedListPanel.BgColor			"TransparentBlack"
 		SectionedListPanel.SelectedTextColor			"Black"
-		SectionedListPanel.SelectedBgColor				"255 155 0 255"
+		SectionedListPanel.SelectedBgColor				"28 28 28 255"
 		SectionedListPanel.OutOfFocusSelectedTextColor	"Black"
-		SectionedListPanel.OutOfFocusSelectedBgColor	"255 155 0 128"
+		SectionedListPanel.OutOfFocusSelectedBgColor	"28 28 28 128"
 
 		Slider.NobColor				"108 108 108 255"
-		Slider.TextColor			"127 140 127 255"
+		Slider.TextColor			"180 180 180 255"
 		Slider.TrackColor			"31 31 31 255"
 		Slider.DisabledTextColor1	"117 117 117 255"
 		Slider.DisabledTextColor2	"30 30 30 255"
@@ -161,14 +161,14 @@ Scheme
 		TextEntry.DisabledTextColor	"DullWhite"
 		TextEntry.DisabledBgColor	"Blank"
 		TextEntry.SelectedTextColor	"Black"
-		TextEntry.SelectedBgColor	"255 155 0 255"
-		TextEntry.OutOfFocusSelectedBgColor	"255 155 0 128"
+		TextEntry.SelectedBgColor	"28 28 28 255"
+		TextEntry.OutOfFocusSelectedBgColor	"28 28 28 128"
 		TextEntry.FocusEdgeColor	"0 0 0 196"
 
 		ToggleButton.SelectedTextColor	"White"
 
 		Tooltip.TextColor			"0 0 0 196"
-		Tooltip.BgColor				"255 155 0 255"
+		Tooltip.BgColor				"28 28 28 255"
 
 		TreeView.BgColor			"TransparentBlack"
 
@@ -177,7 +177,7 @@ Scheme
 		// scheme-specific colors
 		MainMenu.TextColor			"White"
 		MainMenu.ArmedTextColor		"200 200 200 255"
-		MainMenu.DepressedTextColor	"192 186 80 255"
+		MainMenu.DepressedTextColor	"245 245 245 255"
 		MainMenu.MenuItemHeight		"30"
 		MainMenu.Inset				"32"
 
@@ -186,7 +186,7 @@ Scheme
 
 		NewGame.TextColor			"White"
 		NewGame.FillColor			"0 0 0 255"
-		NewGame.SelectionColor		"255 155 0 255"
+		NewGame.SelectionColor		"245 245 245 255"
 		NewGame.DisabledColor		"128 128 128 196"
 	}
 
@@ -203,53 +203,53 @@ Scheme
 		{
 			"1"
 			{
-				"name"		"Impact"
+				"name"		"Trebuchet MS"
 				"tall"		"32"
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultUnderline"
 		{
 			"1"
 			{
-				"name"		"Impact"
+				"name"		"Trebuchet MS"
 				"tall"		"32"
-				"weight"	"900"
+				"weight"	"700"
 				"underline" "1"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultSmall"
 		{
 			"1"
 			{
-				"name"		"Impact"
+				"name"		"Trebuchet MS"
 				"tall"		"24"
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 		"DefaultVerySmall"
 		{
 			"1"
 			{
-				"name"		"Impact"
+				"name"		"Trebuchet MS"
 				"tall"		"18"
-				"weight"	"900"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		"DefaultLarge"
 		{
 			"1"
 			{
-				"name"		"Impact"
+				"name"		"Trebuchet MS"
 				"tall"		"48"
-				"weight"	"0"
-				"range"		"0x0000 0x017F" //	Basic Latin, Latin-1 Supplement, Latin Extended-A
-			}
+				"weight"	"700"
+				"antialias" "1"
+			"range" "0x0020 0x04FF" }
 		}
 
 		// this is the symbol font
@@ -311,7 +311,7 @@ Scheme
 				}
 			}
 		}
-		
+
 		TitleButtonBorder
 		{
 			"inset" "0 0 1 1"

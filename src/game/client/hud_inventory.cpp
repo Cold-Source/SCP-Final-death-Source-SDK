@@ -1,4 +1,5 @@
 #include "cbase.h"
+#include "../shared/scp_ui_font.h"
 #include "hud_inventory.h"
 #include "clientmode.h"
 #include <vgui/ISurface.h>
@@ -100,8 +101,10 @@ void CHudInventory::Paint()
             int drawX = m_GridStartX + x * m_CellSize;
             int drawY = m_GridStartY + y * m_CellSize;
 
-            surface()->DrawSetColor(45, 45, 45, 220);
+            surface()->DrawSetColor(14, 14, 14, 220);
             surface()->DrawFilledRect(drawX, drawY, drawX + m_CellSize - 2, drawY + m_CellSize - 2);
+            surface()->DrawSetColor(255, 255, 255, 45);
+            surface()->DrawOutlinedRect(drawX, drawY, drawX + m_CellSize - 2, drawY + m_CellSize - 2);
         }
     }
 
@@ -114,8 +117,10 @@ void CHudInventory::Paint()
             int w = item->width * m_CellSize - 2;
             int h = item->height * m_CellSize - 2;
 
-            surface()->DrawSetColor(50, 90, 150, 230);
+            surface()->DrawSetColor(18, 18, 18, 240);
             surface()->DrawFilledRect(drawX, drawY, drawX + w, drawY + h);
+            surface()->DrawSetColor(255, 255, 255, 105);
+            surface()->DrawOutlinedRect(drawX, drawY, drawX + w, drawY + h);
 
             surface()->DrawSetTextColor(255, 255, 255, 255);
             HFont hFont = scheme()->GetIScheme(scheme()->GetScheme("ClientScheme"))->GetFont("Default", false);
@@ -138,8 +143,10 @@ void CHudInventory::Paint()
         int w = m_pDraggedItem->width * m_CellSize - 2;
         int h = m_pDraggedItem->height * m_CellSize - 2;
 
-        surface()->DrawSetColor(70, 130, 200, 250);
+        surface()->DrawSetColor(245, 245, 245, 230);
         surface()->DrawFilledRect(drawX, drawY, drawX + w, drawY + h);
+        surface()->DrawSetColor(255, 255, 255, 255);
+        surface()->DrawOutlinedRect(drawX, drawY, drawX + w, drawY + h);
     }
 }
 
