@@ -1,0 +1,65 @@
+// Native PAL/VHS pass, adapted from the signal stages of Realistic VHS Effect 2
+// (Workshop 3494727681). No Garry's Mod shaders or Lua runtime are required.
+sampler Frame : register(s0);
+float4 Settings : register(c0); // seconds, PAL width, PAL height, strength
+float4 SourceRect : register(c1); // source UV origin.xy, size.zw
+float4 Framing : register(c2); // fraction of viewport occupied by the 4:3 picture
+
+float Noise(float2 p)
+{
+    return frac(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);
+}
+
+float3 ReadFrame(float2 uv)
+{
+    // Half-texel inset avoids wrapping or sampling outside the copied viewport.
+    uv = clamp(uv, 0.5 / Settings.yz, 1.0 - 0.5 / Settings.yz);
+    return tex2D(Frame, SourceRect.xy + uv * SourceRect.zw).rgb;
+}
+
+float Luma(float3 c) { return dot(c, float3(0.299, 0.587, 0.114)); }
+
+float4 main(float2 texcoord : TEXCOORD0) : COLOR
+{
+    float2 uv = (texcoord - SourceRect.xy) / SourceRect.zw;
+    // Centre crop: keep geometry and the aiming centre unchanged. PAL pixels
+    // are counted inside this frame, not across the black side bars.
+    float picture = step(abs(uv.x - 0.5), Framing.x * 0.5);
+    float t = Settings.x;
+    float strength = Settings.w;
+    float field = floor(t * 50.0);
+    float scanLine = floor(uv.y * Settings.z);
+    float tracking = smoothstep(0.965, 1.0, uv.y);
+    float wave = sin(scanLine / 64.0 + t * 4.0) + 0.5 * sin(scanLine / 32.0 + t * 8.0);
+    float jitter = (Noise(float2(scanLine, field)) - 0.5);
+    uv.x += strength * (wave * 0.65 + jitter * tracking * 4.0) / Settings.y;
+    // PAL sampling softness, without forcing the game's rendering to 25 FPS.
+    float2 pal = (floor(uv * Settings.yz) + 0.5) / Settings.yz;
+    uv = lerp(uv, pal, 0.55 * strength);
+    float2 dx = float2(1.0 / Settings.y, 0);
+    float2 dy = float2(0, 1.0 / Settings.z);
+    float3 centre = ReadFrame(uv);
+    float y = Luma(centre) * 0.40;
+    y += (Luma(ReadFrame(uv - dx)) + Luma(ReadFrame(uv + dx))) * 0.20;
+    y += (Luma(ReadFrame(uv - dy)) + Luma(ReadFrame(uv + dy))) * 0.10;
+
+    // VHS chrominance has much lower horizontal bandwidth than luminance.
+    // Reconstruct from broad colour taps rather than merely shifting RGB edges.
+    float2 chromaUV = uv + dx * strength * (1.25 + 0.25 * sin(t * 2.0));
+    float3 chroma = ReadFrame(chromaUV) * 0.30;
+    chroma += (ReadFrame(chromaUV - dx * 2.0) + ReadFrame(chromaUV + dx * 2.0)) * 0.23;
+    chroma += (ReadFrame(chromaUV - dx * 4.0) + ReadFrame(chromaUV + dx * 4.0)) * 0.12;
+    float3 rgb = y + (chroma - Luma(chroma)) * 0.94;
+    float grain = Noise(float2(floor(uv.x * Settings.y), scanLine) + field * float2(1.37, 2.41)) - 0.5;
+    rgb += grain * (0.026 + tracking * 0.08);
+    // Alternating fields and the small head-switching band at the bottom.
+    rgb *= 1.0 - 0.035 * frac((scanLine + field) * 0.5) * 2.0;
+    float headNoise = Noise(float2(floor(uv.x * 180.0), field));
+    rgb += tracking * (headNoise - 0.5) * 0.10;
+    float2 edge = abs(float2((uv.x - 0.5) / Framing.x + 0.5, uv.y) * 2.0 - 1.0);
+    float vignette = saturate(1.0 - 0.19 * (edge.x * edge.x + edge.y * edge.y));
+    rgb *= vignette;
+    // A modest tape black lift, preserving highlights and avoiding an exposure change.
+    rgb = rgb * 0.97 + 0.006;
+    return float4(saturate(lerp(centre, rgb, strength)) * picture, 1.0);
+}

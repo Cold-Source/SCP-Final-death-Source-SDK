@@ -5,6 +5,7 @@
 //=============================================================================//
 
 #include "basecombatweapon_shared.h"
+#include "scp_weapon_module.h"
 #include "luamanager.h"
 
 #ifndef BASEHLCOMBATWEAPON_H
@@ -30,6 +31,30 @@ public:
 	~CHL2MPScriptedWeapon();
 
 	bool			IsScripted( void ) const { return true; }
+    bool IsAiming() const { return m_bSWEPAiming; }
+    void SetAimState(bool aiming) { m_bSWEPAiming = aiming; }
+    bool IsNativeSWEP() const;
+    int GetSWEPModuleCount() const;
+    int GetSWEPModuleOptionCount(int slot) const;
+    int GetSWEPModuleSelection(int slot) const
+    {
+        const int count = GetSWEPModuleOptionCount(slot);
+        return count > 0 && m_iSWEPModules[slot] >= 0 && m_iSWEPModules[slot] < count ? m_iSWEPModules[slot] : 0;
+    }
+    void GetSWEPModuleName(int slot, char *buffer, int size) const;
+    bool GetSWEPModuleOption(int slot, int option, SCPWeaponModuleOption &out) const;
+    void ApplySWEPModules(CBaseAnimating *target, bool world) const;
+#ifndef CLIENT_DLL
+    bool SetSWEPModule(int slot, int option);
+#else
+    void DrawSWEPModules(C_BaseAnimating *parent, int flags, bool world);
+    float GetSWEPAimFraction() const { return m_flSWEPAimBlend; }
+    CHandle<C_BaseAnimating> m_hSWEPViewParts[SCP_WEAPON_MODULE_SLOTS];
+    CHandle<C_BaseAnimating> m_hSWEPLensParts[SCP_WEAPON_MODULE_SLOTS];
+    CHandle<C_BaseAnimating> m_hSWEPWorldParts[SCP_WEAPON_MODULE_SLOTS];
+#endif
+    bool IsSafetyOn() const { return m_bSWEPSafety; }
+    void SetSafetyState(bool enabled) { m_bSWEPSafety = enabled; }
 	
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
@@ -39,6 +64,7 @@ public:
 	acttable_t *ActivityList( void );
 	int ActivityListCount( void );
 	acttable_t *ActivityList(int &count) OVERRIDE { count = ActivityListCount(); return ActivityList(); }
+    Activity ActivityOverride(Activity activity, bool *required) OVERRIDE;
 
 	void			Precache( void );
 	void			InitScriptedWeapon( void );
@@ -60,6 +86,17 @@ public:
 
 #ifdef CLIENT_DLL
 	virtual void	OnDataChanged( DataUpdateType_t updateType );
+    void AddViewmodelBob(CBaseViewModel *viewmodel, Vector &origin, QAngle &angles) OVERRIDE;
+    float GetSWEPViewModelFOV(float fallback) const;
+    void GetAimEntOrigin(IClientEntity *attachedTo, Vector *origin, QAngle *angles) OVERRIDE;
+    float m_flSWEPSprintBlend = 0.0f;
+    float m_flSWEPAimBlend = 0.0f;
+    float m_flSWEPSafetyBlend = 0.0f;
+    float m_flSWEPRecoilBlend = 0.0f;
+    float m_flSWEPWalkBlend = 0.0f;
+    float m_flSWEPStepPhase = 0.0f;
+    int m_iSWEPPreviousClip = -2;
+    int m_nSWEPViewFrame = -1;
 	virtual const char *GetScriptedClassname( void );
 #endif
 
@@ -105,6 +142,9 @@ private:
 	CHL2MPScriptedWeapon( const CHL2MPScriptedWeapon & );
 
 	CNetworkString( m_iScriptedClassname, MAX_WEAPON_STRING );
+    CNetworkVar(bool, m_bSWEPAiming);
+    CNetworkVar(bool, m_bSWEPSafety);
+    CNetworkArray(int, m_iSWEPModules, SCP_WEAPON_MODULE_SLOTS);
 
 };
 

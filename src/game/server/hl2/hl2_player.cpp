@@ -13,6 +13,9 @@
 #include "gamerules.h"
 #include "trains.h"
 #include "basehlcombatweapon_shared.h"
+#ifdef LUA_SDK
+#include "hl2mp/weapon_hl2mpbase_scriptedweapon.h"
+#endif
 #include "vcollide_parse.h"
 #include "in_buttons.h"
 #include "ai_interactions.h"
@@ -421,6 +424,7 @@ CSuitPowerDevice SuitDeviceBreather( bits_SUIT_DEVICE_BREATHER, 6.7f );		// 100 
 
 IMPLEMENT_SERVERCLASS_ST(CHL2_Player, DT_HL2_Player)
 	SendPropDataTable(SENDINFO_DT(m_HL2Local), &REFERENCE_SEND_TABLE(DT_HL2Local), SendProxy_SendLocalDataTable),
+    SendPropFloat(SENDINFO(m_flWeaponPickupProgress), 12, 0, -1.0f, 1.0f),
 	SendPropBool( SENDINFO(m_fIsSprinting) ),
 	SendPropBool( SENDINFO(m_bSprintAllowed) ),
 	SendPropFloat( SENDINFO(m_flFlashlightPowerDrainScale), 0, SPROP_NOSCALE ),
@@ -524,6 +528,7 @@ void CHL2_Player::HandleArmorReduction( void )
 //-----------------------------------------------------------------------------
 void CHL2_Player::PreThink(void)
 {
+    if (!IsAlive()) ResetWeaponPickup();
 	if ( player_showpredictedposition.GetBool() )
 	{
 		Vector	predPos;
@@ -1019,14 +1024,82 @@ bool CHL2_Player::HandleInteraction(int interactionType, void *data, CBaseCombat
 // NPC character models use activities rather than the legacy ref_aim_*
 // player sequences. Resolve the weapon's activity first, then an unarmed
 // fallback, instead of displaying sequence zero when a sequence is absent.
+// Player versions of characters include the shared multiplayer animations.
+// Native HL2 weapons still request NPC activities, so resolve both families.
+static Activity MultiplayerCharacterActivity(CHL2_Player *player, Activity source)
+{
+    Activity base;
+    switch (source)
+    {
+    case ACT_IDLE: case ACT_IDLE_ANGRY: base = ACT_HL2MP_IDLE; break;
+    case ACT_WALK: case ACT_WALK_AIM: case ACT_RUN: case ACT_RUN_AIM: base = ACT_HL2MP_RUN; break;
+    case ACT_COVER_LOW: case ACT_RANGE_AIM_LOW: base = ACT_HL2MP_IDLE_CROUCH; break;
+    case ACT_WALK_CROUCH: case ACT_WALK_CROUCH_AIM: base = ACT_HL2MP_WALK_CROUCH; break;
+    case ACT_JUMP: base = ACT_HL2MP_JUMP; break;
+    case ACT_SWIM: base = ACT_HL2MP_RUN; break;
+    case ACT_GESTURE_RANGE_ATTACK1: base = ACT_HL2MP_GESTURE_RANGE_ATTACK; break;
+    case ACT_GESTURE_RELOAD: base = ACT_HL2MP_GESTURE_RELOAD; break;
+    default: return source;
+    }
+    CBaseCombatWeapon *weapon = player->GetActiveWeapon();
+    if (!weapon) return base;
+    const char *hold = weapon->GetAnimPrefix();
+    Activity idle = ACT_HL2MP_IDLE;
+    if (!V_stricmp(hold, "pistol") || !V_stricmp(hold, "python")) idle = ACT_HL2MP_IDLE_PISTOL;
+    else if (!V_stricmp(hold, "smg") || !V_stricmp(hold, "smg1") || !V_stricmp(hold, "smg2")) idle = ACT_HL2MP_IDLE_SMG1;
+    else if (!V_stricmp(hold, "ar2") || !V_stricmp(hold, "rifle")) idle = ACT_HL2MP_IDLE_AR2;
+    else if (!V_stricmp(hold, "shotgun")) idle = ACT_HL2MP_IDLE_SHOTGUN;
+    else if (!V_stricmp(hold, "rpg")) idle = ACT_HL2MP_IDLE_RPG;
+    else if (!V_stricmp(hold, "crossbow")) idle = ACT_HL2MP_IDLE_CROSSBOW;
+    else if (!V_stricmp(hold, "physgun") || !V_stricmp(hold, "physcannon")) idle = ACT_HL2MP_IDLE_PHYSGUN;
+    else if (!V_stricmp(hold, "grenade")) idle = ACT_HL2MP_IDLE_GRENADE;
+    else if (!V_stricmp(hold, "crowbar") || !V_stricmp(hold, "melee")) idle = ACT_HL2MP_IDLE_MELEE;
+    else if (!V_stricmp(hold, "slam")) idle = ACT_HL2MP_IDLE_SLAM;
+    // Each HL2MP hold type has the same contiguous seven-activity layout.
+    return (Activity)(idle + base - ACT_HL2MP_IDLE);
+}
+
+static bool IsCharacterWeaponSafe(CHL2_Player *player)
+{
+#ifdef LUA_SDK
+    CHL2MPScriptedWeapon *weapon = dynamic_cast<CHL2MPScriptedWeapon *>(player->GetActiveWeapon());
+    return weapon && weapon->IsNativeSWEP() && weapon->IsSafetyOn();
+#else
+    return false;
+#endif
+}
+
+// These sequences also work with shared player animation models whose passive
+// activities are not part of the original Source SDK activity enumeration.
+static int SelectSafeCharacterSequence(CHL2_Player *player, Activity movement)
+{
+    const char *hold = player->GetActiveWeapon()->GetAnimPrefix();
+    const bool passive = !V_stricmp(hold, "ar2") || !V_stricmp(hold, "rifle") ||
+        !V_stricmp(hold, "smg") || !V_stricmp(hold, "smg1") || !V_stricmp(hold, "smg2") ||
+        !V_stricmp(hold, "shotgun") || !V_stricmp(hold, "rpg") || !V_stricmp(hold, "crossbow");
+    const char *name = passive ? "idle_passive" : "idle_all_01";
+    Activity fallback = ACT_IDLE;
+    switch (movement)
+    {
+    case ACT_WALK_AIM: name = passive ? "walk_passive" : "walk_all"; fallback = ACT_WALK; break;
+    case ACT_RUN_AIM: name = passive ? "run_passive" : "run_all_01"; fallback = ACT_RUN; break;
+    case ACT_RANGE_AIM_LOW: name = passive ? "cidle_passive" : "cidle_all"; fallback = ACT_COVER_LOW; break;
+    case ACT_WALK_CROUCH_AIM: name = passive ? "cwalk_passive" : "cwalk_all"; fallback = ACT_WALK_CROUCH; break;
+    case ACT_JUMP: name = passive ? "jump_passive" : "jump_slam"; fallback = ACT_JUMP; break;
+    case ACT_SWIM: name = passive ? "swimming_passive" : "swimming_all"; fallback = ACT_SWIM; break;
+    }
+    int sequence = player->LookupSequence(name);
+    return sequence >= 0 ? sequence : player->SelectWeightedSequence(fallback);
+}
+
 static int SelectHL2CharacterSequence( CHL2_Player *pPlayer, Activity preferred,
 	Activity fallback, Activity &selectedActivity )
 {
 	const Activity candidates[] =
 	{
-		pPlayer->Weapon_TranslateActivity( preferred ), preferred,
-		pPlayer->Weapon_TranslateActivity( fallback ), fallback,
-		pPlayer->Weapon_TranslateActivity( ACT_IDLE ), ACT_IDLE
+        MultiplayerCharacterActivity(pPlayer, preferred), pPlayer->Weapon_TranslateActivity(preferred), preferred,
+        MultiplayerCharacterActivity(pPlayer, fallback), pPlayer->Weapon_TranslateActivity(fallback), fallback,
+        MultiplayerCharacterActivity(pPlayer, ACT_IDLE), pPlayer->Weapon_TranslateActivity(ACT_IDLE), ACT_IDLE
 	};
 	for ( int i = 0; i < ARRAYSIZE( candidates ); ++i )
 	{
@@ -1048,9 +1121,23 @@ void CHL2_Player::SetAnimation( PLAYER_ANIM playerAnim )
 		return;
 	}
 
+    const bool safe = IsCharacterWeaponSafe(this);
+    const bool multiplayerModel = SelectWeightedSequence(ACT_HL2MP_IDLE_PISTOL) >= 0;
+    if (multiplayerModel)
+    {
+        Vector forward, right;
+        AngleVectors(QAngle(0, GetLocalAngles().y, 0), &forward, &right, NULL);
+        const Vector velocity = GetAbsVelocity();
+        const float scale = MAX(velocity.Length2D(), 1.0f);
+        SetPoseParameter("move_x", DotProduct(velocity, forward) / scale);
+        SetPoseParameter("move_y", -DotProduct(velocity, right) / scale);
+        SetPoseParameter("aim_pitch", safe ? 0.0f : clamp(AngleNormalize(EyeAngles().x), -89.0f, 89.0f));
+        SetPoseParameter("aim_yaw", 0);
+    }
+
 	char legacySequence[64];
 	Q_snprintf( legacySequence, sizeof( legacySequence ), "ref_aim_%s", m_szAnimExtension );
-	if ( LookupSequence( legacySequence ) >= 0 )
+	if ( !safe && LookupSequence( legacySequence ) >= 0 )
 	{
 		BaseClass::SetAnimation( playerAnim );
 		return;
@@ -1058,10 +1145,14 @@ void CHL2_Player::SetAnimation( PLAYER_ANIM playerAnim )
 
 	if ( playerAnim == PLAYER_ATTACK1 || playerAnim == PLAYER_RELOAD )
 	{
+        if (safe) return;
 		Activity gesture = Weapon_TranslateActivity( playerAnim == PLAYER_ATTACK1
 			? ACT_GESTURE_RANGE_ATTACK1 : ACT_GESTURE_RELOAD );
-		if ( SelectWeightedSequence( gesture ) >= 0 )
-			RestartGesture( gesture );
+        const Activity multiplayerGesture = MultiplayerCharacterActivity(this, playerAnim == PLAYER_ATTACK1
+            ? ACT_GESTURE_RANGE_ATTACK1 : ACT_GESTURE_RELOAD);
+        if (SelectWeightedSequence(multiplayerGesture) >= 0) gesture = multiplayerGesture;
+        if (SelectWeightedSequence(gesture) >= 0)
+            RestartGesture(gesture);
 		return;
 	}
 
@@ -1090,7 +1181,9 @@ void CHL2_Player::SetAnimation( PLAYER_ANIM playerAnim )
 	}
 
 	Activity selectedActivity = ACT_IDLE;
-	int sequence = SelectHL2CharacterSequence( this, preferred, fallback, selectedActivity );
+	int sequence = safe ? SelectSafeCharacterSequence(this, preferred) : -1;
+    if (sequence < 0)
+        sequence = SelectHL2CharacterSequence( this, preferred, fallback, selectedActivity );
 	if ( sequence < 0 )
 	{
 		BaseClass::SetAnimation( playerAnim );
@@ -1102,7 +1195,13 @@ void CHL2_Player::SetAnimation( PLAYER_ANIM playerAnim )
 		ResetSequence( sequence );
 		SetCycle( 0.0f );
 	}
-	SetPlaybackRate( 1.0f );
+    float playback = 1.0f;
+    if (multiplayerModel && speed > 1.0f && (GetFlags() & FL_ONGROUND))
+    {
+        const float groundSpeed = GetSequenceGroundSpeed(GetSequence());
+        if (groundSpeed > 1.0f) playback = clamp(speed / groundSpeed, 0.1f, 2.0f);
+    }
+    SetPlaybackRate(playback);
 }
 
 void CHL2_Player::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
@@ -1166,6 +1265,10 @@ void CHL2_Player::PlayerRunCommand(CUserCmd *ucmd, IMoveHelper *moveHelper)
 //-----------------------------------------------------------------------------
 void CHL2_Player::Spawn(void)
 {
+    ResetWeaponPickup();
+    m_bWeaponPickupConsumed = false;
+    m_bAllowWeaponPickup = false;
+    m_flNextWeaponDrop = 0.0f;
 
 #ifndef HL2MP
 #ifndef PORTAL
@@ -2703,6 +2806,8 @@ void CHL2_Player::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 //-----------------------------------------------------------------------------
 bool CHL2_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 {
+    // Physical touches may never bypass the server's held-use interaction.
+    if (!m_bAllowWeaponPickup) return false;
 
 #if	HL2_SINGLE_PRIMARY_WEAPON_MODE
 
@@ -2786,6 +2891,27 @@ bool CHL2_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 //-----------------------------------------------------------------------------
 bool CHL2_Player::ClientCommand( const CCommand &args )
 {
+    if (FStrEq(args[0], "scp_dropweapon"))
+    {
+        CBaseCombatWeapon *weapon = GetActiveWeapon();
+        if (IsAlive() && !IsInAVehicle() && GetMoveType() != MOVETYPE_LADDER &&
+            weapon && weapon->GetOwner() == this && gpGlobals->curtime >= m_flNextWeaponDrop && weapon->Holster(NULL))
+        {
+            m_flNextWeaponDrop = gpGlobals->curtime + 0.35f;
+            ResetWeaponPickup();
+            Vector forward;
+            AngleVectors(EyeAngles(), &forward);
+            Vector velocity = forward * 160.0f + GetAbsVelocity();
+            Weapon_Drop(weapon, NULL, &velocity);
+        }
+        return true;
+    }
+    if (FStrEq(args[0], "scp_weapon_module"))
+    {
+        CHL2MPScriptedWeapon *weapon = dynamic_cast<CHL2MPScriptedWeapon *>(GetActiveWeapon());
+        if (args.ArgC() == 3 && weapon) weapon->SetSWEPModule(Q_atoi(args[1]), Q_atoi(args[2]));
+        return true;
+    }
 	if ( SCPAdminCommand( this, args ) ) return true;
 	if ( FStrEq( args[0], "scp_applyplayermodel" ) )
 	{
@@ -2824,8 +2950,80 @@ bool CHL2_Player::ClientCommand( const CCommand &args )
 // Purpose: 
 // Output : void CBasePlayer::PlayerUse
 //-----------------------------------------------------------------------------
+// Explicit grants (loadout, give, admin and Lua) retain the native acquisition
+// path and its ammo, pickup outputs and game-rule checks.
+CBaseEntity *CHL2_Player::GiveNamedItem(const char *name, int subtype)
+{
+    const bool previous = m_bAllowWeaponPickup;
+    m_bAllowWeaponPickup = true;
+    CBaseEntity *item = BaseClass::GiveNamedItem(name, subtype);
+    m_bAllowWeaponPickup = previous;
+    return item;
+}
+
+void CHL2_Player::ResetWeaponPickup()
+{
+    m_hWeaponPickupTarget = NULL;
+    m_flWeaponPickupStarted = 0.0f;
+    m_flWeaponPickupProgress = -1.0f;
+}
+
+bool CHL2_Player::UpdateWeaponPickup()
+{
+    if (!(m_nButtons & IN_USE)) m_bWeaponPickupConsumed = false;
+    if (!IsAlive() || IsObserver() || !IsAllowedToPickupWeapons() || IsInAVehicle() || GetMoveType() == MOVETYPE_LADDER ||
+        m_flTimeUseSuspended > gpGlobals->curtime || GetUseEntity() != NULL ||
+        (m_afPhysicsFlags & PFLAG_DIROVERRIDE))
+    {
+        ResetWeaponPickup();
+        return false;
+    }
+    if (m_bWeaponPickupConsumed)
+    {
+        ResetWeaponPickup();
+        return true;
+    }
+
+    Vector forward;
+    AngleVectors(EyeAngles(), &forward);
+    trace_t tr;
+    const Vector start = EyePosition();
+    // The first obstruction wins, including players and props: no pickup through walls.
+    UTIL_TraceLine(start, start + forward * 96.0f, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
+    CBaseCombatWeapon *weapon = dynamic_cast<CBaseCombatWeapon *>(tr.m_pEnt);
+    if (!weapon || weapon->GetOwner() || weapon->IsMarkedForDeletion() || weapon->IsDissolving() ||
+        weapon->IsEffectActive(EF_NODRAW) || weapon->HasSpawnFlags(SF_WEAPON_NO_PLAYER_PICKUP) ||
+        !Weapon_CanUse(weapon) || !g_pGameRules->CanHavePlayerItem(this, weapon))
+    {
+        ResetWeaponPickup();
+        return false;
+    }
+    if (m_hWeaponPickupTarget.Get() != weapon || !(m_nButtons & IN_USE))
+    {
+        m_hWeaponPickupTarget = weapon;
+        m_flWeaponPickupStarted = gpGlobals->curtime;
+        m_flWeaponPickupProgress = 0.0f;
+    }
+    if (m_nButtons & IN_USE)
+    {
+        m_flWeaponPickupProgress = clamp(gpGlobals->curtime - m_flWeaponPickupStarted, 0.0f, 1.0f);
+        if (m_flWeaponPickupProgress >= 1.0f)
+        {
+            // Keep the normal touch path for map outputs and ammo-only pickups.
+            // It is reached only after rechecking the target on this server tick.
+            m_bWeaponPickupConsumed = true;
+            m_bAllowWeaponPickup = true;
+            weapon->DefaultTouch(this);
+            m_bAllowWeaponPickup = false;
+            ResetWeaponPickup();
+        }
+    }
+    return true;
+}
+
 void CHL2_Player::PlayerUse ( void )
 {
+    if (UpdateWeaponPickup()) return;
 	// Was use pressed or released?
 	if ( ! ((m_nButtons | m_afButtonPressed | m_afButtonReleased) & IN_USE) )
 		return;
@@ -2874,6 +3072,8 @@ void CHL2_Player::PlayerUse ( void )
 	}
 
 	CBaseEntity *pUseEntity = FindUseEntity();
+    // Weapons are handled exclusively by the aimed, timed interaction above.
+    if (dynamic_cast<CBaseCombatWeapon *>(pUseEntity)) return;
 
 	bool usedSomething = false;
 
@@ -3316,7 +3516,11 @@ void CHL2_Player::UpdateClientData( void )
 //---------------------------------------------------------
 void CHL2_Player::OnRestore()
 {
-	BaseClass::OnRestore();
+    BaseClass::OnRestore();
+    ResetWeaponPickup();
+    m_bWeaponPickupConsumed = false;
+    m_bAllowWeaponPickup = false;
+    m_flNextWeaponDrop = 0.0f;
 	m_HL2Local.m_bDisplayReticle = true;
 	m_pPlayerAISquad = g_AI_SquadManager.FindCreateSquad(AllocPooledString(PLAYER_SQUADNAME));
 }

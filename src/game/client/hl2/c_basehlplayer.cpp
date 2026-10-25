@@ -11,6 +11,14 @@
 #include "c_ai_basenpc.h"
 #include "in_buttons.h"
 #include "collisionutils.h"
+#include "igamesystem.h"
+#include "view.h"
+#include "view_scene.h"
+#include "datacache/imdlcache.h"
+#include "model_types.h"
+#ifdef LUA_SDK
+#include "hl2mp/weapon_hl2mpbase_scriptedweapon.h"
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -30,6 +38,7 @@ ConVar cl_npc_speedmod_outtime( "cl_npc_speedmod_outtime", "1.5", FCVAR_CLIENTDL
 
 IMPLEMENT_CLIENTCLASS_DT(C_BaseHLPlayer, DT_HL2_Player, CHL2_Player)
 	RecvPropDataTable( RECVINFO_DT(m_HL2Local),0, &REFERENCE_RECV_TABLE(DT_HL2Local) ),
+    RecvPropFloat(RECVINFO(m_flWeaponPickupProgress)),
 	RecvPropBool( RECVINFO( m_fIsSprinting ) ),
 	RecvPropBool( RECVINFO( m_bSprintAllowed ) ),
 	RecvPropFloat( RECVINFO( m_flFlashlightPowerDrainScale ) ),
@@ -118,6 +127,12 @@ float C_BaseHLPlayer::GetFOV()
 
 	// Clamp FOV in MP
 	int min_fov = ( gpGlobals->maxClients == 1 ) ? 5 : default_fov.GetInt();
+#ifdef LUA_SDK
+    C_HL2MPScriptedWeapon *scripted = dynamic_cast<C_HL2MPScriptedWeapon *>(GetActiveWeapon());
+    // Honor the server's authored aim FOV, including its blend back to default.
+    if (scripted && (scripted->IsAiming() || BaseClass::GetFOV() != GetDefaultFOV()))
+        min_fov = 5;
+#endif
 	
 	// Don't let it go too low
 	flFOVOffset = MAX( min_fov, flFOVOffset );
@@ -666,3 +681,109 @@ void C_BaseHLPlayer::BuildTransformations( CStudioHdr *hdr, Vector *pos, Quatern
 	BuildFirstPersonMeathookTransformations( hdr, pos, q, cameraTransform, boneMask, boneComputed, "ValveBiped.Bip01_Head1" );
 }
 
+
+// A separate bone-merged renderable leaves the real player, weapon, camera and
+// world shadows untouched. Only the lower-body bones survive on this copy.
+static ConVar cl_scp_legs("cl_scp_legs", "1", FCVAR_CLIENTDLL | FCVAR_ARCHIVE,
+    "Show your legs in first person (0 = off, 1 = on).", true, 0, true, 1);
+
+static bool ShouldShowFirstPersonLegs(C_BasePlayer *player)
+{
+    return cl_scp_legs.GetBool() && !engine->IsLevelMainMenuBackground() && player && player->IsAlive() &&
+        player->GetObserverMode() == OBS_MODE_NONE && !player->IsInAVehicle() &&
+        player->InFirstPersonView() && !C_BasePlayer::ShouldDrawLocalPlayer();
+}
+
+class C_SCPFirstPersonLegs : public C_BaseAnimating
+{
+    DECLARE_CLASS(C_SCPFirstPersonLegs, C_BaseAnimating);
+public:
+    virtual ShadowType_t ShadowCastType() { return SHADOWS_NONE; }
+    virtual bool ShouldDraw()
+    {
+        C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
+        return ShouldShowFirstPersonLegs(player) && GetOwnerEntity() == player && BaseClass::ShouldDraw();
+    }
+    virtual int DrawModel(int flags)
+    {
+        if (!DrawingMainView() || !ShouldDraw() || (flags & STUDIO_SHADOWDEPTHTEXTURE)) return 0;
+        MDLCACHE_CRITICAL_SECTION();
+        CreateModelInstance();
+        // The base DrawModel hides followers when their parent is hidden in
+        // first person. Bone merging itself sets up the parent without drawing it.
+        return InternalDrawModel(flags);
+    }
+    virtual void BuildTransformations(CStudioHdr *hdr, Vector *pos, Quaternion q[],
+        const matrix3x4_t &cameraTransform, int boneMask, CBoneBitList &boneComputed)
+    {
+        BaseClass::BuildTransformations(hdr, pos, q, cameraTransform, boneMask, boneComputed);
+        const int left = LookupBone("ValveBiped.Bip01_L_Thigh");
+        const int right = LookupBone("ValveBiped.Bip01_R_Thigh");
+        const int pelvis = LookupBone("ValveBiped.Bip01_Pelvis");
+        const int readable = m_BoneAccessor.GetReadableBones();
+        const int writable = m_BoneAccessor.GetWritableBones();
+        m_BoneAccessor.SetReadableBones(BONE_USED_BY_ANYTHING);
+        m_BoneAccessor.SetWritableBones(BONE_USED_BY_ANYTHING);
+        Vector waist = GetAbsOrigin();
+        if (pelvis >= 0) MatrixGetColumn(GetBoneForWrite(pelvis), 3, waist);
+        for (int bone = 0; bone < hdr->numbones(); ++bone)
+        {
+            bool leg = false;
+            for (int parent = bone; parent >= 0; parent = hdr->pBone(parent)->parent)
+                if (parent == left || parent == right) { leg = true; break; }
+            if (!leg)
+            {
+                matrix3x4_t &transform = GetBoneForWrite(bone);
+                MatrixScaleByZero(transform);
+                MatrixSetColumn(waist, 3, transform);
+            }
+        }
+        m_BoneAccessor.SetReadableBones(readable);
+        m_BoneAccessor.SetWritableBones(writable);
+    }
+};
+
+class C_SCPFirstPersonLegsSystem : public CAutoGameSystemPerFrame
+{
+    CHandle<C_SCPFirstPersonLegs> m_legs;
+    void RemoveLegs()
+    {
+        if (m_legs) m_legs->Release();
+        m_legs = NULL;
+    }
+public:
+    C_SCPFirstPersonLegsSystem() : CAutoGameSystemPerFrame("SCPFirstPersonLegs") {}
+    virtual void LevelShutdownPreEntity() { RemoveLegs(); }
+    virtual void Shutdown() { RemoveLegs(); }
+    virtual void PreRender()
+    {
+        C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
+        if (!ShouldShowFirstPersonLegs(player) || !player->GetModel())
+        {
+            RemoveLegs();
+            return;
+        }
+        if (m_legs && (m_legs->GetModelIndex() != player->GetModelIndex() || m_legs->GetOwnerEntity() != player))
+            RemoveLegs();
+        if (!m_legs)
+        {
+            // Unsupported skeletons must never display a head in the camera.
+            if (player->LookupBone("ValveBiped.Bip01_L_Thigh") < 0 ||
+                player->LookupBone("ValveBiped.Bip01_R_Thigh") < 0) return;
+            C_SCPFirstPersonLegs *legs = new C_SCPFirstPersonLegs;
+            if (!legs->InitializeAsClientEntity(modelinfo->GetModelName(player->GetModel()), RENDER_GROUP_OPAQUE_ENTITY))
+            {
+                legs->Release();
+                return;
+            }
+            m_legs = legs;
+            legs->SetOwnerEntity(player);
+            legs->FollowEntity(player, true);
+        }
+        m_legs->m_nSkin = player->GetSkin();
+        m_legs->m_nBody = player->GetBody();
+        m_legs->SetModelScale(player->GetModelScale());
+        m_legs->InvalidateBoneCache();
+    }
+};
+static C_SCPFirstPersonLegsSystem g_SCPFirstPersonLegs;

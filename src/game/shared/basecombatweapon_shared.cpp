@@ -686,6 +686,7 @@ void CBaseCombatWeapon::Drop( const Vector &vecVelocity )
 	// a game_weapon_manager does a cleanup on surplus weapons in the
 	// world.
 	SetRemoveable( true );
+    m_bHasBeenDropped = true;
 	WeaponManager_AmmoMod( this );
 
 	//If it was dropped then there's no need to respawn it.
@@ -2671,6 +2672,7 @@ BEGIN_DATADESC( CBaseCombatWeapon )
 	DEFINE_FIELD( m_bReloadsSingly, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_iSubType, FIELD_INTEGER ),
  	DEFINE_FIELD( m_bRemoveable, FIELD_BOOLEAN ),
+    DEFINE_FIELD( m_bHasBeenDropped, FIELD_BOOLEAN ),
 
 	DEFINE_FIELD( m_flUnlockTime,		FIELD_TIME ),
 	DEFINE_FIELD( m_hLocker,			FIELD_EHANDLE ),

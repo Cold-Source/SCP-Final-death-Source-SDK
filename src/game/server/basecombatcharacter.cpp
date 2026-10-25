@@ -2087,6 +2087,10 @@ void CBaseCombatCharacter::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 	// Weapon is now on my team
 	pWeapon->ChangeTeam( GetTeamNumber() );
 
+    // Spawn ammo is awarded once. A dropped gun retains its actual magazine
+    // and cannot generate reserve ammo by repeatedly dropping and picking it up.
+    if (!pWeapon->HasBeenDropped())
+    {
 	// ----------------------
 	//  Give Primary Ammo
 	// ----------------------
@@ -2128,6 +2132,7 @@ void CBaseCombatCharacter::Weapon_Equip( CBaseCombatWeapon *pWeapon )
 		pWeapon->m_iClip2 = pWeapon->GetMaxClip2();
 		GiveAmmo( (pWeapon->GetDefaultClip2() - pWeapon->GetMaxClip2()), pWeapon->m_iSecondaryAmmoType); 
 	}
+    }
 
 	pWeapon->Equip( this );
 

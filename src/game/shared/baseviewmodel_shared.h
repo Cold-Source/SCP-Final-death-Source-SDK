@@ -63,6 +63,7 @@ public:
 	// Returns which viewmodel it is
 	int						ViewModelIndex( ) const;
 
+    void SetScriptedSequenceLoop(bool enabled) { m_bScriptedSequenceLoop = enabled; }
 	virtual void			Precache( void );
 
 	virtual void			Spawn( void );
@@ -174,6 +175,11 @@ public:
 #endif
 
 private:
+#ifdef LUA_SDK
+    C_BaseAnimating *GetScriptedHands();
+    CHandle<C_BaseAnimating> m_hScriptedHands;
+    CHandle<C_BaseAnimating> m_hScriptedHandsRig;
+#endif
 	CBaseViewModel( const CBaseViewModel & ); // not defined, not accessible
 
 #endif
@@ -189,6 +195,7 @@ private:
 
 	// Used to force restart on client, only needs a few bits
 	CNetworkVar( int, m_nAnimationParity );
+    CNetworkVar(bool, m_bScriptedSequenceLoop);
 
 	// Weapon art
 	string_t				m_sVMName;			// View model of this weapon

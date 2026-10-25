@@ -362,6 +362,7 @@ public:
 	virtual	void	Render( vrect_t *rect );
 	virtual void	RenderView( const CViewSetup &view, int nClearFlags, int whatToDraw );
 	virtual void	RenderPlayerSprites();
+    void DrawWeaponScopeView(const CViewSetup &view, ITexture *target, float scopeFOV);
 	virtual void	Render2DEffectsPreHUD( const CViewSetup &view );
 	virtual void	Render2DEffectsPostHUD( const CViewSetup &view );
 

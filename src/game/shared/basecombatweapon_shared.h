@@ -429,6 +429,7 @@ public:
 	virtual	int				ObjectCaps( void );
 
 	bool					IsRemoveable() { return m_bRemoveable; }
+    bool HasBeenDropped() const { return m_bHasBeenDropped; }
 	void					SetRemoveable( bool bRemoveable ) { m_bRemoveable = bRemoveable; }
 	
 	// Returns bits for	weapon conditions
@@ -615,6 +616,9 @@ private:
 	Activity				m_IdealActivity;
 
 	bool					m_bRemoveable;
+#ifndef CLIENT_DLL
+    bool m_bHasBeenDropped = false;
+#endif
 
 	int						m_iPrimaryAmmoCount;
 	int						m_iSecondaryAmmoCount;

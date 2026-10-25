@@ -53,6 +53,7 @@ CBaseViewModel::CBaseViewModel()
 	m_nViewModelIndex	= 0;
 
 	m_nAnimationParity	= 0;
+    m_bScriptedSequenceLoop = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -60,6 +61,10 @@ CBaseViewModel::CBaseViewModel()
 //-----------------------------------------------------------------------------
 CBaseViewModel::~CBaseViewModel()
 {
+#if defined(CLIENT_DLL) && defined(LUA_SDK)
+    if (m_hScriptedHands) m_hScriptedHands->Release();
+    if (m_hScriptedHandsRig) m_hScriptedHandsRig->Release();
+#endif
 }
 
 void CBaseViewModel::UpdateOnRemove( void )
@@ -359,6 +364,7 @@ void CBaseViewModel::SendViewModelMatchingSequence( int sequence )
 	// since all we do is send a sequence number down to the client, 
 	// set this here so other weapons code knows which sequence is playing.
 	SetSequence( sequence );
+    m_bScriptedSequenceLoop = false;
 
 	m_nAnimationParity = ( m_nAnimationParity + 1 ) & ( (1<<VIEWMODEL_ANIMATION_PARITY_BITS) - 1 );
 
@@ -564,6 +570,7 @@ BEGIN_NETWORK_TABLE_NOBASE(CBaseViewModel, DT_BaseViewModel)
 	SendPropFloat	(SENDINFO(m_flPlaybackRate),	8,	SPROP_ROUNDUP,	-4.0,	12.0f),
 	SendPropInt		(SENDINFO(m_fEffects),		10, SPROP_UNSIGNED),
 	SendPropInt		(SENDINFO(m_nAnimationParity), 3, SPROP_UNSIGNED ),
+    SendPropBool(SENDINFO(m_bScriptedSequenceLoop)),
 	SendPropEHandle (SENDINFO(m_hWeapon)),
 	SendPropEHandle (SENDINFO(m_hOwner)),
 
@@ -583,6 +590,7 @@ BEGIN_NETWORK_TABLE_NOBASE(CBaseViewModel, DT_BaseViewModel)
 	RecvPropFloat	(RECVINFO(m_flPlaybackRate)),
 	RecvPropInt		(RECVINFO(m_fEffects), 0, RecvProxy_EffectFlags ),
 	RecvPropInt		(RECVINFO(m_nAnimationParity)),
+    RecvPropBool(RECVINFO(m_bScriptedSequenceLoop)),
 	RecvPropEHandle (RECVINFO(m_hWeapon), RecvProxy_Weapon ),
 	RecvPropEHandle (RECVINFO(m_hOwner)),
 
@@ -609,6 +617,7 @@ BEGIN_PREDICTION_DATA( CBaseViewModel )
 	DEFINE_PRED_FIELD_TOL( m_flPlaybackRate, FIELD_FLOAT, FTYPEDESC_INSENDTABLE, 0.125f ),
 	DEFINE_PRED_FIELD( m_fEffects, FIELD_INTEGER, FTYPEDESC_INSENDTABLE | FTYPEDESC_OVERRIDE ),
 	DEFINE_PRED_FIELD( m_nAnimationParity, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
+    DEFINE_PRED_FIELD(m_bScriptedSequenceLoop, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE),
 	DEFINE_PRED_FIELD( m_hWeapon, FIELD_EHANDLE, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_flAnimTime, FIELD_FLOAT, 0 ),
 

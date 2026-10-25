@@ -2070,6 +2070,12 @@ void CViewRender::RenderView( const CViewSetup &viewRender, int nClearFlags, int
 		g_flFreezeFlash = 0.0f;
 
 		g_pClientShadowMgr->AdvanceFrame();
+#ifdef HL2_CLIENT_DLL
+        extern void SCPUpdateWeaponScope(CViewRender &renderer, const CViewSetup &view);
+        if ((whatToDraw & RENDERVIEW_DRAWVIEWMODEL) && !(whatToDraw & RENDERVIEW_SUPPRESSMONITORRENDERING))
+            SCPUpdateWeaponScope(*this, viewRender);
+#endif
+
 
 	#ifdef USE_MONITORS
 		if ( cl_drawmonitors.GetBool() && 
@@ -2158,6 +2164,10 @@ void CViewRender::RenderView( const CViewSetup &viewRender, int nClearFlags, int
 
 		// Now actually draw the viewmodel
 		DrawViewModels( viewRender, whatToDraw & RENDERVIEW_DRAWVIEWMODEL );
+#ifdef HL2_CLIENT_DLL
+        extern void SCPDrawWeaponReticle(const CViewSetup &view);
+        if (whatToDraw & RENDERVIEW_DRAWVIEWMODEL) SCPDrawWeaponReticle(viewRender);
+#endif
 
 		DrawUnderwaterOverlay();
 
@@ -3165,6 +3175,32 @@ void CViewRender::ViewDrawScene_Intro( const CViewSetup &viewRender, int nClearF
 //			highend - 
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
+// Use the same isolated scene path as point-camera monitors. A lens needs its
+// own projection and depth buffer, not a resampled copy of the player's frame.
+void CViewRender::DrawWeaponScopeView(const CViewSetup &cameraView, ITexture *target, float scopeFOV)
+{
+    CViewSetup scopeView = cameraView;
+    scopeView.x = scopeView.y = 0;
+    scopeView.width = scopeView.m_nUnscaledWidth = target->GetActualWidth();
+    scopeView.height = scopeView.m_nUnscaledHeight = target->GetActualHeight();
+    scopeView.m_nUnscaledX = scopeView.m_nUnscaledY = 0;
+    scopeView.fov = scopeFOV;
+    scopeView.m_flAspectRatio = 1.0f;
+    scopeView.m_bOrtho = false;
+    scopeView.m_bViewToProjectionOverride = false;
+    const bool previousCamera = g_bRenderingCameraView;
+    g_bRenderingCameraView = true;
+    C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
+    const bool hidePlayer = player && !player->IsEffectActive(EF_NODRAW);
+    if (hidePlayer) player->AddEffects(EF_NODRAW);
+    Frustum frustum;
+    render->Push3DView(scopeView, VIEW_CLEAR_DEPTH | VIEW_CLEAR_COLOR, target, (VPlane *)frustum);
+    ViewDrawScene(false, SKYBOX_2DSKYBOX_VISIBLE, scopeView, 0, VIEW_MONITOR);
+    render->PopView(frustum);
+    if (hidePlayer) player->RemoveEffects(EF_NODRAW);
+    g_bRenderingCameraView = previousCamera;
+}
+
 bool CViewRender::DrawOneMonitor( ITexture *pRenderTarget, int cameraNum, C_PointCamera *pCameraEnt, 
 	const CViewSetup &cameraView, C_BasePlayer *localPlayer, int x, int y, int width, int height )
 {

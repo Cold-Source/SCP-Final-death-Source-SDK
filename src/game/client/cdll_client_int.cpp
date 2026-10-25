@@ -167,6 +167,7 @@ extern vgui::IInputInternal *g_InputInternal;
 
 #ifdef LUA_SDK
 #include "luamanager.h"
+#include "../shared/scp_admin_catalog.h"
 #include "luacachefile.h"
 #include "mountaddons.h"
 #endif
@@ -1757,6 +1758,7 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 	luasrc_dofolder(L, LUA_PATH_GAME_CLIENT);
 
 	luasrc_LoadWeapons();
+	if (gpGlobals->maxClients>1) luasrc_LoadWeapons(LUA_PATH_CACHE "/");
 	luasrc_LoadEntities();
 	// luasrc_LoadEffects();
 
@@ -2873,3 +2875,53 @@ CSteamID GetSteamIDForPlayerIndex( int iPlayerIndex )
 }
 
 #endif
+
+// VGUI messages cross the client/GamepadUI DLL boundary without persistent caches.
+CON_COMMAND(scp_admin_weaponcatalog, "Refresh the admin weapon catalog.")
+{
+    if (args.ArgC() != 2 || !L || !g_bLuaInitialized) return;
+    char *end = NULL;
+    const unsigned long handle = strtoul(args[1], &end, 10);
+    if (!end || end == args[1] || *end) return;
+    const vgui::VPANEL panel = vgui::ivgui()->HandleToPanel((vgui::HPanel)handle);
+    if (!panel) return;
+    KeyValues *catalog = new KeyValues("SCPWeaponCatalog");
+    const int top = lua_gettop(L);
+    lua_getglobal(L, "weapon");
+    if (lua_istable(L, -1))
+    {
+        lua_getfield(L, -1, "getweapons");
+        if (lua_isfunction(L, -1) && luasrc_pcall(L, 0, 1, 0) == 0 && lua_istable(L, -1))
+        {
+            lua_pushnil(L);
+            int count = 0;
+            while (lua_next(L, -2))
+            {
+                const char *name = lua_type(L, -2) == LUA_TSTRING ? lua_tostring(L, -2) : NULL;
+                if (count < 512 && SCPAdminWeaponClassname(name) && lua_istable(L, -1))
+                {
+                    lua_getfield(L, -1, "swep_config");
+                    const bool swep = lua_istable(L, -1); lua_pop(L, 1);
+                    lua_getfield(L, -1, "Spawnable");
+                    const bool spawnable = !lua_isboolean(L, -1) || lua_toboolean(L, -1); lua_pop(L, 1);
+                    if (swep && spawnable)
+                    {
+                        KeyValues *item = catalog->FindKey(name, true);
+                        const char *fields[] = { "PrintName", "WorldModel", "Category" };
+                        for (int i = 0; i < ARRAYSIZE(fields); ++i)
+                        {
+                            lua_getfield(L, -1, fields[i]);
+                            const char *value = lua_type(L, -1) == LUA_TSTRING ? lua_tostring(L, -1) : "";
+                            if (V_strlen(value) < 256) item->SetString(fields[i], value);
+                            lua_pop(L, 1);
+                        }
+                        ++count;
+                    }
+                }
+                lua_pop(L, 1);
+            }
+        }
+    }
+    lua_settop(L, top);
+    vgui::ivgui()->PostMessage(panel, catalog, 0);
+}

@@ -13,8 +13,10 @@
 #include "lbaseplayer_shared.h"
 #ifdef CLIENT_DLL
 #include "lc_baseanimating.h"
+#include "hl2/c_basehlplayer.h"
 #else
 #include "lbaseanimating.h"
+#include "hl2/hl2_player.h"
 #endif
 #include "lbasecombatweapon_shared.h"
 #include "lbaseentity_shared.h"
@@ -132,6 +134,17 @@ static int CBasePlayer_FindUseEntity (lua_State *L) {
   CBaseEntity *pUseEntity = luaL_checkplayer(L, 1)->FindUseEntity();
   lua_pushentity(L, pUseEntity);
   return 1;
+}
+
+static int CBasePlayer_IsSprinting(lua_State *state)
+{
+#ifdef CLIENT_DLL
+    const C_BaseHLPlayer *player = dynamic_cast<C_BaseHLPlayer *>(luaL_checkplayer(state, 1));
+#else
+    CHL2_Player *player = dynamic_cast<CHL2_Player *>(luaL_checkplayer(state, 1));
+#endif
+    lua_pushboolean(state, player && player->IsSprinting());
+    return 1;
 }
 
 static int CBasePlayer_GetActiveWeapon (lua_State *L) {
@@ -926,6 +939,7 @@ static const luaL_Reg CBasePlayermeta[] = {
   {"EyePositionAndVectors", CBasePlayer_EyePositionAndVectors},
   {"EyeVectors", CBasePlayer_EyeVectors},
   {"FindUseEntity", CBasePlayer_FindUseEntity},
+  {"IsSprinting", CBasePlayer_IsSprinting},
   {"GetActiveWeapon", CBasePlayer_GetActiveWeapon},
   {"GetAmmoCount", CBasePlayer_GetAmmoCount},
   {"GetAutoaimVector", CBasePlayer_GetAutoaimVector},

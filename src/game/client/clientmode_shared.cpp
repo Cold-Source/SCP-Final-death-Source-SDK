@@ -10,6 +10,9 @@
 
 #include "cbase.h"
 #include "clientmode_shared.h"
+#include "hl2mp/weapon_hl2mpbase_scriptedweapon.h"
+#include "inputsystem/iinputsystem.h"
+#include "in_buttons.h"
 #include "iinput.h"
 #include "view_shared.h"
 #include "iviewrender.h"
@@ -444,6 +447,12 @@ void ClientModeShared::Shutdown()
 // Input  : frametime - 
 //			*cmd - 
 //-----------------------------------------------------------------------------
+CON_COMMAND(scp_dropweapon, "Drop the active weapon")
+{
+    if (engine->IsInGame() && !engine->IsLevelMainMenuBackground())
+        engine->ServerCmd("scp_dropweapon\n");
+}
+
 bool ClientModeShared::CreateMove( float flInputSampleTime, CUserCmd *cmd )
 {
 	// Let the player override the view.
@@ -452,7 +461,35 @@ bool ClientModeShared::CreateMove( float flInputSampleTime, CUserCmd *cmd )
 		return true;
 
 	// Let the player at it
-	return pPlayer->CreateMove( flInputSampleTime, cmd );
+    const bool result = pPlayer->CreateMove(flInputSampleTime, cmd);
+    extern bool SCPWeaponModuleMenuVisible();
+    if (SCPWeaponModuleMenuVisible())
+    {
+        cmd->buttons = 0;
+        cmd->impulse = 0;
+        cmd->forwardmove = cmd->sidemove = cmd->upmove = 0;
+        return result;
+    }
+    static bool consumedSafetyReload = false;
+    const bool reloadDown = g_pInputSystem && g_pInputSystem->IsButtonDown(KEY_R);
+    if (!reloadDown) consumedSafetyReload = false;
+    CHL2MPScriptedWeapon *weapon = dynamic_cast<CHL2MPScriptedWeapon *>(pPlayer->GetActiveWeapon());
+    if (weapon && weapon->IsNativeSWEP() && pPlayer->IsAlive() &&
+        !enginevgui->IsGameUIVisible() && !engine->Con_IsVisible() && g_pInputSystem)
+    {
+        const bool use = g_pInputSystem->IsButtonDown(KEY_E);
+        const bool shift = g_pInputSystem->IsButtonDown(KEY_LSHIFT) || g_pInputSystem->IsButtonDown(KEY_RSHIFT);
+        // IN_WEAPON2 is reserved by Source for weapon-specific input and travels
+        // in the normal user command, preserving the server's pressed-key edges.
+        cmd->buttons &= ~IN_WEAPON2;
+        if (use && shift && reloadDown)
+        {
+            cmd->buttons |= IN_WEAPON2;
+            consumedSafetyReload = true;
+        }
+    }
+    if (consumedSafetyReload) cmd->buttons &= ~(IN_RELOAD | IN_USE);
+    return result;
 }
 
 //-----------------------------------------------------------------------------
@@ -754,6 +791,13 @@ void ClientModeShared::ProcessInput(bool bActive)
 //-----------------------------------------------------------------------------
 int	ClientModeShared::KeyInput( int down, ButtonCode_t keynum, const char *pszCurrentBinding )
 {
+    // The weapon UI owns its binding before gamemode hooks can consume it.
+    if (pszCurrentBinding && !Q_stricmp(pszCurrentBinding, "scp_weapon_modules") &&
+        !engine->Con_IsVisible() && !enginevgui->IsGameUIVisible())
+    {
+        if (down) engine->ClientCmd_Unrestricted("scp_weapon_modules\n");
+        return 0;
+    }
 #ifdef LUA_SDK
 	if (g_bLuaInitialized)
 	{
@@ -978,6 +1022,13 @@ void ClientModeShared::StartMessageMode( int iMessageModeType )
 //-----------------------------------------------------------------------------
 void ClientModeShared::LevelInit( const char *newmap )
 {
+    // Migrate the stock flashlight binding, preserving deliberately customized keys.
+    const char *moduleBinding = engine->Key_BindingForKey(KEY_C);
+    if (!moduleBinding || !*moduleBinding || !Q_stricmp(moduleBinding, "impulse 50"))
+        engine->ClientCmd_Unrestricted("bind c scp_weapon_modules\n");
+    const char *dropBinding = engine->Key_BindingForKey(KEY_F);
+    if (!dropBinding || !*dropBinding || !Q_stricmp(dropBinding, "impulse 100"))
+        engine->ClientCmd_Unrestricted("bind f scp_dropweapon\n");
 	m_pViewport->GetAnimationController()->StartAnimationSequence("LevelInit");
 
 	// Tell the Chat Interface
@@ -1148,7 +1199,11 @@ void ClientModeShared::Layout()
 
 float ClientModeShared::GetViewModelFOV( void )
 {
-	return v_viewmodel_fov.GetFloat();
+    C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
+    if (player && player->IsObserver() && player->GetObserverMode() == OBS_MODE_IN_EYE)
+        player = ToBasePlayer(player->GetObserverTarget());
+    const CHL2MPScriptedWeapon *weapon = player ? dynamic_cast<CHL2MPScriptedWeapon *>(player->GetActiveWeapon()) : NULL;
+    return weapon ? weapon->GetSWEPViewModelFOV(v_viewmodel_fov.GetFloat()) : v_viewmodel_fov.GetFloat();
 }
 
 class CHudChat;

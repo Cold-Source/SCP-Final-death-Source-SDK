@@ -26,6 +26,7 @@ extern void lcf_close (lua_State *L);
 
 #ifndef CLIENT_DLL
 extern void lcf_preparecachefile( void );
+bool luasrc_QueueClientFile(const char *path);
 #endif
 
 #endif // LUACACHEFILE_H

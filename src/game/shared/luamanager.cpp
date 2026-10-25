@@ -77,7 +77,7 @@ static int luasrc_print (lua_State *L) {
       return luaL_error(L, LUA_QL("tostring") " must return a string to "
                            LUA_QL("print"));
     if (i>1) Msg("\t");
-    Msg(s);
+    Msg("%s",s);
     lua_pop(L, 1);  /* pop result */
   }
   Msg("\n");
@@ -340,6 +340,12 @@ static void LoadModeContent()
     LoadModeFolder("vgui");
 #endif
     luasrc_LoadWeapons(contentRelativePath);
+#ifdef CLIENT_DLL
+    if (gpGlobals->maxClients>1) {
+        char cache[MAX_PATH]; V_snprintf(cache,sizeof(cache),LUA_PATH_CACHE "/%s",contentRelativePath);
+        luasrc_LoadWeapons(cache);
+    }
+#endif
     luasrc_LoadEntities(contentRelativePath);
     LoadModeFolder("game/shared");
     LoadModeFolder("autorun");
@@ -488,6 +494,47 @@ void luasrc_LoadEntities (const char *path)
 	g_pFullFileSystem->FindClose( fh );
 }
 
+static bool SWEPModels(lua_State *state,int definition)
+{
+    lua_getfield(state,definition,"swep_config");
+    const bool scripted=lua_istable(state,-1); lua_pop(state,1);
+    if(!scripted) return true;
+    const char *fields[]={"viewmodel","playermodel","hands_model","hands_rig_model"};
+    for(int i=0;i<ARRAYSIZE(fields);++i) {
+        lua_getfield(state,definition,fields[i]); const char *path=lua_tostring(state,-1);
+        if(path && path[0]) {
+            // Read only the common MDL header prefix, not the entire model.
+            int header[41]={0};
+            FileHandle_t file=filesystem->Open(path,"rb","GAME");
+            int bytes=file ? filesystem->Read(header,sizeof(header),file) : 0;
+            if(file) filesystem->Close(file);
+            if(bytes!=sizeof(header) || memcmp(header,"IDST",4)!=0 || header[39]<0 || header[39]>MAXSTUDIOBONES) {
+                Warning("SCP weapon rejected: unsupported or missing model %s (bones %d, maximum %d)\n",path,header[39],MAXSTUDIOBONES);
+                lua_pop(state,1); return false;
+            }
+#ifndef CLIENT_DLL
+            CBaseEntity::PrecacheModel(path);
+#endif
+        }
+        lua_pop(state,1);
+    }
+#ifndef CLIENT_DLL
+    lua_getfield(state,definition,"resources");
+    if (lua_istable(state,-1))
+    {
+        for (int n=1;n<=(int)lua_objlen(state,-1);++n)
+        {
+            lua_rawgeti(state,-1,n);
+            const char *resource=lua_tostring(state,-1);
+            bool sent=resource && luasrc_QueueClientFile(resource);
+            lua_pop(state,1);
+            if (!sent) { lua_pop(state,1); return false; }
+        }
+    }
+    lua_pop(state,1);
+#endif
+    return true;
+}
 void luasrc_LoadWeapons (const char *path)
 {
 	FileFindHandle_t fh;
@@ -520,6 +567,8 @@ void luasrc_LoadWeapons (const char *path)
 #else
 				Q_snprintf( filename, sizeof( filename ), "%s" LUA_PATH_WEAPONS "\\%s\\init.lua", path, className );
 #endif
+				if(!filesystem->FileExists(filename,"MOD"))
+                    Q_snprintf(filename,sizeof(filename),"%s" LUA_PATH_WEAPONS "\\%s\\shared.lua",path,className);
 				if ( filesystem->FileExists( filename, "MOD" ) )
 				{
 					filesystem->RelativePathToFullPath( filename, "MOD", fullpath, sizeof( fullpath ) );
@@ -533,6 +582,14 @@ void luasrc_LoadWeapons (const char *path)
 					lua_setglobal( L, "SWEP" );
 					if ( luasrc_dofile( L, fullpath ) == 0 )
 					{
+                        lua_getglobal(L,"SWEP");
+                        bool valid=SWEPModels(L,lua_gettop(L));
+#ifndef CLIENT_DLL
+                        lua_getfield(L,-1,"swep_config"); bool scripted=lua_istable(L,-1); lua_pop(L,1);
+                        if (valid && scripted) valid=luasrc_QueueClientFile(filename);
+#endif
+                        lua_pop(L,1);
+                        if(!valid) { lua_pushnil(L); lua_setglobal(L,"SWEP"); fn=filesystem->FindNext(fh); continue; }
 						lua_getglobal( L, "weapon" );
 						if ( lua_istable( L, -1 ) )
 						{

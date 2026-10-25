@@ -6,6 +6,7 @@
 // $NoKeywords: $
 //=============================================================================//
 #include "cbase.h"
+#include "hl2mp/weapon_hl2mpbase_scriptedweapon.h"
 #include "c_baseviewmodel.h"
 #include "model_types.h"
 #include "hud.h"
@@ -18,6 +19,9 @@
 #include "tools/bonelist.h"
 #include <KeyValues.h>
 #include "hltvcamera.h"
+#ifdef LUA_SDK
+#include "luamanager.h"
+#endif
 #ifdef TF_CLIENT_DLL
 	#include "c_tf_player.h"
 	#include "tf_weaponbase.h"
@@ -197,7 +201,7 @@ bool C_BaseViewModel::Interpolate( float currentTime )
 	float dt = elapsed_time * GetSequenceCycleRate( pStudioHdr, GetSequence() ) * GetPlaybackRate();
 	if ( dt >= 1.0f )
 	{
-		if ( !IsSequenceLooping( GetSequence() ) )
+		if ( !m_bScriptedSequenceLoop && !IsSequenceLooping( GetSequence() ) )
 		{
 			dt = 0.999f;
 		}
@@ -298,8 +302,80 @@ bool C_BaseViewModel::ShouldDraw()
 // Purpose: Render the weapon. Draw the Viewmodel if the weapon's being carried
 //			by this player, otherwise draw the worldmodel.
 //-----------------------------------------------------------------------------
+#ifdef LUA_SDK
+// Hands share the weapon's animated skeleton and are drawn in the same
+// viewmodel pass. They never enter the world render list or cast a shadow.
+class C_ScriptedWeaponHands : public C_BaseAnimating
+{
+public:
+    int DrawModel(int flags) OVERRIDE
+    {
+        MDLCACHE_CRITICAL_SECTION();
+        if (!GetModel()) return 0;
+        CreateModelInstance();
+        return InternalDrawModel(flags);
+    }
+    bool IsViewModel() const OVERRIDE { return true; }
+    bool ShouldDraw() OVERRIDE { return false; }
+    ShadowType_t ShadowCastType() OVERRIDE { return SHADOWS_NONE; }
+};
+
+C_BaseAnimating *C_BaseViewModel::GetScriptedHands()
+{
+    char path[MAX_PATH] = {0};
+    char rigPath[MAX_PATH] = {0};
+    C_BaseCombatWeapon *weapon = GetWeapon();
+    if (L && weapon && weapon->m_nTableReference != LUA_NOREF)
+    {
+        int top = lua_gettop(L);
+        lua_getref(L,weapon->m_nTableReference);
+        if (lua_istable(L,-1))
+        {
+            lua_getfield(L,-1,"hands_model");
+            if (lua_isstring(L,-1)) Q_strncpy(path,lua_tostring(L,-1),sizeof(path));
+            lua_pop(L,1);
+            lua_getfield(L,-1,"hands_rig_model");
+            if (lua_isstring(L,-1)) Q_strncpy(rigPath,lua_tostring(L,-1),sizeof(rigPath));
+        }
+        lua_settop(L,top);
+    }
+    const int rigIndex = rigPath[0] ? modelinfo->GetModelIndex(rigPath) : -1;
+    if (m_hScriptedHandsRig && m_hScriptedHandsRig->GetModelIndex() != rigIndex) m_hScriptedHandsRig->Release();
+    if (!m_hScriptedHandsRig && rigIndex > 0)
+    {
+        C_ScriptedWeaponHands *rig = new C_ScriptedWeaponHands;
+        if (rig->InitializeAsClientEntity(rigPath, RENDER_GROUP_VIEW_MODEL_OPAQUE))
+        {
+            rig->FollowEntity(this, true);
+            rig->AddEffects(EF_NODRAW);
+            m_hScriptedHandsRig = rig;
+        }
+        else rig->Release();
+    }
+    C_BaseAnimating *handsParent = m_hScriptedHandsRig ? m_hScriptedHandsRig.Get() : this;
+    if (m_hScriptedHands && m_hScriptedHands->GetMoveParent() != handsParent) m_hScriptedHands->Release();
+    int index = path[0] ? modelinfo->GetModelIndex(path) : -1;
+    if (m_hScriptedHands && m_hScriptedHands->GetModelIndex() != index)
+        m_hScriptedHands->Release();
+    if (index > 0 && !m_hScriptedHands)
+    {
+        C_ScriptedWeaponHands *hands = new C_ScriptedWeaponHands;
+        if (hands->InitializeAsClientEntity(path,RENDER_GROUP_VIEW_MODEL_OPAQUE))
+        {
+            hands->FollowEntity(handsParent,true);
+            hands->AddEffects(EF_NODRAW);
+            m_hScriptedHands = hands;
+        }
+        else hands->Release();
+    }
+    return m_hScriptedHands.Get();
+}
+#endif
+
 int C_BaseViewModel::DrawModel( int flags )
 {
+    CHL2MPScriptedWeapon *bodyWeapon = dynamic_cast<CHL2MPScriptedWeapon *>(GetWeapon());
+    if (bodyWeapon) bodyWeapon->ApplySWEPModules(this, false);
 	if ( !m_bReadyToDraw )
 		return 0;
 
@@ -348,6 +424,17 @@ int C_BaseViewModel::DrawModel( int flags )
 		ret = BaseClass::DrawModel( flags );
 	}
 
+#ifdef LUA_SDK
+    CHL2MPScriptedWeapon *moduleWeapon = dynamic_cast<CHL2MPScriptedWeapon *>(GetWeapon());
+    if (moduleWeapon) moduleWeapon->DrawSWEPModules(this, flags, false);
+    C_BaseAnimating *hands = GetScriptedHands();
+    if (hands && (flags & STUDIO_RENDER))
+    {
+        hands->RemoveEffects(EF_NODRAW);
+        hands->DrawModel(flags);
+        hands->AddEffects(EF_NODRAW);
+    }
+#endif
 	// Now that we've rendered, reset the animation restart flag
 	if ( flags & STUDIO_RENDER )
 	{

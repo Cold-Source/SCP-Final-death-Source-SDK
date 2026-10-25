@@ -74,8 +74,18 @@
   else \
     lua_pop(L, 1);
 
+inline void luasrc_pushweapontable(lua_State *state, int reference)
+{
+    lua_getref(state, reference);
+    if (!lua_istable(state, -1))
+    {
+        lua_pop(state, 1);
+        lua_newtable(state);
+    }
+}
+
 #define BEGIN_LUA_CALL_WEAPON_METHOD(functionName) \
-  lua_getref(L, m_nTableReference); \
+  luasrc_pushweapontable(L, m_nTableReference); \
   lua_getfield(L, -1, functionName); \
   lua_remove(L, -2); \
   if (lua_isfunction(L, -1)) { \
@@ -92,7 +102,7 @@
 
 #define BEGIN_LUA_CALL_WEAPON_HOOK(functionName, pWeapon) \
   if (pWeapon->IsScripted()) { \
-    lua_getref(L, pWeapon->m_nTableReference); \
+    luasrc_pushweapontable(L, pWeapon->m_nTableReference); \
     lua_getfield(L, -1, functionName); \
     lua_remove(L, -2); \
     int args = 0; \
@@ -105,7 +115,7 @@
   }
 
 #define BEGIN_LUA_CALL_ENTITY_METHOD(functionName) \
-  lua_getref(L, m_nTableReference); \
+  luasrc_pushweapontable(L, m_nTableReference); \
   lua_getfield(L, -1, functionName); \
   lua_remove(L, -2); \
   if (lua_isfunction(L, -1)) { \
@@ -121,7 +131,7 @@
     lua_pop(L, 1);
 
 #define BEGIN_LUA_CALL_TRIGGER_METHOD(functionName) \
-  lua_getref(L, m_nTableReference); \
+  luasrc_pushweapontable(L, m_nTableReference); \
   lua_getfield(L, -1, functionName); \
   lua_remove(L, -2); \
   if (lua_isfunction(L, -1)) { \

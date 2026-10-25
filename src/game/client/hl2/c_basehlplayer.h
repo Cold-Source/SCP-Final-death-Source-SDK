@@ -64,6 +64,7 @@ public:
 	float				m_flSpeedModTime;
 	bool				m_fIsSprinting;
 	bool m_bSprintAllowed;
+    float m_flWeaponPickupProgress = -1.0f;
 	float m_flFlashlightPowerDrainScale;
 
 private:

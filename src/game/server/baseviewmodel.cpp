@@ -28,6 +28,7 @@ void SendProxy_SequenceChanged( const void *pStruct, const void *pVarData, DVari
 BEGIN_DATADESC( CBaseViewModel )
 
 	DEFINE_FIELD( m_hOwner, FIELD_EHANDLE ),
+    DEFINE_FIELD(m_bScriptedSequenceLoop, FIELD_BOOLEAN),
 
 // Client only
 //	DEFINE_FIELD( m_LagAnglesHistory, CInterpolatedVar < QAngle > ),

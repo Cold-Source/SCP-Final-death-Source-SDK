@@ -3,6 +3,7 @@
 #include "../../shared/scp_admin_catalog.h"
 #include "ai_basenpc.h"
 #include "ammodef.h"
+#include "luamanager.h"
 #include "tier0/memdbgon.h"
 
 namespace
@@ -12,6 +13,22 @@ void Reply( CBasePlayer *player, const char *text )
     ClientPrint( player, HUD_PRINTTALK, text );
 }
 
+CON_COMMAND(scp_weapon_list,"List weapons registered by the active SCP Lua content.")
+{
+    if(!g_bLuaInitialized || !L) { Msg("Load a map first.\n"); return; }
+    const int top=lua_gettop(L);
+    lua_getglobal(L,"weapon"); lua_getfield(L,-1,"getweapons");
+    if(luasrc_pcall(L,0,1,0)==0 && lua_istable(L,-1)) {
+        lua_pushnil(L);
+        while(lua_next(L,-2)) {
+            const char *name=lua_tostring(L,-2);
+            if(name) Msg("%s\n",name);
+            lua_pop(L,1);
+        }
+    }
+    lua_settop(L,top);
+}
+
 void GiveWeapon( CBasePlayer *player, int index )
 {
     if ( !player->IsAlive() ) return;
@@ -19,6 +36,37 @@ void GiveWeapon( CBasePlayer *player, int index )
     CBaseEntity::SetAllowPrecache( true );
     player->GiveNamedItem( SCPAdminWeapons[index].classname );
     CBaseEntity::SetAllowPrecache( allow );
+}
+
+// Catalog entries are presentation only. Revalidate each custom class on the server.
+bool RegisteredSWEP(const char *name)
+{
+    if (!SCPAdminWeaponClassname(name) || !L || !g_bLuaInitialized) return false;
+    const int top = lua_gettop(L);
+    bool valid = false;
+    lua_getglobal(L, "weapon");
+    if (lua_istable(L, -1))
+    {
+        lua_getfield(L, -1, "get");
+        lua_pushstring(L, name);
+        if (lua_isfunction(L, -2) && luasrc_pcall(L, 1, 1, 0) == 0 && lua_istable(L, -1))
+        {
+            lua_getfield(L, -1, "swep_config"); valid = lua_istable(L, -1); lua_pop(L, 1);
+            lua_getfield(L, -1, "Spawnable");
+            if (lua_isboolean(L, -1) && !lua_toboolean(L, -1)) valid = false;
+        }
+    }
+    lua_settop(L, top);
+    return valid;
+}
+
+void GiveSWEP(CBasePlayer *player, const char *name)
+{
+    if (!player->IsAlive() || !RegisteredSWEP(name)) return;
+    const bool allow = CBaseEntity::IsPrecacheAllowed();
+    CBaseEntity::SetAllowPrecache(true);
+    player->GiveNamedItem(name);
+    CBaseEntity::SetAllowPrecache(allow);
 }
 
 // Find a free standing position near the destination, never inside a player/wall.
@@ -99,6 +147,7 @@ bool SCPAdminCommand( CBasePlayer *player, const CCommand &args )
         const int index = V_atoi( args[2] );
         if ( index >= 0 && index < ARRAYSIZE( SCPAdminWeapons ) ) GiveWeapon( player, index );
     }
+    else if (!V_stricmp(action, "swep") && args.ArgC() == 3) GiveSWEP(player, args[2]);
     else
     {
         // Server-wide actions, NPC creation and moderation belong to the listen host.

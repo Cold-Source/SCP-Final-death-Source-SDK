@@ -12,7 +12,12 @@
 #include "lbasecombatweapon_shared.h"
 #include "lbaseentity_shared.h"
 #include "lbaseplayer_shared.h"
+#include "baseviewmodel_shared.h"
+#include "hl2mp/weapon_hl2mpbase_scriptedweapon.h"
 #include "mathlib/lvector.h"
+#ifndef CLIENT_DLL
+#include "recipientfilter.h"
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -972,7 +977,193 @@ static int CBaseCombatWeapon___tostring (lua_State *L) {
 }
 
 
+// Native sequence control for SCP Lua weapons. Animation parity is replicated
+// by the existing viewmodel, so clients do not need a custom animation protocol.
+static int CBaseCombatWeapon_PlayPlayerAnimation(lua_State *state)
+{
+    CBaseCombatWeapon *weapon = luaL_checkweapon(state, 1);
+    const char *action = luaL_checkstring(state, 2);
+    PLAYER_ANIM event;
+    if (!V_stricmp(action, "fire")) event = PLAYER_ATTACK1;
+    else if (!V_stricmp(action, "reload")) event = PLAYER_RELOAD;
+    else return luaL_error(state, "expected fire or reload player animation");
+#ifndef CLIENT_DLL
+    CBasePlayer *owner = ToBasePlayer(weapon->GetOwner());
+    if (owner && owner->IsAlive()) owner->SetAnimation(event);
+#endif
+    return 0;
+}
+
+static int CBaseCombatWeapon_PlayWeaponSound(lua_State *state)
+{
+    CBaseCombatWeapon *weapon = luaL_checkweapon(state, 1);
+    const char *path = luaL_checkstring(state, 2);
+    const bool shot = lua_toboolean(state, 3) != 0;
+    const int length = V_strlen(path);
+    if (length < 5 || length >= MAX_PATH || V_stricmp(path + length - 4, ".wav") ||
+        path[0] == '/' || path[0] == '\\' || V_strstr(path, "..") || V_strchr(path, ':') || V_strchr(path, '\\'))
+        return luaL_error(state, "expected a relative WAV path");
+    for (const char *p = path; *p; ++p)
+        if ((unsigned char)*p < 32) return luaL_error(state, "invalid weapon sound path");
+#ifndef CLIENT_DLL
+    CBasePlayer *owner = ToBasePlayer(weapon->GetOwner());
+    if (owner && owner->IsAlive())
+    {
+        const Vector origin = owner->EyePosition();
+        const soundlevel_t level = shot ? SNDLVL_GUNFIRE : SNDLVL_NORM;
+        CPASAttenuationFilter filter(origin, level);
+        // This SWEP is server-authoritative: the shooter does not predict a copy.
+        filter.SetIgnorePredictionCull(true);
+        filter.AddRecipient(owner);
+        EmitSound_t sound;
+        sound.m_pSoundName = path;
+        sound.m_nChannel = shot ? CHAN_WEAPON : CHAN_AUTO;
+        sound.m_SoundLevel = level;
+        sound.m_pOrigin = &origin;
+        CBaseEntity::EmitSound(filter, owner->entindex(), sound);
+    }
+#endif
+    return 0;
+}
+
+static int CBaseCombatWeapon_MeleeAttack(lua_State *state)
+{
+    CBaseCombatWeapon *weapon = luaL_checkweapon(state, 1);
+    const float damage = luaL_checknumber(state, 2);
+    const float range = luaL_checknumber(state, 3);
+    if (!IsFinite(damage) || damage <= 0 || damage > 10000 ||
+        !IsFinite(range) || range <= 0 || range > 128)
+        return luaL_error(state, "invalid melee damage or range");
+    bool hit = false;
+#ifndef CLIENT_DLL
+    CBasePlayer *owner = ToBasePlayer(weapon->GetOwner());
+    if (owner && owner->IsAlive())
+    {
+        const Vector start = owner->Weapon_ShootPosition();
+        const Vector direction = owner->GetAutoaimVector(0);
+        const Vector end = start + direction * range;
+        trace_t trace;
+        UTIL_TraceLine(start, end, MASK_SHOT_HULL, owner, COLLISION_GROUP_NONE, &trace);
+        if (trace.fraction == 1.0f)
+            UTIL_TraceHull(start, end, Vector(-8,-8,-8), Vector(8,8,8), MASK_SHOT_HULL,
+                owner, COLLISION_GROUP_NONE, &trace);
+        hit = trace.fraction < 1.0f;
+        if (hit && trace.m_pEnt)
+        {
+            CTakeDamageInfo info(weapon, owner, weapon, damage, DMG_CLUB);
+            CalculateMeleeDamageForce(&info, direction, trace.endpos);
+            ClearMultiDamage();
+            trace.m_pEnt->DispatchTraceAttack(info, direction, &trace);
+            ApplyMultiDamage();
+            UTIL_ImpactTrace(&trace, DMG_CLUB);
+        }
+    }
+#endif
+    lua_pushboolean(state, hit);
+    return 1;
+}
+
+static int CBaseCombatWeapon_SetAimState(lua_State *state)
+{
+    CHL2MPScriptedWeapon *weapon = dynamic_cast<CHL2MPScriptedWeapon *>(luaL_checkweapon(state, 1));
+#ifndef CLIENT_DLL
+    if (weapon) weapon->SetAimState(lua_toboolean(state, 2) != 0);
+#endif
+    return 0;
+}
+
+static int CBaseCombatWeapon_IsAiming(lua_State *state)
+{
+    CHL2MPScriptedWeapon *weapon = dynamic_cast<CHL2MPScriptedWeapon *>(luaL_checkweapon(state, 1));
+    lua_pushboolean(state, weapon && weapon->IsAiming());
+    return 1;
+}
+
+static int CBaseCombatWeapon_GetModuleSelection(lua_State *state)
+{
+    CHL2MPScriptedWeapon *weapon = dynamic_cast<CHL2MPScriptedWeapon *>(luaL_checkweapon(state, 1));
+    const int slot = (int)luaL_checkinteger(state, 2) - 1;
+    lua_pushinteger(state, weapon ? weapon->GetSWEPModuleSelection(slot) + 1 : 1);
+    return 1;
+}
+
+static int CBaseCombatWeapon_IsSafetyOn(lua_State *state)
+{
+    CHL2MPScriptedWeapon *weapon = dynamic_cast<CHL2MPScriptedWeapon *>(luaL_checkweapon(state, 1));
+    lua_pushboolean(state, weapon && weapon->IsSafetyOn());
+    return 1;
+}
+
+static int CBaseCombatWeapon_SetSafetyState(lua_State *state)
+{
+    CHL2MPScriptedWeapon *weapon = dynamic_cast<CHL2MPScriptedWeapon *>(luaL_checkweapon(state, 1));
+    luaL_checktype(state, 2, LUA_TBOOLEAN);
+#ifndef CLIENT_DLL
+    CBasePlayer *owner = weapon ? ToBasePlayer(weapon->GetOwner()) : NULL;
+    const bool enabled = lua_toboolean(state, 2) != 0;
+    if (owner && owner->IsAlive() && owner->GetActiveWeapon() == weapon &&
+        weapon->IsNativeSWEP() && weapon->IsSafetyOn() != enabled)
+    {
+        weapon->SetSafetyState(enabled);
+    }
+#endif
+    return 0;
+}
+
+static int CBaseCombatWeapon_GetClassname(lua_State *state)
+{
+    CBaseCombatWeapon *weapon = luaL_checkweapon(state, 1);
+#ifdef CLIENT_DLL
+    CHL2MPScriptedWeapon *scripted = dynamic_cast<CHL2MPScriptedWeapon *>(weapon);
+    if (scripted && scripted->GetScriptedClassname()[0])
+    {
+        lua_pushstring(state, scripted->GetScriptedClassname());
+        return 1;
+    }
+#endif
+    lua_pushstring(state, weapon->GetClassname());
+    return 1;
+}
+
+static int CBaseCombatWeapon_PlaySequence(lua_State *state)
+{
+    CBaseCombatWeapon *weapon=luaL_checkweapon(state,1);
+    CBasePlayer *owner=ToBasePlayer(weapon->GetOwner());
+    CBaseViewModel *model=owner ? owner->GetViewModel() : NULL;
+    if(!model) { lua_pushnumber(state,0); return 1; }
+    int sequence=model->LookupSequence(luaL_checkstring(state,2));
+    if(sequence<0) return luaL_error(state,"weapon animation not found: %s",lua_tostring(state,2));
+    const float naturalDuration = MAX(0.01f, model->SequenceDuration(sequence));
+    const float rate = luaL_optnumber(state, 4, 1.0f);
+    if (!IsFinite(rate) || rate <= 0 || rate > 12)
+        return luaL_error(state, "invalid weapon animation rate");
+    const float duration = luaL_optnumber(state, 3, naturalDuration / rate);
+    if (!IsFinite(duration) || duration <= 0 || duration > 120)
+        return luaL_error(state, "invalid weapon animation duration");
+    model->SendViewModelMatchingSequence(sequence);
+    model->SetScriptedSequenceLoop(lua_toboolean(state, 5) != 0);
+    model->SetPlaybackRate(naturalDuration / duration);
+    weapon->SetWeaponIdleTime(gpGlobals->curtime + duration);
+    lua_pushnumber(state,duration); return 1;
+}
+static int CBaseCombatWeapon_DeployModel(lua_State *state)
+{
+    CBaseCombatWeapon *weapon=luaL_checkweapon(state,1);
+    lua_pushboolean(state,weapon->DefaultDeploy((char *)weapon->GetViewModel(),(char *)weapon->GetWorldModel(),ACT_VM_DRAW,(char *)weapon->GetAnimPrefix()));
+    return 1;
+}
 static const luaL_Reg CBaseCombatWeaponmeta[] = {
+  {"GetModuleSelection", CBaseCombatWeapon_GetModuleSelection},
+  {"IsSafetyOn",CBaseCombatWeapon_IsSafetyOn},
+  {"SetSafetyState",CBaseCombatWeapon_SetSafetyState},
+  {"PlayWeaponSound",CBaseCombatWeapon_PlayWeaponSound},
+  {"MeleeAttack",CBaseCombatWeapon_MeleeAttack},
+  {"PlayPlayerAnimation",CBaseCombatWeapon_PlayPlayerAnimation},
+  {"SetAimState",CBaseCombatWeapon_SetAimState},
+  {"IsAiming",CBaseCombatWeapon_IsAiming},
+  {"GetClassname",CBaseCombatWeapon_GetClassname},
+  {"PlaySequence",CBaseCombatWeapon_PlaySequence},
+  {"DeployModel",CBaseCombatWeapon_DeployModel},
   {"AbortReload", CBaseCombatWeapon_AbortReload},
   {"Activate", CBaseCombatWeapon_Activate},
   {"ActivityListCount", CBaseCombatWeapon_ActivityListCount},

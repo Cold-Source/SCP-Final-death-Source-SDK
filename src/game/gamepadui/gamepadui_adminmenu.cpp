@@ -9,6 +9,9 @@
 #include "matsys_controls/matsyscontrols.h"
 #include "vgui/ISurface.h"
 #include "vgui_controls/TextEntry.h"
+#include "vgui_controls/PanelListPanel.h"
+#include "vgui/IVGui.h"
+#include "tier1/utlstring.h"
 #include "tier0/memdbgon.h"
 
 static ConVar cl_scp_playermodel( "cl_scp_playermodel", "models/player.mdl", FCVAR_USERINFO,
@@ -27,6 +30,12 @@ namespace
 const char *const MODEL_SCHEME = GAMEPADUI_RESOURCE_FOLDER "schememodels.res";
 const int PAGE_SIZE = 12;
 const int PLAYER_ROWS = 6;
+struct AdminWeapon
+{
+    char classname[80], model[MAX_PATH], name[256], category[97];
+    int builtin;
+};
+
 enum AdminTab { TAB_PLAYER, TAB_MODELS, TAB_NPCS, TAB_WEAPONS, TAB_SERVER, TAB_COUNT };
 
 bool MatchesModelName( const char *name, const char *search )
@@ -294,6 +303,15 @@ public:
             m_Categories[i] = new ModelButton( this, "ModelCategory", categories[i], command );
         }
         for ( int i = 0; i < PAGE_SIZE; ++i ) m_Tiles[i] = new ModelTile( this, i );
+        m_WeaponCategories = new vgui::PanelListPanel(this, "WeaponCategories");
+        m_WeaponCategories->SetFirstColumnWidth(0);
+        m_WeaponCategories->SetVerticalBufferPixels(6);
+        m_WeaponCategories->SetPaintBackgroundEnabled(false);
+        LoadBuiltinWeapons();
+        RebuildWeaponCategories();
+        char request[80];
+        V_snprintf(request, sizeof(request), "scp_admin_weaponcatalog %u", vgui::ivgui()->PanelToHandle(GetVPanel()));
+        GamepadUI::GetInstance().GetEngineClient()->ClientCmd_Unrestricted(request);
         DoModal();
         LayoutBrowser();
         Refilter( true );
@@ -361,6 +379,19 @@ public:
         if ( !V_strnicmp( command, "spawn ", 6 ) )
         {
             const int index = V_atoi( command + 6 );
+            if (m_Tab == TAB_WEAPONS)
+            {
+                const int slot = m_WeaponPage * PAGE_SIZE + index;
+                if (index >= 0 && index < PAGE_SIZE && slot < m_WeaponFiltered.Count())
+                {
+                    const AdminWeapon &weapon = m_Weapons[m_WeaponFiltered[slot]];
+                    char cmd[128];
+                    if (weapon.builtin >= 0) V_snprintf(cmd, sizeof(cmd), "cmd scp_admin weapon %d", weapon.builtin);
+                    else V_snprintf(cmd, sizeof(cmd), "cmd scp_admin swep %s", weapon.classname);
+                    Send(cmd);
+                }
+                return;
+            }
             const int count = m_Tab == TAB_NPCS ? ARRAYSIZE( SCPAdminNPCs ) : ARRAYSIZE( SCPAdminWeapons );
             if ( ( m_Tab == TAB_NPCS || m_Tab == TAB_WEAPONS ) && index >= 0 && index < count )
             {
@@ -425,6 +456,11 @@ public:
             if ( slot >= 0 && slot < PAGE_SIZE && index < m_Filtered.Count() ) Select( m_Filtered[index] );
             return;
         }
+        if (!V_strnicmp(command, "weaponcategory ", 15))
+        {
+            m_WeaponCategory = clamp(V_atoi(command + 15), 0, m_WeaponCategoryNames.Count() - 1);
+            FilterWeapons(); return;
+        }
         if ( !V_strnicmp( command, "category ", 9 ) )
         {
             m_Category = clamp( V_atoi( command + 9 ), 0, 3 ); Refilter( false ); return;
@@ -433,6 +469,11 @@ public:
         {
             if ( m_Tab == TAB_SERVER )
             { m_PlayerPage += !V_stricmp( command, "next" ) ? 1 : -1; RefreshPlayers(); return; }
+            if (m_Tab == TAB_WEAPONS)
+            {
+                m_WeaponPage = clamp(m_WeaponPage + (!V_stricmp(command, "next") ? 1 : -1), 0, Max(0, (m_WeaponFiltered.Count()-1)/PAGE_SIZE));
+                RefreshWeapons(); return;
+            }
             if ( m_Tab != TAB_MODELS ) return;
             m_Page = clamp( m_Page + ( !V_stricmp( command, "next" ) ? 1 : -1 ), 0, Max( 0, ( m_Filtered.Count() - 1 ) / PAGE_SIZE ) );
             RefreshTiles(); return;
@@ -453,7 +494,7 @@ public:
         else if ( code == KEY_PAGEUP ) OnCommand( "previous" );
         else BaseClass::OnKeyCodePressed( code );
     }
-    void OnMouseWheeled( int delta ) OVERRIDE { if ( delta && ( m_Tab == TAB_MODELS || m_Tab == TAB_SERVER ) ) OnCommand( delta > 0 ? "previous" : "next" ); }
+    void OnMouseWheeled( int delta ) OVERRIDE { if ( delta && ( m_Tab == TAB_MODELS || m_Tab == TAB_SERVER || m_Tab == TAB_WEAPONS ) ) OnCommand( delta > 0 ? "previous" : "next" ); }
 
 private:
     void Send( const char *command )
@@ -467,7 +508,8 @@ private:
         m_Tab = tab;
         const bool models = tab == TAB_MODELS, server = tab == TAB_SERVER;
         for ( int i = 0; i < TAB_COUNT; ++i ) m_Tabs[i]->SetHighlighted( i == tab );
-        m_Search->SetVisible( models );
+        m_Search->SetVisible( models || tab == TAB_WEAPONS );
+        m_WeaponCategories->SetVisible(tab == TAB_WEAPONS);
         m_Preview->SetVisible( models && m_Selected >= 0 );
         m_Apply->SetVisible( models );
         m_SkinPrev->SetVisible( models && m_Selected >= 0 ); m_SkinNext->SetVisible( models && m_Selected >= 0 );
@@ -496,12 +538,13 @@ private:
             if ( hasModel ) m_SpawnTiles[i]->SetModel( model );
             else m_SpawnTiles[i]->SetCaption( catalog[i].name );
         }
-        m_Prev->SetVisible( models || server ); m_Next->SetVisible( models || server );
+        m_Prev->SetVisible( models || server || tab == TAB_WEAPONS ); m_Next->SetVisible( models || server || tab == TAB_WEAPONS );
         if ( server ) RefreshPlayers();
         else
             for ( int row = 0; row < PLAYER_ROWS; ++row )
                 for ( int action = 0; action < 4; ++action ) m_PlayerActions[row][action]->SetVisible( false );
         if ( models ) RefreshTiles();
+        if (tab == TAB_WEAPONS) FilterWeapons();
         LayoutBrowser();
     }
     void RefreshPlayers()
@@ -571,11 +614,114 @@ private:
             char page[32]; V_snprintf( page, sizeof( page ), "%d / %d", m_PlayerPage + 1, Max( 1, ( m_PlayerCount + PLAYER_ROWS - 1 ) / PLAYER_ROWS ) );
             DrawText( small, page, left, m_FooterY - S( 35 ), m_ServerW, muted, true );
         }
+        if (m_Tab == TAB_WEAPONS)
+        {
+            char page[40]; V_snprintf(page,sizeof(page),"%d / %d",m_WeaponPage+1,Max(1,(m_WeaponFiltered.Count()+PAGE_SIZE-1)/PAGE_SIZE));
+            DrawText(small,page,m_X+S(24),m_FooterY-S(25),m_GridW,muted,true);
+        }
         DrawText( small, "#SCPAdmin_HostNote", left + S( 165 ), m_FooterY + S( 9 ), m_W - S( 220 ), muted );
         if ( Plat_FloatTime() - m_LastRequest < 2.0 )
             DrawText( small, "#SCPAdmin_Sent", left, m_FooterY - S( 65 ), m_W - S( 48 ), white );
     }
-    MESSAGE_FUNC_PARAMS( OnSearchChanged, "TextChanged", data ) { Refilter( false ); }
+    MESSAGE_FUNC_PARAMS( OnSearchChanged, "TextChanged", data )
+    { if (m_Tab == TAB_WEAPONS) FilterWeapons(); else Refilter(false); }
+
+    void LoadBuiltinWeapons()
+    {
+        m_Weapons.RemoveAll();
+        for (int i=0; i<ARRAYSIZE(SCPAdminWeapons); ++i)
+        {
+            AdminWeapon weapon = {};
+            V_strncpy(weapon.classname, SCPAdminWeapons[i].classname, sizeof(weapon.classname));
+            V_strncpy(weapon.model, SCPAdminWeapons[i].model, sizeof(weapon.model));
+            V_strncpy(weapon.name, SCPAdminWeapons[i].name, sizeof(weapon.name));
+            V_strncpy(weapon.category, "Half-Life 2", sizeof(weapon.category));
+            weapon.builtin = i;
+            m_Weapons.AddToTail(weapon);
+        }
+    }
+    MESSAGE_FUNC_PARAMS(OnWeaponCatalog, "SCPWeaponCatalog", catalog)
+    {
+        LoadBuiltinWeapons();
+        for (KeyValues *item=catalog->GetFirstSubKey(); item && m_Weapons.Count()<522; item=item->GetNextKey())
+        {
+            if (!SCPAdminWeaponClassname(item->GetName())) continue;
+            AdminWeapon weapon = {};
+            V_strncpy(weapon.classname, item->GetName(), sizeof(weapon.classname));
+            V_strncpy(weapon.model, item->GetString("WorldModel"), sizeof(weapon.model));
+            V_strncpy(weapon.name, item->GetString("PrintName", item->GetName()), sizeof(weapon.name));
+            V_strncpy(weapon.category, item->GetString("Category", "Other"), sizeof(weapon.category));
+            if (!weapon.category[0]) V_strncpy(weapon.category, "Other", sizeof(weapon.category));
+            weapon.builtin = -1;
+            m_Weapons.AddToTail(weapon);
+        }
+        m_Weapons.Sort([](const AdminWeapon *a, const AdminWeapon *b) {
+            const int category=V_stricmp(a->category,b->category);
+            return category ? category : V_stricmp(a->name,b->name);
+        });
+        RebuildWeaponCategories();
+        if (m_Tab == TAB_WEAPONS) FilterWeapons();
+    }
+    void RebuildWeaponCategories()
+    {
+        m_WeaponCategoryButtons.RemoveAll();
+        m_WeaponCategories->DeleteAllItems();
+        m_WeaponCategoryNames.RemoveAll();
+        m_WeaponCategoryNames.AddToTail(CUtlString(""));
+        FOR_EACH_VEC(m_Weapons, i)
+        {
+            bool found=false;
+            FOR_EACH_VEC(m_WeaponCategoryNames, j)
+                if (!V_stricmp(m_Weapons[i].category,m_WeaponCategoryNames[j].String())) { found=true; break; }
+            if (!found) m_WeaponCategoryNames.AddToTail(CUtlString(m_Weapons[i].category));
+        }
+        FOR_EACH_VEC(m_WeaponCategoryNames, i)
+        {
+            char command[40]; V_snprintf(command,sizeof(command),"weaponcategory %d",i);
+            ModelButton *button=new ModelButton(this,"WeaponCategory", i ? m_WeaponCategoryNames[i].String() : "#SCPModels_All",command);
+            button->SetTall(S(38));
+            m_WeaponCategories->AddItem(NULL,button);
+            m_WeaponCategoryButtons.AddToTail(button);
+        }
+        m_WeaponCategory=0;
+        m_WeaponCategories->InvalidateLayout();
+    }
+    void FilterWeapons()
+    {
+        FOR_EACH_VEC(m_WeaponCategoryButtons,i)
+            m_WeaponCategoryButtons[i]->SetHighlighted(i == m_WeaponCategory);
+        char search[256]; m_Search->GetText(search,sizeof(search));
+        m_WeaponFiltered.RemoveAll();
+        FOR_EACH_VEC(m_Weapons,i)
+        {
+            if (m_WeaponCategory && V_stricmp(m_Weapons[i].category,m_WeaponCategoryNames[m_WeaponCategory].String())) continue;
+            if (search[0] && !MatchesModelName(m_Weapons[i].name,search) && !MatchesModelName(m_Weapons[i].classname,search)) continue;
+            m_WeaponFiltered.AddToTail(i);
+        }
+        m_WeaponPage=0;
+        RefreshWeapons();
+    }
+    void RefreshWeapons()
+    {
+        for (int i=0; i<PAGE_SIZE; ++i)
+        {
+            const int index=m_WeaponPage*PAGE_SIZE+i;
+            const bool show=m_Tab==TAB_WEAPONS && index<m_WeaponFiltered.Count();
+            m_SpawnTiles[i]->SetVisible(show);
+            if (!show) continue;
+            const AdminWeapon &weapon=m_Weapons[m_WeaponFiltered[index]];
+            SCPPlayerModel model = {};
+            V_strncpy(model.path,weapon.model,sizeof(model.path));
+            V_strncpy(model.name,weapon.name,sizeof(model.name));
+            V_strncpy(model.nameRussian,weapon.name,sizeof(model.nameRussian));
+            const bool exists=g_pFullFileSystem->FileExists(model.path,"GAME");
+            m_SpawnTiles[i]->m_Preview->SetVisible(exists);
+            if (exists) m_SpawnTiles[i]->SetModel(model);
+            else m_SpawnTiles[i]->SetCaption(weapon.name);
+        }
+        m_Prev->SetEnabled(m_WeaponPage>0);
+        m_Next->SetEnabled((m_WeaponPage+1)*PAGE_SIZE<m_WeaponFiltered.Count());
+    }
     int S( int n ) const { return Max( 1, int( n * m_Scale ) ); }
     void Refilter( bool initial )
     {
@@ -670,6 +816,15 @@ private:
         const int gap = S( 12 ), spawnW = ( contentW - 3 * gap ) / 4;
         const int spawnH = ( m_FooterY - m_GridY - S( 20 ) - 2 * gap ) / 3;
         for ( int i = 0; i < PAGE_SIZE; ++i ) m_SpawnTiles[i]->SetBounds( left + ( i % 4 ) * ( spawnW + gap ), m_GridY + ( i / 4 ) * ( spawnH + gap ), spawnW, spawnH );
+        if (m_Tab == TAB_WEAPONS)
+        {
+            const int sidebar=S(205), weaponW=(contentW-sidebar-2*gap)/3;
+            const int weaponH=(m_FooterY-m_GridY-S(25)-3*gap)/4;
+            m_WeaponCategories->SetBounds(left,m_GridY,sidebar-S(15),m_FooterY-m_GridY-S(25));
+            FOR_EACH_VEC(m_WeaponCategoryButtons,i) m_WeaponCategoryButtons[i]->SetTall(S(38));
+            for (int i=0;i<PAGE_SIZE;++i)
+                m_SpawnTiles[i]->SetBounds(left+sidebar+(i%3)*(weaponW+gap),m_GridY+(i/3)*(weaponH+gap),weaponW,weaponH);
+        }
         m_SettingsW = S( 300 ); m_SettingsX = m_X + m_W - S( 24 ) - m_SettingsW;
         m_ServerW = m_SettingsX - left - S( 24 );
         m_PlayerRowH = Min( S( 65 ), ( m_FooterY - m_GridY - S( 130 ) ) / PLAYER_ROWS );
@@ -690,6 +845,12 @@ private:
             m_Next->SetBounds( left + m_ServerW / 2 + S( 54 ), m_FooterY - S( 42 ), S( 36 ), S( 32 ) );
         }
     }
+    CUtlVector<AdminWeapon> m_Weapons;
+    CUtlVector<int> m_WeaponFiltered;
+    CUtlVector<CUtlString> m_WeaponCategoryNames;
+    CUtlVector<ModelButton *> m_WeaponCategoryButtons;
+    vgui::PanelListPanel *m_WeaponCategories;
+    int m_WeaponPage = 0, m_WeaponCategory = 0;
     CUtlVector<SCPPlayerModel> m_Models;
     CUtlVector<int> m_Filtered;
     ModelPreview *m_Preview;

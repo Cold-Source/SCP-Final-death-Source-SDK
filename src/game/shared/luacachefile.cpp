@@ -11,6 +11,7 @@
 #endif
 #include "zip/XUnzip.h"
 #include "utldict.h"
+#include "tier1/utlbuffer.h"
 #include "luamanager.h"
 #include "luacachefile.h"
 
@@ -45,142 +46,101 @@ LUA_API IZip* luasrc_GetLcfFile( void )
 //-----------------------------------------------------------------------------
 LUA_API void luasrc_AddFileToLcf( const char *relativename, const char *fullpath )
 {
-	s_lcfFile->AddFileToZip( relativename, fullpath );
+	luasrc_GetLcfFile()->AddFileToZip( relativename, fullpath );
 }
 
 #ifdef CLIENT_DLL
 
-LUA_API void luasrc_ExtractLcf ()
+static bool SafeClientPath(const char *path)
 {
-	INetworkStringTable *downloadables = networkstringtable->FindTable( "downloadables" );
-	const char *pFilename = NULL;
-	for ( int i=0; i<downloadables->GetNumStrings(); i++ )
-	{
-		pFilename = downloadables->GetString( i );
-		char ext[ 10 ];
-		Q_ExtractFileExtension( pFilename, ext, sizeof( ext ) );
-
-		if ( !Q_stricmp( ext, "lcf" ) )
-		{
-			char current[ 512 ] = { 0 };
-			char cachePath[MAX_PATH];
-			bool bGetCurrentDirectory = V_GetCurrentDirectory( current, sizeof( current ) );
-			if ( bGetCurrentDirectory )
-			{
-#ifdef CLIENT_DLL
-				const char *gamePath = engine->GetGameDirectory();
-#else
-				char gamePath[ 256 ];
-				engine->GetGameDir( gamePath, 256 );
-#endif
-				Q_strncpy( cachePath, gamePath, sizeof( cachePath ) );
-				Q_strncat( cachePath, "\\" LUA_PATH_CACHE, sizeof( cachePath ), COPY_ALL_CHARACTERS );
-				V_SetCurrentDirectory( cachePath );
-			}
-
-			char fullpath[MAX_PATH];
-			filesystem->RelativePathToFullPath( pFilename, "MOD", fullpath, sizeof( fullpath ) );
-			HZIP hz = OpenZip( fullpath, 0, ZIP_FILENAME );
-			ZIPENTRY ze;
-			GetZipItem( hz, -1, &ze );
-			int numitems = ze.index;
-			for ( int i = 0; i < numitems; i++ )
-			{
-				GetZipItem( hz, i, &ze );
-				// forget directories, we create hierarchies from file names
-				if ((ze.attr & FILE_ATTRIBUTE_DIRECTORY) != 1)
-				{
-					char fullpath[MAX_PATH];
-					char path[MAX_PATH];
-					Q_snprintf( path, sizeof( path ), LUA_PATH_CACHE"\\%s", ze.name );
-					Q_StripFilename( path );
-					filesystem->CreateDirHierarchy( path, "MOD" );
-					Q_snprintf( fullpath, sizeof( fullpath ), "%s%s", cachePath, path + Q_strlen( LUA_PATH_CACHE ) );
-					// DevMsg( "LCF: setting current directory to %s...\n", fullpath );
-					V_SetCurrentDirectory( fullpath );
-					// DevMsg( "LCF: unpacking %s...\n", ze.name );
-					UnzipItem( hz, i, (void *)V_UnqualifiedFileName( ze.name ), 0, ZIP_FILENAME );
-				}
-			}
-			CloseZip( hz );
-
-			if ( bGetCurrentDirectory )
-				V_SetCurrentDirectory( current );
-
-			break;
-		}
-	}
+    if (!path || !path[0] || V_strlen(path)>=MAX_PATH || path[0]=='/' || path[0]=='\\'
+        || V_strstr(path,"..") || V_strchr(path,':')) return false;
+    for (const char *p=path; *p; ++p)
+        if ((unsigned char)*p<32 || *p=='*' || *p=='?' || *p=='"' || *p=='|') return false;
+    return true;
+}
+LUA_API void luasrc_ExtractLcf()
+{
+    INetworkStringTable *downloads=networkstringtable->FindTable("downloadables");
+    if (!downloads) return;
+    for (int n=0;n<downloads->GetNumStrings();++n)
+    {
+        const char *name=downloads->GetString(n);
+        if (!SafeClientPath(name) || !V_GetFileExtension(name) || V_stricmp(V_GetFileExtension(name),"lcf")) continue;
+        char archive[MAX_PATH];
+        if (!filesystem->RelativePathToFullPath(name,"GAME",archive,sizeof(archive))) continue;
+        HZIP zip=OpenZip(archive,0,ZIP_FILENAME);
+        if (!zip) continue;
+        ZIPENTRY entry;
+        if (GetZipItem(zip,-1,&entry)!=ZR_OK || entry.index<0 || entry.index>4096) { CloseZip(zip); continue; }
+        const int count=entry.index; int total=0;
+        for (int i=0;i<count;++i)
+        {
+            if (GetZipItem(zip,i,&entry)!=ZR_OK) break;
+            if (entry.attr & FILE_ATTRIBUTE_DIRECTORY) continue;
+            if (!SafeClientPath(entry.name) || !V_GetFileExtension(entry.name) || V_stricmp(V_GetFileExtension(entry.name),"lua")
+                || entry.unc_size<0 || entry.unc_size>4*1024*1024 || entry.unc_size>32*1024*1024-total)
+            { Warning("Rejected invalid Lua cache entry\n"); break; }
+            total+=entry.unc_size;
+            CUtlBuffer bytes(0,entry.unc_size+1); bytes.EnsureCapacity(entry.unc_size+1);
+            if (UnzipItem(zip,i,bytes.Base(),entry.unc_size+1,ZIP_MEMORY)!=ZR_OK) break;
+            bytes.SeekPut(CUtlBuffer::SEEK_HEAD,entry.unc_size);
+            char destination[MAX_PATH],directory[MAX_PATH];
+            V_snprintf(destination,sizeof(destination),LUA_PATH_CACHE "/%s",entry.name);
+            V_FixSlashes(destination,'/'); V_strncpy(directory,destination,sizeof(directory)); V_StripFilename(directory);
+            filesystem->CreateDirHierarchy(directory,"MOD");
+            if (!filesystem->WriteFile(destination,"MOD",bytes)) { Warning("Unable to write Lua cache entry\n"); break; }
+        }
+        CloseZip(zip);
+    }
 }
 
 #else
 
 static CUtlDict< char *, int > m_LcfDatabase;
 
-static const char *UTIL_StripAddonName( char *addonName )
+bool luasrc_QueueClientFile(const char *input)
 {
-	char *pc = addonName;
-	int i = 0;
-	while ( *pc )
-	{
-		char c = *pc;
-
-		if ( c == '/' || c == '\\' )
-		{
-			*pc = 0;
-			++i;
-			return addonName + i;
-		}
-		else
-		{
-			*pc = 0;
-			++i;
-		}
-		++pc;
-	}
-	Assert( false );
-	return addonName + i;
+    if (gpGlobals->maxClients<=1) return true;
+    if (!input || !input[0] || V_strlen(input)>=MAX_PATH-16 || input[0]=='/' || input[0]=='\\'
+        || V_strstr(input,"..") || V_strchr(input,':')) return false;
+    char path[MAX_PATH]; V_strncpy(path,input,sizeof(path)); V_FixSlashes(path,'/');
+    for (const char *p=path; *p; ++p)
+        if ((unsigned char)*p<32 || *p=='*' || *p=='?' || *p=='"' || *p=='|') return false;
+    char full[MAX_PATH];
+    if (!filesystem->FileExists(path,"MOD") || !filesystem->RelativePathToFullPath(path,"MOD",full,sizeof(full)))
+    { Warning("Missing SCP client resource: %s\n",path); return false; }
+    const char *ext=V_GetFileExtension(path);
+    if (ext && !V_stricmp(ext,"lua"))
+    {
+        int index=m_LcfDatabase.Find(path);
+        if (index!=m_LcfDatabase.InvalidIndex())
+        { free(m_LcfDatabase[index]); m_LcfDatabase[index]=strdup(full); }
+        else m_LcfDatabase.Insert(path,strdup(full));
+        return true;
+    }
+    const char *allowed[]={"mdl","vvd","vtx","phy","vtf","vmt","wav"};
+    bool accepted=false;
+    for (int i=0;ext && i<ARRAYSIZE(allowed);++i) if (!V_stricmp(ext,allowed[i])) accepted=true;
+    if (!accepted || (V_strnicmp(path,"models/",7) && V_strnicmp(path,"materials/",10) && V_strnicmp(path,"sound/",6))) return false;
+    INetworkStringTable *downloads=networkstringtable->FindTable("downloadables");
+    if (!downloads) return false;
+    downloads->AddString(true,path);
+    return true;
 }
 
-static int luasrc_sendfile (lua_State *L) {
-  // Can only send files in multiplayer!!!
-  if ( gpGlobals->maxClients == 1 )
-  {
-  	return 0;
-  }
-  lua_Debug ar1;
-  lua_getstack(L, 1, &ar1);
-  lua_getinfo(L, "f", &ar1);
-  lua_Debug ar2;
-  lua_getinfo(L, ">S", &ar2);
-  int iLength = Q_strlen( ar2.source );
-  char source[MAX_PATH];
-  Q_StrRight( ar2.source, iLength-1, source, sizeof( source ) );
-  Q_StripFilename( source );
-  char filename[MAX_PATH];
-  Q_snprintf( filename, sizeof( filename ), "%s\\%s", source, luaL_checkstring(L, 1) );
-  char relativePath[MAX_PATH];
-  if ( filesystem->FullPathToRelativePathEx( filename, "MOD", relativePath, MAX_PATH ) )
-  {
-	const char *zipPath = NULL;
-	if ( Q_strnicmp( relativePath, "addons/", 7 ) )
-	{
-		char *substring = strstr( relativePath, "addons\\" );
-		if ( substring )
-		{
-			*substring = 0;
-			zipPath = UTIL_StripAddonName( relativePath + 7 );
-		}
-	}
-	char gamePath[ 256 ];
-	engine->GetGameDir( gamePath, 256 );
-	// DevMsg( "LCF: adding %s to the Lua cache file...\n", zipPath );
-	m_LcfDatabase.Insert( zipPath, strdup( filename ) );
-  }
-  else
-  {
-	DevMsg( "LCF: couldn't find relative path to %s!\n", filename );
-  }
-  return 0;
+static int luasrc_sendfile(lua_State *L)
+{
+    lua_Debug caller;
+    if (!lua_getstack(L,1,&caller) || !lua_getinfo(L,"S",&caller) || caller.source[0]!='@') return 0;
+    char directory[MAX_PATH],full[MAX_PATH],relative[MAX_PATH];
+    V_strncpy(directory,caller.source+1,sizeof(directory)); V_StripFilename(directory);
+    const char *file=luaL_checkstring(L,1);
+    if (V_strstr(file,"..") || V_strchr(file,':') || file[0]=='/' || file[0]=='\\') return luaL_error(L,"sendfile requires a relative path");
+    V_snprintf(full,sizeof(full),"%s/%s",directory,file);
+    if (!filesystem->FullPathToRelativePathEx(full,"MOD",relative,sizeof(relative)) || !luasrc_QueueClientFile(relative))
+        return luaL_error(L,"sendfile: file cannot be sent");
+    return 0;
 }
 
 
@@ -266,7 +226,7 @@ extern void lcf_close (lua_State *L) {
 	int c = m_LcfDatabase.Count(); 
 	for ( int i = 0; i < c; ++i )
 	{
-		delete m_LcfDatabase[ i ];
+		free(m_LcfDatabase[ i ]);
 	}
 	m_LcfDatabase.RemoveAll();
 #else
@@ -293,39 +253,24 @@ extern void lcf_preparecachefile (void) {
 	}
 	// force create this directory incase it doesn't exist
 	filesystem->CreateDirHierarchy( "cache", "MOD");
-	FileHandle_t fh = g_pFullFileSystem->Open( "cache\\cache_temp.lcf", "wb", "MOD" );
-	if ( FILESYSTEM_INVALID_HANDLE != fh )
-	{
-		pZip->SaveToDisk( fh );
-	}
-	g_pFullFileSystem->Close( fh );
+    CUtlBuffer archive;
+    pZip->SaveToBuffer(archive);
+    const int size = archive.TellPut();
+    if (size <= 0 || size > 64 * 1024 * 1024)
+    {
+        Warning("Invalid Lua cache archive size\n");
+        return;
+    }
+    if (!filesystem->WriteFile("cache/cache_temp.lcf", "MOD", archive))
+    {
+        Warning("Cannot write Lua cache archive\n");
+        return;
+    }
 
-	byte *buffer;
-
-	fh = g_pFullFileSystem->Open( "cache\\cache_temp.lcf", "rb", "MOD" );
-
-	int size = g_pFullFileSystem->Size( fh );
-	buffer = new byte[ size + 1 ];
-	if ( !buffer )
-	{
-		Warning( "lcf_preparecachefile:  Couldn't allocate buffer of size %i\n", size + 1 );
-		g_pFullFileSystem->Close( fh );
-		return;
-	}
-	g_pFullFileSystem->Read( buffer, size, fh );
-	g_pFullFileSystem->Close( fh );
-
-	// Ensure null terminator
-	// buffer[ size ] =0;
-
-	CRC32_t crc;
-
-	CRC32_Init( &crc );
-	// CRC32_ProcessBuffer( &crc, buffer, sizeof( buffer ) );
-	CRC32_ProcessBuffer( &crc, buffer, size );
-	CRC32_Final( &crc );
-
-	delete[] buffer;
+    CRC32_t crc;
+    CRC32_Init(&crc);
+    CRC32_ProcessBuffer(&crc, archive.Base(), size);
+    CRC32_Final(&crc);
 
 	char filename[ MAX_PATH ];
 	char hexname[ 16 ];
@@ -341,7 +286,7 @@ extern void lcf_preparecachefile (void) {
 	}
 
 	INetworkStringTable *downloadables = networkstringtable->FindTable( "downloadables" );
-	downloadables->AddString( true, filename, -1 );
+    if (downloadables) downloadables->AddString(true,filename,-1);
 	IZip::ReleaseZip( pZip );
 	s_lcfFile = 0;
 }

@@ -4,7 +4,20 @@
 #pragma once
 #endif
 
-// A fixed catalog shared by the menu and server. Never execute client class names.
+// Shared built-in catalog and identifier check. Custom classes also require
+// a successful server-side lookup in the active Lua weapon registry.
+inline bool SCPAdminWeaponClassname(const char *name)
+{
+    if (!name || !*name) return false;
+    int length = 0;
+    for (; *name; ++name)
+    {
+        if (++length >= 80 || !((*name >= 'a' && *name <= 'z') ||
+            (*name >= '0' && *name <= '9') || *name == '_')) return false;
+    }
+    return true;
+}
+
 struct SCPAdminSpawn
 {
     const char *classname;
@@ -15,11 +28,6 @@ struct SCPAdminSpawn
 
 static const SCPAdminSpawn SCPAdminNPCs[] =
 {
-    { "npc_citizen", "models/humans/group03/male_07.mdl", "#SCPAdmin_Citizen", "weapon_smg1" },
-    { "npc_combine_s", "models/combine_soldier.mdl", "#SCPAdmin_Combine", "weapon_smg1" },
-    { "npc_metropolice", "models/police.mdl", "#SCPAdmin_Police", "weapon_pistol" },
-    { "npc_zombie", "models/zombie/classic.mdl", "#SCPAdmin_Zombie", "" },
-    { "npc_fastzombie", "models/zombie/fast.mdl", "#SCPAdmin_FastZombie", "" },
     { "npc_headcrab", "models/headcrabclassic.mdl", "#SCPAdmin_Headcrab", "" },
     { "npc_antlion", "models/antlion.mdl", "#SCPAdmin_Antlion", "" },
     { "npc_manhack", "models/manhack.mdl", "#SCPAdmin_Manhack", "" },

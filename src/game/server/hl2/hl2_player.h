@@ -102,6 +102,15 @@ public:
 	virtual void		PlayerRunCommand( CUserCmd *ucmd, IMoveHelper *moveHelper);
 	virtual void		SetAnimation( PLAYER_ANIM playerAnim ) OVERRIDE;
 	virtual void		PlayerUse ( void );
+    virtual CBaseEntity *GiveNamedItem(const char *name, int subtype = 0) OVERRIDE;
+    bool UpdateWeaponPickup();
+    void ResetWeaponPickup();
+    CNetworkVar(float, m_flWeaponPickupProgress);
+    EHANDLE m_hWeaponPickupTarget;
+    float m_flWeaponPickupStarted = 0.0f;
+    float m_flNextWeaponDrop = 0.0f;
+    bool m_bAllowWeaponPickup = false;
+    bool m_bWeaponPickupConsumed = false;
 	virtual void		SuspendUse( float flDuration ) { m_flTimeUseSuspended = gpGlobals->curtime + flDuration; }
 	virtual void		UpdateClientData( void );
 	virtual void		OnRestore();

@@ -44,7 +44,7 @@ LUA_API lua_FireBulletsInfo_t lua_tofirebulletsinfo (lua_State *L, int idx) {
   lua_pop(L, 1);
   lua_getfield(L, idx, "m_flDamage");
   if (!lua_isnil(L, -1))
-    info.m_flDamage = luaL_checklong(L, -1);
+    info.m_flDamage = luaL_checknumber(L, -1);
   lua_pop(L, 1);
   lua_getfield(L, idx, "m_iPlayerDamage");
   if (!lua_isnil(L, -1))
